@@ -38,6 +38,14 @@ RUN set -x \
     && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true \
-    && rm -rf /var/cache/apk/* \
+    && rm -rf /var/cache/apk/*
+
+# 5432: PostgreSQL server
+# 8008: Patroni API
+EXPOSE 5432 8008
+
+# Expose our data directory
+VOLUME ["/data"]
+ENV DATA_VOLUME=/data
 
 CMD /bin/true
