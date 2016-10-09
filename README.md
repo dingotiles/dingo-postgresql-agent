@@ -5,13 +5,13 @@ This WIP repo is to create a new agent to manage the configuration/lifecycle of 
 To build:
 
 ```
-docker build -t dingotiles/dingo-postgresql-agent-base:latest .
+docker build -t dingotiles/dingo-postgresql96-agent-base:latest .
 ```
 
 Sanity check:
 
 ```
-image=dingotiles/dingo-postgresql-agent-base:latest
+image=dingotiles/dingo-postgresql96-agent-base:latest
 $ docker run -ti $image postgres --version
 postgres (PostgreSQL) 9.6.0
 $ docker run -ti $image psql --version
