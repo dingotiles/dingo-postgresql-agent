@@ -41,7 +41,7 @@ func RunAgent(c *cli.Context) {
 		IndentJSON: true, // Output human readable JSON
 	}))
 	m.Get("/health", func(r render.Render) {
-		r.JSON(200, `{"health":"ok"}`)
+		r.JSON(200, map[string]interface{}{"health": "ok"})
 	})
 	m.Run()
 }
