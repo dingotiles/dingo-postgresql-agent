@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"time"
 )
 
 type ClusterSpecification struct {
@@ -32,7 +33,10 @@ type ClusterSpecification struct {
 func FetchClusterSpec() (cluster *ClusterSpecification, err error) {
 	apiSpec := APISpec()
 	apiClusterSpec := fmt.Sprintf("%s/api", apiSpec.URI)
-	resp, err := http.Get(apiClusterSpec)
+	var netClient = &http.Client{
+		Timeout: time.Second * 10,
+	}
+	resp, err := netClient.Get(apiClusterSpec)
 	if err != nil {
 		return
 	}
@@ -42,7 +46,6 @@ func FetchClusterSpec() (cluster *ClusterSpecification, err error) {
 		return
 	}
 	json.Unmarshal(body, &cluster)
-	fmt.Printf("%v\n", *cluster)
 
 	return
 }

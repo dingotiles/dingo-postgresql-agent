@@ -1,5 +1,12 @@
 package config
 
+import (
+	"io/ioutil"
+	"path/filepath"
+
+	"gopkg.in/yaml.v1"
+)
+
 // PatroniSpecification is constructed based on ClusterSpecification provided by the API.
 // It is converted to a patroni.yml and used by Patroni to configure & run PostgreSQL.
 type PatroniSpecification struct {
@@ -68,4 +75,25 @@ type PatroniSpecification struct {
 		ConnectAddress string `yaml:"connect_address"`
 		Listen         string `yaml:"listen"`
 	} `yaml:"restapi"`
+}
+
+var defaultPatroniSpec *PatroniSpecification
+
+func DefaultPatroniSpec() (*PatroniSpecification, error) {
+	if defaultPatroniSpec == nil {
+		filename, err := filepath.Abs(APISpec().PatroniDefaultPath)
+		if err != nil {
+			return nil, err
+		}
+		yamlFile, err := ioutil.ReadFile(filename)
+		if err != nil {
+			return nil, err
+		}
+		defaultPatroniSpec = &PatroniSpecification{}
+		err = yaml.Unmarshal(yamlFile, defaultPatroniSpec)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return defaultPatroniSpec, nil
 }

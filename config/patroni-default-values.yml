@@ -1,0 +1,84 @@
+---
+ttl: &ttl 30
+loop_wait: &loop_wait 10
+scope: &scope TODO
+restapi:
+  listen: 0.0.0.0:8008
+  connect_address: TODO
+etcd:
+  scope: *scope
+  ttl: *ttl
+  host: TODO
+postgresql:
+  name: TODO
+  scope: *scope
+  listen: 0.0.0.0:5432
+  connect_address: TODO
+  data_dir: /data/postgres0
+  maximum_lag_on_failover: 1048576 # 1 megabyte in bytes
+  use_slots: False
+  pgpass: /tmp/pgpass
+  pg_hba:
+  # Allow any user from any host to connect to database
+  # "postgres" if the user's password is correctly supplied.
+  # TYPE    DATABASE     USER            ADDRESS   METHOD
+  - host    replication  APPUSER_USERNAME  0.0.0.0/0 md5
+  - host    postgres     all               0.0.0.0/0 md5
+  # hostssl entry can only be turned on if  ssl: "on" is set
+  # - hostssl postgres     all             0.0.0.0/0 md5
+  replication: # replication username, user will be created during initialization
+    username: TODO_APPUSER_USERNAME
+    password: TODO_APPUSER_PASSWORD
+    network:  127.0.0.1/32
+  superuser:
+    username: TODO_SUPERUSER_USERNAME
+    password: TODO_SUPERUSER_PASSWORD
+  admin: # user will be created during initialization. It would have CREATEDB and CREATEROLE privileges
+    username: TODO_ADMIN_USERNAME
+    password: TODO_ADMIN_PASSWORD
+  create_replica_method: [wal_e,basebackup]
+
+  wal_e:
+    command: /patroni/scripts/wale_restore.py
+    # {key: value} below are converted to options for wale_restore.py script
+    envdir: /data/wal-e/env
+    threshold_megabytes: 10240
+    threshold_backup_size_percentage: 30
+    retries: 2
+    use_iam: 0
+    no_master: 1
+  recovery_conf:
+    restore_command: "envdir /data/wal-e/env wal-e wal-fetch \"%f\" \"%p\" -p 1"
+
+  # parameters are converted into --<name> <value> flags on the server command line
+  parameters:
+    # http://www.postgresql.org/docs/9.5/static/runtime-config-connection.html
+    listen_addresses: 0.0.0.0
+    port: 5432
+    max_connections: 100
+    # ssl: "on"
+    # ssl_cert_file: "$SSL_CERTIFICATE"
+    # ssl_key_file: "$SSL_PRIVATE_KEY"
+
+    # http://www.postgresql.org/docs/9.5/static/runtime-config-wal.html
+    wal_level: hot_standby
+    wal_log_hints: "on"
+    archive_mode: "on"
+    archive_command: "envdir /data/wal-e/env wal-e wal-push \"%p\" -p 1"
+    archive_timeout: 10min
+
+    # http://www.postgresql.org/docs/9.5/static/runtime-config-replication.html
+    # - sending servers config
+    max_wal_senders: 5
+    max_replication_slots: 5
+    max_wal_size: 1GB
+    min_wal_size: 128MB
+    wal_keep_segments: 8
+    # - standby servers config
+    hot_standby: "on"
+
+    # When using synchronous replication, use at least three Postgres data nodes
+    # to ensure write availability if one host fails.
+    # To enable a simple synchronous replication test:
+    # synchronous_commit: "on"
+    # synchronous_standby_names: "*"
