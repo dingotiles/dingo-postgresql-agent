@@ -1,5 +1,12 @@
 package config
 
+import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+)
+
 type ClusterSpecification struct {
 	Etcd struct {
 		URI string `json:"uri"`
@@ -20,4 +27,22 @@ type ClusterSpecification struct {
 	} `json:"postgresql"`
 	WaleEnv  []string `json:"wale_env"`
 	WaleMode string   `json:"wale_mode"`
+}
+
+func FetchClusterSpec() (cluster *ClusterSpecification, err error) {
+	apiSpec := APISpec()
+	apiClusterSpec := fmt.Sprintf("%s/api", apiSpec.URI)
+	resp, err := http.Get(apiClusterSpec)
+	if err != nil {
+		return
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+	json.Unmarshal(body, &cluster)
+	fmt.Printf("%v\n", *cluster)
+
+	return
 }
