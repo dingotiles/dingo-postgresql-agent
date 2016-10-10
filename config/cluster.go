@@ -9,6 +9,10 @@ import (
 )
 
 type ClusterSpecification struct {
+	Cluster struct {
+		Name  string `json:"name"`
+		Scope string `json:"scope"`
+	} `json:"cluster"`
 	Etcd struct {
 		URI string `json:"uri"`
 	} `json:"etcd"`

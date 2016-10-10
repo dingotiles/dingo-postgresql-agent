@@ -15,11 +15,11 @@ func RunAgent(c *cli.Context) {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(*clusterSpec)
+	// fmt.Println(*clusterSpec)
 
-	patroniSpec, err := config.DefaultPatroniSpec()
+	patroniSpec, err := config.BuildPatroniSpec(clusterSpec)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(*patroniSpec)
+	fmt.Println(patroniSpec)
 }

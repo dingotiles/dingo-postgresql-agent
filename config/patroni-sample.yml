@@ -1,84 +1,81 @@
 ---
-ttl: &ttl 30
-loop_wait: &loop_wait 10
-scope: &scope demo-cluster
+scope: batman
+#namespace: /service/
+name: postgresql0
+
 restapi:
-  listen: 0.0.0.0:8008
-  connect_address: 10.10.10.10:8000
+  listen: 127.0.0.1:8008
+  connect_address: 127.0.0.1:8008
+#  certfile: /etc/ssl/certs/ssl-cert-snakeoil.pem
+#  keyfile: /etc/ssl/private/ssl-cert-snakeoil.key
+#  authentication:
+#    username: username
+#    password: password
+
 etcd:
-  scope: *scope
-  ttl: *ttl
-  host: http://10.10.10.10:4001
+  host: 127.0.0.1:2379
+
+bootstrap:
+  # this section will be written into Etcd:/<namespace>/<scope>/config after initializing new cluster
+  # and all other cluster members will use it as a `global configuration`
+  dcs:
+    ttl: 30
+    loop_wait: 10
+    retry_timeout: 10
+    maximum_lag_on_failover: 1048576
+    postgresql:
+      use_pg_rewind: true
+#      use_slots: true
+      parameters:
+#        wal_level: hot_standby
+#        hot_standby: "on"
+#        wal_keep_segments: 8
+#        max_wal_senders: 5
+#        max_replication_slots: 5
+#        wal_log_hints: "on"
+#        archive_mode: "on"
+#        archive_timeout: 1800s
+#        archive_command: mkdir -p ../wal_archive && test ! -f ../wal_archive/%f && cp %p ../wal_archive/%f
+#      recovery_conf:
+#        restore_command: cp ../wal_archive/%f %p
+
+  # some desired options for 'initdb'
+  initdb:  # Note: It needs to be a list (some options need values, others are switches)
+  - encoding: UTF8
+  - data-checksums
+
+  pg_hba:  # Add following lines to pg_hba.conf after running 'initdb'
+  - host replication replicator 127.0.0.1/32 md5
+  - host all all 0.0.0.0/0 md5
+#  - hostssl all all 0.0.0.0/0 md5
+
+  # Additional script to be launched after initial cluster creation (will be passed the connection URL as parameter)
+# post_init: /usr/local/bin/setup_cluster.sh
+
+  # Some additional users users which needs to be created after initializing new cluster
+  users:
+    admin:
+      password: admin
+      options:
+        - createrole
+        - createdb
+
 postgresql:
-  name: demo-cluster
-  scope: *scope
-  listen: 0.0.0.0:5432
-  connect_address: 10.10.10.10:5000
-  data_dir: /data/postgres0
-  maximum_lag_on_failover: 1048576 # 1 megabyte in bytes
-  use_slots: False
-  pgpass: /tmp/pgpass
-  pg_hba:
-  # Allow any user from any host to connect to database
-  # "postgres" if the user's password is correctly supplied.
-  # TYPE    DATABASE     USER            ADDRESS   METHOD
-  - host    replication  APPUSER_USERNAME  0.0.0.0/0 md5
-  - host    postgres     all               0.0.0.0/0 md5
-  # hostssl entry can only be turned on if  ssl: "on" is set
-  # - hostssl postgres     all             0.0.0.0/0 md5
-  replication: # replication username, user will be created during initialization
-    username: APPUSER_USERNAME
-    password: APPUSER_PASSWORD
-    network:  127.0.0.1/32
-  superuser:
-    username: SUPERUSER_USERNAME
-    password: SUPERUSER_PASSWORD
-  admin: # user will be created during initialization. It would have CREATEDB and CREATEROLE privileges
-    username: ADMIN_USERNAME
-    password: ADMIN_PASSWORD
-  create_replica_method: [wal_e,basebackup]
-
-  wal_e:
-    command: /patroni/scripts/wale_restore.py
-    # {key: value} below are converted to options for wale_restore.py script
-    envdir: /data/wal-e/env
-    threshold_megabytes: 10240
-    threshold_backup_size_percentage: 30
-    retries: 2
-    use_iam: 0
-    no_master: 1
-  recovery_conf:
-    restore_command: "envdir /data/wal-e/env wal-e wal-fetch \"%f\" \"%p\" -p 1"
-
-  # parameters are converted into --<name> <value> flags on the server command line
+  listen: 127.0.0.1:5432
+  connect_address: 127.0.0.1:5432
+  data_dir: data/postgresql0
+#  bin_dir:
+  pgpass: /tmp/pgpass0
+  authentication:
+    replication:
+      username: replicator
+      password: rep-pass
+    superuser:
+      username: postgres
+      password: zalando
   parameters:
-    # http://www.postgresql.org/docs/9.5/static/runtime-config-connection.html
-    listen_addresses: 0.0.0.0
-    port: 5432
-    max_connections: 100
-    # ssl: "on"
-    # ssl_cert_file: "$SSL_CERTIFICATE"
-    # ssl_key_file: "$SSL_PRIVATE_KEY"
-
-    # http://www.postgresql.org/docs/9.5/static/runtime-config-wal.html
-    wal_level: hot_standby
-    wal_log_hints: "on"
-    archive_mode: "on"
-    archive_command: "envdir /data/wal-e/env wal-e wal-push \"%p\" -p 1"
-    archive_timeout: 10min
-
-    # http://www.postgresql.org/docs/9.5/static/runtime-config-replication.html
-    # - sending servers config
-    max_wal_senders: 5
-    max_replication_slots: 5
-    max_wal_size: 1GB
-    min_wal_size: 128MB
-    wal_keep_segments: 8
-    # - standby servers config
-    hot_standby: "on"
-
-    # When using synchronous replication, use at least three Postgres data nodes
-    # to ensure write availability if one host fails.
-    # To enable a simple synchronous replication test:
-    # synchronous_commit: "on"
-    # synchronous_standby_names: "*"
+    unix_socket_directories: '.'
+tags:
+    nofailover: false
+    noloadbalance: false
+    clonefrom: false
