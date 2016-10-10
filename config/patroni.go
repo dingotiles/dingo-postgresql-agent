@@ -7,9 +7,10 @@ import (
 	"gopkg.in/yaml.v1"
 )
 
-// PatroniSpecification is constructed based on ClusterSpecification provided by the API.
+// PatroniV11Specification is constructed based on ClusterSpecification provided by the API.
 // It is converted to a patroni.yml and used by Patroni to configure & run PostgreSQL.
-type PatroniSpecification struct {
+// The scheme is for Patroni v1.1
+type PatroniV11Specification struct {
 	Name      string `yaml:"name"`
 	Namespace string `yaml:"namespace"`
 	Scope     string `yaml:"scope"`
@@ -66,9 +67,9 @@ type PatroniSpecification struct {
 	} `yaml:"tags"`
 }
 
-var defaultPatroniSpec *PatroniSpecification
+var defaultPatroniSpec *PatroniV11Specification
 
-func BuildPatroniSpec(clusterSpec *ClusterSpecification) (patroniSpec *PatroniSpecification, err error) {
+func BuildPatroniSpec(clusterSpec *ClusterSpecification) (patroniSpec *PatroniV11Specification, err error) {
 	patroniSpec, err = DefaultPatroniSpec()
 	if err != nil {
 		return
@@ -77,7 +78,7 @@ func BuildPatroniSpec(clusterSpec *ClusterSpecification) (patroniSpec *PatroniSp
 	return
 }
 
-func DefaultPatroniSpec() (*PatroniSpecification, error) {
+func DefaultPatroniSpec() (*PatroniV11Specification, error) {
 	if defaultPatroniSpec == nil {
 		filename, err := filepath.Abs(APISpec().PatroniDefaultPath)
 		if err != nil {
@@ -87,7 +88,7 @@ func DefaultPatroniSpec() (*PatroniSpecification, error) {
 		if err != nil {
 			return nil, err
 		}
-		defaultPatroniSpec = &PatroniSpecification{}
+		defaultPatroniSpec = &PatroniV11Specification{}
 		err = yaml.Unmarshal(yamlFile, defaultPatroniSpec)
 		if err != nil {
 			return nil, err
@@ -96,13 +97,13 @@ func DefaultPatroniSpec() (*PatroniSpecification, error) {
 	return defaultPatroniSpec, nil
 }
 
-func (patroniSpec *PatroniSpecification) MergeClusterSpec(clusterSpec *ClusterSpecification) {
+func (patroniSpec *PatroniV11Specification) MergeClusterSpec(clusterSpec *ClusterSpecification) {
 	patroniSpec.Etcd.Host = clusterSpec.Etcd.URI
 	patroniSpec.Scope = clusterSpec.Cluster.Scope
 	patroniSpec.Name = clusterSpec.Cluster.Name
 }
 
-func (patroniSpec *PatroniSpecification) String() string {
+func (patroniSpec *PatroniV11Specification) String() string {
 	bytes, err := yaml.Marshal(patroniSpec)
 	if err != nil {
 		panic(err)
