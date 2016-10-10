@@ -42,12 +42,12 @@ func FetchClusterSpec() (cluster *ClusterSpecification, err error) {
 	}
 	resp, err := netClient.Get(apiClusterSpec)
 	if err != nil {
-		return
+		return nil, err
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return
+		return nil, err
 	}
 	json.Unmarshal(body, &cluster)
 

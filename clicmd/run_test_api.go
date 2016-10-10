@@ -54,5 +54,4 @@ func RunTestAPI(c *cli.Context) {
 		r.JSON(200, staticResponse)
 	})
 	m.Run()
-
 }

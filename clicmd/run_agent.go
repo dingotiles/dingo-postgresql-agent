@@ -2,6 +2,7 @@ package clicmd
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/codegangsta/cli"
@@ -19,7 +20,7 @@ func RunAgent(c *cli.Context) {
 	var clusterSpec *config.ClusterSpecification
 	for retryCount < 3 {
 		clusterSpec, err = config.FetchClusterSpec()
-		if err == nil {
+		if err == nil && clusterSpec != nil {
 			break
 		}
 		fmt.Printf("Error trying to connect to API %s, retrying...\n", config.APISpec().URI)
@@ -28,6 +29,10 @@ func RunAgent(c *cli.Context) {
 	}
 	if err != nil {
 		panic(err)
+	}
+	if clusterSpec == nil {
+		fmt.Println("Cannot connect to API", config.APISpec().URI)
+		os.Exit(1)
 	}
 	fmt.Println(*clusterSpec)
 

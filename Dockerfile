@@ -10,3 +10,5 @@ RUN set -x \
     && go install github.com/dingotiles/dingo-postgresql-agent \
     && apk del go git \
     && rm -rf /var/cache/apk/*
+
+ADD config/patroni-default-values.yml /patroni/patroni-default-values.yml
