@@ -21,6 +21,11 @@ func main() {
 			Usage:  "run the agent",
 			Action: clicmd.RunAgent,
 		},
+		{
+			Name:   "test-api",
+			Usage:  "run the sample/test API backend",
+			Action: clicmd.RunTestAPI,
+		},
 	}
 	app.Run(os.Args)
 }
