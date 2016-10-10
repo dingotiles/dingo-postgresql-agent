@@ -8,6 +8,7 @@ services:
     ports: ["5000:8008"]
     environment:
       PORT: 8008
+      ETCD_URI: http://${DOCKER_HOST_IP}:4001
     command: [dingo-postgresql-agent, test-api]
   patroni1:
     build: .
