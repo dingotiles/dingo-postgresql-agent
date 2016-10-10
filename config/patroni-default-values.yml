@@ -61,7 +61,7 @@ bootstrap:
         - createdb
 
 postgresql:
-  listen: 127.0.0.1:5432
+  listen: 0.0.0.0:5432
   connect_address: HOSTIP:5432
   data_dir: /data/postgresql0
   pgpass: /tmp/pgpass0
@@ -75,6 +75,6 @@ postgresql:
   parameters:
     unix_socket_directories: '.'
 tags:
-    nofailover: false
-    noloadbalance: false
-    clonefrom: false
+  nofailover: false
+  noloadbalance: false
+  clonefrom: false
