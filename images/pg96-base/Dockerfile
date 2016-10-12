@@ -47,7 +47,7 @@ RUN set -x \
       && pip3 install --upgrade pip setuptools \
       && rm -rf /root/.cache \
       && rm -rf /var/cache/apk/* \
-      && pip3 install --no-cache-dir wal-e==${WALE_VERSION} awscli envdir pgxnclient --upgrade
+      && pip3 install --no-cache-dir wal-e[aws,azure,google,swift]==${WALE_VERSION} awscli envdir pgxnclient --upgrade
 
 # python2, dumb-init, supervisor
 ENV SUPERVISOR_VERSION=3.3.1
