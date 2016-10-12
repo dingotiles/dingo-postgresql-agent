@@ -38,7 +38,7 @@ RUN echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/re
             libxml2-dev gdal-dev proj4-dev \
             gcc make libgcc g++
 
-# python3, wal-3
+# python3, wal-3, chaperone
 ENV WALE_VERSION=1.0.0
 RUN set -x \
       && apk add --update bash python3 python3-dev jq curl alpine-sdk linux-headers musl-dev \
@@ -47,7 +47,7 @@ RUN set -x \
       && pip3 install --upgrade pip setuptools \
       && rm -rf /root/.cache \
       && rm -rf /var/cache/apk/* \
-      && pip install --no-cache-dir wal-e==${WALE_VERSION} awscli envdir pgxnclient --upgrade
+      && pip install --no-cache-dir wal-e==${WALE_VERSION} awscli envdir pgxnclient chaperone --upgrade
 
 # etcdctl
 RUN set -x \
