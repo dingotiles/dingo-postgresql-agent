@@ -11,6 +11,8 @@ indent() {
 }
 
 (
+  # TODO: create /data/wal-e/env
+
   export PG_DATA_DIR=${DATA_VOLUME}/postgres0
   chown postgres:postgres -R ${DATA_VOLUME} /patroni /config
 

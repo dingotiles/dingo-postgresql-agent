@@ -12,9 +12,7 @@ RUN set -x \
     && rm -rf /var/cache/apk/*
 
 ADD config/patroni-default-values.yml /patroni/patroni-default-values.yml
-ADD images/entry.sh /entry.sh
-ADD images/patroni_wrapper.sh /patroni_wrapper.sh
-ADD images/agent_wrapper.sh /agent_wrapper.sh
+ADD images/scripts/* /scripts/
 ADD images/supervisord.conf /etc/supervisor/supervisord.conf
 ADD images/services/*.conf /etc/supervisor/conf.d/
 ADD sample-patroni.yml /config/patroni.yml
