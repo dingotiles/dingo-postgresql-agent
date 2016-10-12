@@ -38,7 +38,7 @@ RUN echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/re
             libxml2-dev gdal-dev proj4-dev \
             gcc make libgcc g++
 
-# python3, wal-3, chaperone
+# python3, wal-3
 ENV WALE_VERSION=1.0.0
 RUN set -x \
       && apk add --update bash python3 python3-dev jq curl alpine-sdk linux-headers musl-dev \
@@ -47,7 +47,15 @@ RUN set -x \
       && pip3 install --upgrade pip setuptools \
       && rm -rf /root/.cache \
       && rm -rf /var/cache/apk/* \
-      && pip install --no-cache-dir wal-e==${WALE_VERSION} awscli envdir pgxnclient chaperone --upgrade
+      && pip3 install --no-cache-dir wal-e==${WALE_VERSION} awscli envdir pgxnclient --upgrade
+
+# python2, dumb-init, supervisor
+ENV SUPERVISOR_VERSION=3.3.1
+RUN set -x \
+      && apk add --update bash python py-pip \
+      && rm -rf /var/cache/apk/* \
+      && pip install --upgrade pip setuptools \
+      && pip install --no-cache-dir supervisor==${SUPERVISOR_VERSION} dumb-init --upgrade
 
 # etcdctl
 RUN set -x \
@@ -78,7 +86,7 @@ RUN set -x \
     && tar xfz /tmp/patroni-${PATRONI_VERSION}.tar.gz \
     && mv /patroni-${PATRONI_VERSION} /patroni \
     && ls -al /patroni \
-    && pip install --no-cache-dir -r /patroni/requirements.txt --upgrade \
+    && pip3 install --no-cache-dir -r /patroni/requirements.txt --upgrade \
     && rm -rf /root/.cache
 #    && echo "pytz" >> /patroni/requirements.txt \
 

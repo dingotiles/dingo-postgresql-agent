@@ -12,4 +12,6 @@ RUN set -x \
     && rm -rf /var/cache/apk/*
 
 ADD config/patroni-default-values.yml /patroni/patroni-default-values.yml
-ADD images/services/*.conf /etc/chaperone.d/
+ADD images/entry.sh /entry.sh
+ADD images/supervisord.conf /etc/supervisor/supervisord.conf
+ADD images/services/*.conf /etc/supervisor/conf.d/
