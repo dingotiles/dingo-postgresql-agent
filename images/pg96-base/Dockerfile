@@ -41,7 +41,7 @@ RUN echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/re
 # python3, wal-3
 ENV WALE_VERSION=1.0.0
 RUN set -x \
-      && apk add --update bash python3 python3-dev jq curl alpine-sdk linux-headers musl-dev \
+      && apk add --update bash sed python3 python3-dev jq curl alpine-sdk linux-headers musl-dev \
       && python3 -m ensurepip \
       && rm -r /usr/lib/python*/ensurepip \
       && pip3 install --upgrade pip setuptools \
