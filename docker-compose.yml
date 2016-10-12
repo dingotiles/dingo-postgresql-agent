@@ -18,7 +18,12 @@ services:
     environment:
       DINGO_STARTUP_URI: http://${DOCKER_HOST_IP}:5000
       DINGO_STARTUP_PATRONI_DEFAULT_PATH: /patroni/patroni-default-values.yml
-    depends_on: [registrator, etcd]
+      # in lieu of registrator, pass known host config as env vars
+      DOCKER_HOST_IP: ${DOCKER_HOST_IP}
+      DOCKER_HOST_PORT_5432: 5001
+      DOCKER_HOST_PORT_8008: 8001
+    depends_on: [etcd]
+    # depends_on: [registrator, etcd]
     command: [dingo-postgresql-agent, run]
   etcd:
     image: quay.io/coreos/etcd:v2.2.5
@@ -32,10 +37,10 @@ services:
     - -initial-cluster-token=etcd-cluster-1
     - -initial-cluster=etcd0=http://${DOCKER_HOST_IP}:2380
     - -initial-cluster-state=new
-  registrator:
-    image: cfcommunity/registrator:latest
-    network_mode: "host"
-    volumes:
-    - /var/run/docker.sock:/tmp/docker.sock
-    command: /bin/registrator -hostname ${DOCKER_HOST_IP} -ip ${DOCKER_HOST_IP} etcd://${DOCKER_HOST_IP}:4001
-    depends_on: [etcd]
+  # registrator:
+  #   image: cfcommunity/registrator:latest
+  #   network_mode: "host"
+  #   volumes:
+  #   - /var/run/docker.sock:/tmp/docker.sock
+  #   command: /bin/registrator -hostname ${DOCKER_HOST_IP} -ip ${DOCKER_HOST_IP} etcd://${DOCKER_HOST_IP}:4001
+  #   depends_on: [etcd]

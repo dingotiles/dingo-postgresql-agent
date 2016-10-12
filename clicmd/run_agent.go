@@ -15,6 +15,7 @@ import (
 // configures & runs Patroni, which in turn configures & runs PostgreSQL
 func RunAgent(c *cli.Context) {
 	fmt.Println(*config.APISpec())
+	fmt.Println(*config.HostDiscoverySpec())
 	retryCount := 0
 	var err error
 	var clusterSpec *config.ClusterSpecification
@@ -36,7 +37,7 @@ func RunAgent(c *cli.Context) {
 	}
 	fmt.Println(*clusterSpec)
 
-	patroniSpec, err := config.BuildPatroniSpec(clusterSpec)
+	patroniSpec, err := config.BuildPatroniSpec(clusterSpec, config.HostDiscoverySpec())
 	if err != nil {
 		panic(err)
 	}

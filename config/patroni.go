@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"io/ioutil"
 	"path/filepath"
 
@@ -69,12 +70,12 @@ type PatroniV11Specification struct {
 
 var defaultPatroniSpec *PatroniV11Specification
 
-func BuildPatroniSpec(clusterSpec *ClusterSpecification) (patroniSpec *PatroniV11Specification, err error) {
+func BuildPatroniSpec(clusterSpec *ClusterSpecification, hostDiscoverySpec *HostDiscoverySpecification) (patroniSpec *PatroniV11Specification, err error) {
 	patroniSpec, err = DefaultPatroniSpec()
 	if err != nil {
 		return
 	}
-	patroniSpec.MergeClusterSpec(clusterSpec)
+	patroniSpec.MergeClusterSpec(clusterSpec, hostDiscoverySpec)
 	return
 }
 
@@ -97,10 +98,14 @@ func DefaultPatroniSpec() (*PatroniV11Specification, error) {
 	return defaultPatroniSpec, nil
 }
 
-func (patroniSpec *PatroniV11Specification) MergeClusterSpec(clusterSpec *ClusterSpecification) {
+func (patroniSpec *PatroniV11Specification) MergeClusterSpec(clusterSpec *ClusterSpecification, hostDiscoverySpec *HostDiscoverySpecification) {
 	patroniSpec.Etcd.Host = clusterSpec.Etcd.URI
 	patroniSpec.Scope = clusterSpec.Cluster.Scope
 	patroniSpec.Name = clusterSpec.Cluster.Name
+	// hostDiscoverySpec.IP
+	// hostDiscoverySpec.Port5432
+	patroniSpec.Postgresql.ConnectAddress = fmt.Sprintf("%s:%s", hostDiscoverySpec.IP, hostDiscoverySpec.Port5432)
+	patroniSpec.Restapi.ConnectAddress = fmt.Sprintf("%s:%s", hostDiscoverySpec.IP, hostDiscoverySpec.Port8008)
 }
 
 func (patroniSpec *PatroniV11Specification) String() string {
