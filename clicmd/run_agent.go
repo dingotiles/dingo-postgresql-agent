@@ -42,6 +42,13 @@ func RunAgent(c *cli.Context) {
 		panic(err)
 	}
 	fmt.Println(patroniSpec)
+
+	envdir := config.NewEnvdirFromStrings(clusterSpec.WaleEnv)
+	err = envdir.CreateFiles("/data/wal-e/env")
+	if err != nil {
+		panic(err)
+	}
+
 	m := martini.Classic()
 	m.Use(render.Renderer(render.Options{
 		IndentJSON: true, // Output human readable JSON
