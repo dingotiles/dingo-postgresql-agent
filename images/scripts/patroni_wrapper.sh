@@ -14,7 +14,24 @@ indent() {
 }
 
 (
-  # TODO: create /data/wal-e/env
+  echo "\nInstalled alpine/apk packages:"
+  apk info | xargs -I % apk info % | grep description: | awk '{print $1}' | sort
+
+  echo "\nInstalled python3/pip3 packages":
+  pip3 list
+
+  wale_env_dir=/etc/wal-e.d/env
+  wait_message="WARN: Waiting until ${wale_env_dir} is created..."
+  if [[ ! -d ${wale_env_dir} ]]; then
+    if [[ "${wait_message}X" != "X" ]]; then
+      echo ${wait_message} >&2
+    fi
+    sleep 1
+    wait_message=""
+  fi
+
+  echo "Environment variables provided to wal-e:"
+  ls ${wale_env_dir}
 
   export PG_DATA_DIR=${DATA_VOLUME}/postgres0
   chown postgres:postgres -R ${DATA_VOLUME} /patroni /config
