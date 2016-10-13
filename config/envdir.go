@@ -37,6 +37,11 @@ func NewEnvdirFromStrings(envvars []string) (envdir *Envdir) {
 }
 
 func (envdir *Envdir) CreateFiles(dir string) (err error) {
+	fmt.Println(envdir)
+	err = os.RemoveAll(dir)
+	if err != nil {
+		return
+	}
 	err = os.MkdirAll(dir, 0755)
 	if err != nil {
 		return
