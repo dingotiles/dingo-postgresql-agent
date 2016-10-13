@@ -32,6 +32,7 @@ func RunTestAPI(c *cli.Context) {
 				fmt.Sprintf("AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID"),
 				fmt.Sprintf("AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY"),
 				fmt.Sprintf("WAL_S3_BUCKET=WAL_S3_BUCKET"),
+				fmt.Sprintf("AWS_REGION=us-east-1"),
 				fmt.Sprintf("WALE_S3_ENDPOINT=https+path://s3.amazonaws.com:443"),
 				fmt.Sprintf("WALE_S3_PREFIX=s3://WAL_S3_BUCKET/backups/cluster-scope/wal/"),
 			},
