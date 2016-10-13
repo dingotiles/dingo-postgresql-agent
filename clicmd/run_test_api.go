@@ -20,7 +20,7 @@ func RunTestAPI(c *cli.Context) {
 		staticResponse := map[string]interface{}{
 			"cluster": map[string]interface{}{
 				"name":  "patroni1",
-				"scope": "cluster-scope",
+				"scope": "test-cluster-scope",
 			},
 			"wale_env": getWaleEnvVars(),
 			// Example:
@@ -58,7 +58,7 @@ func getWaleEnvVars() []string {
 
 func getWaleEnvVarsFromList(environ []string) []string {
 	waleEnvCount := 0
-	walePrefixes := []string{"WALE", "AWS", "WABS", "GOOGLE", "SWIFT"}
+	walePrefixes := []string{"WAL", "AWS", "WABS", "GOOGLE", "SWIFT"}
 	for _, envVar := range environ {
 		for _, prefix := range walePrefixes {
 			if strings.Index(envVar, prefix) == 0 && !strings.HasSuffix(envVar, "=") {

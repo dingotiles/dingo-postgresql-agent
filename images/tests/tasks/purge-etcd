@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -e
+set -x
+
+etcdctl --endpoint "http://${ETCD_HOST_PORT}" ls --recursive /service/${PATRONI_SCOPE}
+etcdctl --endpoint "http://${ETCD_HOST_PORT}" rm --recursive /service/${PATRONI_SCOPE}

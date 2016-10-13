@@ -7,6 +7,7 @@ services:
     container_name: test-api
     ports: ["5000:8008"]
     environment:
+      PATRONI_SCOPE: test-cluster-scope
       PORT: 8008
       ETCD_HOST_PORT: ${DOCKER_HOST_IP}:4001
       AWS_ACCESS_KEY_ID: ~
@@ -52,3 +53,15 @@ services:
   #   - /var/run/docker.sock:/tmp/docker.sock
   #   command: /bin/registrator -hostname ${DOCKER_HOST_IP} -ip ${DOCKER_HOST_IP} etcd://${DOCKER_HOST_IP}:4001
   #   depends_on: [etcd]
+
+  tests:
+    build: ./images/tests/
+    image: dingotiles/dingo-pg-agent-container-tests
+    environment:
+      DOCKER_HOST_IP:
+      ETCD_HOST_PORT: ${DOCKER_HOST_IP}:4001
+      PATRONI_SCOPE: test-cluster-scope
+      AWS_ACCESS_KEY_ID: ~
+      AWS_SECRET_ACCESS_KEY: ~
+      WAL_S3_BUCKET: ~
+      AWS_REGION: ~

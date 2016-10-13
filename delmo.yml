@@ -1,0 +1,16 @@
+suite:
+  name: dingo-postgresql-agent
+  system: docker-compose.yml
+  task_service: tests
+
+tests:
+- name: read-write
+  before_startup: [purge-backups]
+  spec:
+  - wait: one-node-running
+  - assert: [self-advertizing]
+
+tasks:
+- {name: purge-backups, command: /tasks/purge-backups}
+- {name: one-node-running, command: "/tasks/nodes-running 1"}
+- {name: self-advertizing, command: /tasks/self-advertizing}
