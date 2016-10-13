@@ -37,14 +37,17 @@ func RunAgent(c *cli.Context) {
 	}
 	fmt.Println(*clusterSpec)
 
+	envdir := config.NewEnvdirFromStrings(clusterSpec.WaleEnv)
+	err = envdir.CreateFiles("/etc/wal-e.d/env")
+	if err != nil {
+		panic(err)
+	}
+
 	patroniSpec, err := config.BuildPatroniSpec(clusterSpec, config.HostDiscoverySpec())
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(patroniSpec)
-
-	envdir := config.NewEnvdirFromStrings(clusterSpec.WaleEnv)
-	err = envdir.CreateFiles("/etc/wal-e.d/env")
+	err = patroniSpec.CreateConfigFile("/config/patroni.yml")
 	if err != nil {
 		panic(err)
 	}

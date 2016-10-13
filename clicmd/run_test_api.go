@@ -1,8 +1,8 @@
 package clicmd
 
 import (
-	"fmt"
 	"os"
+	"strings"
 
 	"github.com/codegangsta/cli"
 	"github.com/go-martini/martini"
@@ -23,19 +23,14 @@ func RunTestAPI(c *cli.Context) {
 				"scope": "cluster-scope",
 			},
 			"wale_mode": "aws",
-			"wale_env": []string{
-				// fmt.Sprintf("AWS_ACCESS_KEY_ID=%s", os.Getenv("AWS_ACCESS_KEY_ID")),
-				// fmt.Sprintf("AWS_SECRET_ACCESS_KEY=%s", os.Getenv("AWS_SECRET_ACCESS_KEY")),
-				// fmt.Sprintf("WAL_S3_BUCKET=%s", os.Getenv("WAL_S3_BUCKET")),
-				// fmt.Sprintf("WALE_S3_ENDPOINT=%s", os.Getenv("WALE_S3_ENDPOINT")),
-				// fmt.Sprintf("WALE_S3_PREFIX=%s", fmt.Sprintf("s3://%s/backups/%s/wal/", os.Getenv("WAL_S3_BUCKET"), scope)),
-				fmt.Sprintf("AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID"),
-				fmt.Sprintf("AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY"),
-				fmt.Sprintf("WAL_S3_BUCKET=WAL_S3_BUCKET"),
-				fmt.Sprintf("AWS_REGION=us-east-1"),
-				fmt.Sprintf("WALE_S3_ENDPOINT=https+path://s3.amazonaws.com:443"),
-				fmt.Sprintf("WALE_S3_PREFIX=s3://WAL_S3_BUCKET/backups/cluster-scope/wal/"),
-			},
+			"wale_env":  getWaleEnvVars(),
+			// 	fmt.Sprintf("AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID"),
+			// 	fmt.Sprintf("AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY"),
+			// 	fmt.Sprintf("WAL_S3_BUCKET=WAL_S3_BUCKET"),
+			// 	fmt.Sprintf("AWS_REGION=us-east-1"),
+			// 	fmt.Sprintf("WALE_S3_ENDPOINT=https+path://s3.amazonaws.com:443"),
+			// 	fmt.Sprintf("WALE_S3_PREFIX=s3://WAL_S3_BUCKET/backups/cluster-scope/wal/"),
+			// },
 			"postgresql": map[string]interface{}{
 				"admin": map[string]interface{}{
 					"username": "admin-username",
@@ -51,10 +46,37 @@ func RunTestAPI(c *cli.Context) {
 				},
 			},
 			"etcd": map[string]interface{}{
-				"uri": os.Getenv("ETCD_URI"),
+				"uri": os.Getenv("ETCD_HOST_PORT"),
 			},
 		}
 		r.JSON(200, staticResponse)
 	})
 	m.Run()
+}
+
+func getWaleEnvVars() []string {
+	return getWaleEnvVarsFromList(os.Environ())
+}
+
+func getWaleEnvVarsFromList(environ []string) []string {
+	waleEnvCount := 0
+	walePrefixes := []string{"WALE", "AWS", "WABS", "GOOGLE", "SWIFT"}
+	for _, envVar := range environ {
+		for _, prefix := range walePrefixes {
+			if strings.Index(envVar, prefix) == 0 && !strings.HasSuffix(envVar, "=") {
+				waleEnvCount++
+			}
+		}
+	}
+	waleEnvVars := make([]string, waleEnvCount)
+	waleEnvIndex := 0
+	for _, envVar := range environ {
+		for _, prefix := range walePrefixes {
+			if strings.Index(envVar, prefix) == 0 && !strings.HasSuffix(envVar, "=") {
+				waleEnvVars[waleEnvIndex] = envVar
+				waleEnvIndex++
+			}
+		}
+	}
+	return waleEnvVars
 }

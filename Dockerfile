@@ -13,4 +13,3 @@ COPY config/patroni-default-values.yml /patroni/patroni-default-values.yml
 COPY images/scripts/* /scripts/
 COPY images/supervisord.conf /etc/supervisor/supervisord.conf
 COPY images/services/*.conf /etc/supervisor/conf.d/
-COPY sample-patroni.yml /config/patroni.yml

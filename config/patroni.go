@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"gopkg.in/yaml.v1"
@@ -114,4 +115,17 @@ func (patroniSpec *PatroniV11Specification) String() string {
 		panic(err)
 	}
 	return string(bytes[:])
+}
+
+func (patroniSpec *PatroniV11Specification) CreateConfigFile(path string) (err error) {
+	data, err := yaml.Marshal(patroniSpec)
+	if err != nil {
+		return err
+	}
+	err = os.MkdirAll(filepath.Dir(path), 0755)
+	if err != nil {
+		return
+	}
+	err = ioutil.WriteFile(path, data, 0644)
+	return
 }
