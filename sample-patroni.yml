@@ -12,7 +12,7 @@ bootstrap:
     maximum_lag_on_failover: 1048576
     postgresql:
       parameters:
-        archive_command: envdir /data/wal-e/env wal-e wal-push "%p" -p 1
+        archive_command: envdir /etc/wal-e.d/env wal-e wal-push "%p" -p 1
         archive_mode: "on"
         archive_timeout: 10min
         hot_standby: "on"

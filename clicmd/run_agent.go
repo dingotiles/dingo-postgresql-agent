@@ -44,7 +44,7 @@ func RunAgent(c *cli.Context) {
 	fmt.Println(patroniSpec)
 
 	envdir := config.NewEnvdirFromStrings(clusterSpec.WaleEnv)
-	err = envdir.CreateFiles("/data/wal-e/env")
+	err = envdir.CreateFiles("/etc/wal-e.d/env")
 	if err != nil {
 		panic(err)
 	}
