@@ -16,6 +16,7 @@ services:
     container_name: patroni1
     ports: ["5001:5432", "8001:8008"]
     environment:
+      DEBUG: 1
       DINGO_STARTUP_URI: http://${DOCKER_HOST_IP}:5000
       DINGO_STARTUP_PATRONI_DEFAULT_PATH: /patroni/patroni-default-values.yml
       # in lieu of registrator, pass known host config as env vars

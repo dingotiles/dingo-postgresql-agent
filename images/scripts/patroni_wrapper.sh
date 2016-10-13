@@ -1,6 +1,9 @@
 #!/bin/bash
 
 set -e
+if [[ "${DEBUG}X" != "X" ]]; then
+  set -x
+fi
 
 indent() {
   c="s/^/patroni> /"
