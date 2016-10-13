@@ -1,9 +1,6 @@
 #!/bin/bash
 
 set -e
-if [[ "${DEBUG}X" != "X" ]]; then
-  set -x
-fi
 
 indent() {
   c="s/^/patroni> /"
@@ -14,13 +11,21 @@ indent() {
 }
 
 (
-  echo "\nInstalled alpine/apk packages:"
-  apk info | xargs -I % apk info % | grep description: | awk '{print $1}' | sort
-
-  echo "\nInstalled python3/pip3 packages":
-  pip3 list
-
   wale_env_dir=/etc/wal-e.d/env
+
+  if [[ "${DEBUG}X" != "X" ]]; then
+    set -x
+
+    DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+    echo "\nInstalled alpine/apk packages:"
+    apk info | xargs -I % apk info % | grep description: | awk '{print $1}' | sort
+
+    echo "\nInstalled python3/pip3 packages":
+    ${DIR}/pip-versions.sh
+
+  fi
+
   wait_message="WARN: Waiting until ${wale_env_dir} is created..."
   if [[ ! -d ${wale_env_dir} ]]; then
     if [[ "${wait_message}X" != "X" ]]; then
