@@ -6,10 +6,10 @@ ENV GOPATH /go
 ENV PATH /go/bin:$PATH
 
 RUN set -x \
-    && apk add --update go git \
-    && go install github.com/dingotiles/dingo-postgresql-agent \
-    && apk del go git \
-    && rm -rf /var/cache/apk/*
+    && apk add --update --no-cache go git
+
+RUN set -x\
+    && go install github.com/dingotiles/dingo-postgresql-agent
 
 ADD config/patroni-default-values.yml /patroni/patroni-default-values.yml
 ADD images/scripts/* /scripts/
