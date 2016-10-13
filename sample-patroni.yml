@@ -2,10 +2,10 @@ name: cluster-name
 namespace: /service/
 scope: cluster-scope
 restapi:
-  connect_address: 54.166.182.200:8001
+  connect_address: 52.91.230.223:8001
   listen: 0.0.0.0:8008
 etcd:
-  host: 54.166.182.200:4001
+  host: 52.91.230.223:4001
 bootstrap:
   dcs:
     loop_wait: 10
@@ -44,7 +44,7 @@ postgresql:
     superuser:
       password: SUPERUSER_PASSWORD
       username: SUPERUSER_USERNAME
-  connect_address: 54.166.182.200:5001
+  connect_address: 52.91.230.223:5001
   data_dir: /data/postgresql0
   listen: 0.0.0.0:5432
   parameters:
