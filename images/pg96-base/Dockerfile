@@ -4,8 +4,12 @@ ENV PG_VERSION=9.6
 
 # PostgreSQL
 RUN set -x \
-    && echo "@edge http://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
-    && apk update && apk add curl "postgresql@edge>9.6" "postgresql-contrib@edge>9.6" "postgresql-dev@edge>9.6"
+    && apk update && apk add curl postgresql postgresql-contrib postgresql-dev
+# TODO: when https://pkgs.alpinelinux.org/packages?name=postgresql 9.6.0-r2 or 9.6.1 comes out try again
+# https://github.com/zalando/patroni/issues/341
+# RUN set -x \
+#     && echo "@edge http://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
+#     && apk update && apk add curl "postgresql@edge>9.6" "postgresql-contrib@edge>9.6" "postgresql-dev@edge>9.6"
 
 ENV POSTGIS_VERSION 2.2.2
 # https://hub.docker.com/r/unocha/alpine-base-postgis/~/dockerfile/
@@ -41,7 +45,7 @@ RUN echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/re
 # python3, wal-3
 ENV WALE_VERSION=1.0.0
 RUN set -x \
-      && apk add --update bash sed python3 python3-dev jq curl alpine-sdk linux-headers musl-dev \
+      && apk add --update python3 python3-dev bash sed jq curl alpine-sdk linux-headers musl-dev \
       && python3 -m ensurepip \
       && rm -r /usr/lib/python*/ensurepip \
       && pip3 install --upgrade pip setuptools \
