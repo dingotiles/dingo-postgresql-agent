@@ -64,28 +64,11 @@ RUN set -x \
       && mv /tmp/etcd-v2.3.4-linux-amd64/etcdctl /usr/local/bin \
       && rm -rf /tmp/etcd*
 
-# gosu https://github.com/tianon/gosu
-# https://github.com/tianon/gosu/releases
-ENV GOSU_VERSION=1.10
-RUN set -x \
-    && apk add --no-cache --update dpkg gnupg openssl \
-    && dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
-    && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
-    && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" \
-    && export GNUPGHOME="$(mktemp -d)" \
-    && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
-    && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
-    && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
-    && chmod +x /usr/local/bin/gosu \
-    && gosu nobody true \
-    && rm -rf /var/cache/apk/*
-
 ENV PATRONI_VERSION=1.1
 RUN set -x \
     && curl -sL https://github.com/zalando/patroni/archive/v${PATRONI_VERSION}.tar.gz -o /tmp/patroni-${PATRONI_VERSION}.tar.gz \
     && tar xfz /tmp/patroni-${PATRONI_VERSION}.tar.gz \
     && mv /patroni-${PATRONI_VERSION} /patroni \
-    && ls -al /patroni \
     && pip3 install --no-cache-dir -r /patroni/requirements.txt --upgrade \
     && rm -rf /root/.cache
 #    && echo "pytz" >> /patroni/requirements.txt \
@@ -98,4 +81,4 @@ EXPOSE 5432 8008
 VOLUME ["/data"]
 ENV DATA_VOLUME=/data
 
-CMD /bin/true
+CMD ["/bin/true"]

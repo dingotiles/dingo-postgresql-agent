@@ -52,5 +52,3 @@ Usage: /patroni/patroni.py config.yml
 ```
 
 NOTE: python (2.7) is only required for supervisor. Supervisor 4.0+ will support python3 and then we can remove python (2.7) from base image.
-
-NOTE: gosu is installed; but not yet using it and/or it can be removed until we use it.
