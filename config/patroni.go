@@ -100,9 +100,21 @@ func DefaultPatroniSpec() (*PatroniV11Specification, error) {
 }
 
 func (patroniSpec *PatroniV11Specification) MergeClusterSpec(clusterSpec *ClusterSpecification, hostDiscoverySpec *HostDiscoverySpecification) {
+	appuserName := clusterSpec.Postgresql.Appuser.Username
+	replicationUsername := appuserName
 	patroniSpec.Etcd.Host = clusterSpec.Etcd.URI
 	patroniSpec.Scope = clusterSpec.Cluster.Scope
 	patroniSpec.Name = clusterSpec.Cluster.Name
+	patroniSpec.Bootstrap.PgHba = []string{
+		fmt.Sprintf("host replication %s 127.0.0.1/32 md5", replicationUsername),
+		"host all all 0.0.0.0/0 md5",
+	}
+	patroniSpec.Bootstrap.Users.Admin.Password = clusterSpec.Postgresql.Admin.Password
+	patroniSpec.Postgresql.Authentication.Replication.Username = clusterSpec.Postgresql.Appuser.Username
+	patroniSpec.Postgresql.Authentication.Replication.Password = clusterSpec.Postgresql.Appuser.Password
+	patroniSpec.Postgresql.Authentication.Superuser.Username = clusterSpec.Postgresql.Superuser.Username
+	patroniSpec.Postgresql.Authentication.Superuser.Password = clusterSpec.Postgresql.Superuser.Password
+
 	// hostDiscoverySpec.IP
 	// hostDiscoverySpec.Port5432
 	patroniSpec.Postgresql.ConnectAddress = fmt.Sprintf("%s:%s", hostDiscoverySpec.IP, hostDiscoverySpec.Port5432)

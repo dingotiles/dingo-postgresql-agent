@@ -31,7 +31,7 @@ bootstrap:
   - host replication APPUSER_USERNAME 127.0.0.1/32 md5
   - host all all 0.0.0.0/0 md5
   users:
-    admin:
+    admin: # name of user
       options:
       - createrole
       - createdb

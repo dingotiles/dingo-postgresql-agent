@@ -50,6 +50,9 @@ indent() {
   fi
   set -e
 
+  echo "/config/patroni.yml:"
+  cat ${patroni_config}
+
   export PG_DATA_DIR=${DATA_VOLUME}/postgres0
   chown postgres:postgres -R ${DATA_VOLUME} /patroni /config
 

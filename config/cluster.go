@@ -19,7 +19,6 @@ type ClusterSpecification struct {
 	Postgresql struct {
 		Admin struct {
 			Password string `json:"password"`
-			Username string `json:"username"`
 		} `json:"admin"`
 		Appuser struct {
 			Password string `json:"password"`
@@ -30,8 +29,7 @@ type ClusterSpecification struct {
 			Username string `json:"username"`
 		} `json:"superuser"`
 	} `json:"postgresql"`
-	WaleEnv  []string `json:"wale_env"`
-	WaleMode string   `json:"wale_mode"`
+	WaleEnv []string `json:"wale_env"`
 }
 
 func FetchClusterSpec() (cluster *ClusterSpecification, err error) {

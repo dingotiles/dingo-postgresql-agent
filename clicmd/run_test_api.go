@@ -19,21 +19,19 @@ func RunTestAPI(c *cli.Context) {
 	m.Get("/api", func(r render.Render) {
 		staticResponse := map[string]interface{}{
 			"cluster": map[string]interface{}{
-				"name":  "cluster-name",
+				"name":  "patroni1",
 				"scope": "cluster-scope",
 			},
-			"wale_mode": "aws",
-			"wale_env":  getWaleEnvVars(),
-			// 	fmt.Sprintf("AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID"),
-			// 	fmt.Sprintf("AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY"),
-			// 	fmt.Sprintf("WAL_S3_BUCKET=WAL_S3_BUCKET"),
-			// 	fmt.Sprintf("AWS_REGION=us-east-1"),
-			// 	fmt.Sprintf("WALE_S3_ENDPOINT=https+path://s3.amazonaws.com:443"),
-			// 	fmt.Sprintf("WALE_S3_PREFIX=s3://WAL_S3_BUCKET/backups/cluster-scope/wal/"),
-			// },
+			"wale_env": getWaleEnvVars(),
+			// Example:
+			// 	AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID
+			// 	AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY
+			// 	WAL_S3_BUCKET=WAL_S3_BUCKET
+			// 	AWS_REGION=us-east-1
+			// 	WALE_S3_ENDPOINT=https+path://s3.amazonaws.com:443
+			// 	WALE_S3_PREFIX=s3://${WAL_S3_BUCKET}/backups/cluster-scope/wal/
 			"postgresql": map[string]interface{}{
 				"admin": map[string]interface{}{
-					"username": "admin-username",
 					"password": "admin-password",
 				},
 				"superuser": map[string]interface{}{

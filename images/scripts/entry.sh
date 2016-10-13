@@ -7,4 +7,4 @@
 # done
 #
 echo "Starting supervisor"
-supervisord
+supervisord -c /etc/supervisor/supervisord.conf
