@@ -6,11 +6,15 @@ expected_number_of_nodes=${1}
 
 # Leader is running
 leader_name=$(etcdctl --endpoint "http://${ETCD_HOST_PORT}" get /service/${PATRONI_SCOPE}/leader)
+leader_uri=$(etcdctl --endpoint "http://${ETCD_HOST_PORT}" get /service/${PATRONI_SCOPE}/members/${leader_name} | jq -r '.conn_url')
+superuser_uri=$(echo ${leader_uri} \
+  | sed "s%postgres://%postgres://${SUPERUSER_USERNAME}:${SUPERUSER_PASSWORD}@%")
+
 leader_state=$(etcdctl --endpoint "http://${ETCD_HOST_PORT}" get /service/${PATRONI_SCOPE}/members/${leader_name} | jq -r '.state')
 
-leader_uri=$(etcdctl --endpoint "http://${ETCD_HOST_PORT}" get /service/${PATRONI_SCOPE}/members/${leader_name} | jq -r '.conn_url')
+echo "Using superuser URI: ${superuser_uri}"
 
-if psql ${leader_uri} -c 'SELECT current_database();' > /dev/null 2>&1; then
+if psql ${superuser_uri} -c 'SELECT current_database();' > /dev/null 2>&1; then
   leader_accessible='true'
 else
   leader_accessible='false'

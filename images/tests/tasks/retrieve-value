@@ -2,16 +2,15 @@
 
 set -e
 
-if [[ -z ${TEST_DIR} ]];then
-  TEST_DIR=${TEST_VOLUME}/${DELMO_TEST_NAME}
-fi
-
 table_name=$1
 value=$2
 
-echo "Retrieving ${value} from ${table_name}..."
+leader_name=$(etcdctl --endpoint "http://${ETCD_HOST_PORT}" get /service/${PATRONI_SCOPE}/leader)
+leader_uri=$(etcdctl --endpoint "http://${ETCD_HOST_PORT}" get /service/${PATRONI_SCOPE}/members/${leader_name} | jq -r '.conn_url')
+uri=$(echo ${leader_uri} \
+  | sed "s%postgres://%postgres://${APPUSER_USERNAME}:${APPUSER_PASSWORD}@%")
 
-uri=$(cat ${TEST_DIR}/cluster-state.json | jq -r '.leader_uri')
+echo "Retrieving ${value} from ${table_name}..."
 
 psql ${uri} -c "SELECT value FROM ${table_name};" | grep "${value}" || {
   echo Could not store and retrieve value in cluster!
