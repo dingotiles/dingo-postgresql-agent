@@ -20,7 +20,7 @@ indent() {
     DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
     echo "\nInstalled alpine/apk packages:"
-    apk info | xargs -I % apk info % | grep description: | awk '{print $1}' | sort
+    apk -vv info | sort
 
     echo "\nInstalled python3/pip3 packages":
     ${DIR}/pip-versions.sh
