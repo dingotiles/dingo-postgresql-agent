@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -e -x
+
+leader_name=$(etcdctl --endpoint "http://${ETCD_HOST_PORT}" get /service/${PATRONI_SCOPE}/leader)
+leader_uri=$(etcdctl --endpoint "http://${ETCD_HOST_PORT}" get /service/${PATRONI_SCOPE}/members/${leader_name} | jq -r '.conn_url')
+superuser_uri=$(echo ${leader_uri} \
+  | sed "s%postgres://%postgres://${SUPERUSER_USERNAME}:${SUPERUSER_PASSWORD}@%")
+
+psql ${superuser_uri} -c "select pg_switch_xlog();"

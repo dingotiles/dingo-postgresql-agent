@@ -11,8 +11,22 @@ tests:
   - exec: [write-value]
   - assert: [retrieve-value]
 
+- name: restoration
+  before_startup: [purge-backups]
+  spec:
+  - wait: one-node-running
+  - exec: [write-value, flush-xlog-wal-archives]
+  - stop: [patroni1]
+  - destroy: [patroni1]
+  - exec: [purge-etcd]
+  - start: [patroni1]
+  - {wait: one-node-running, timeout: 180}
+  - assert: [retrieve-value]
+
 tasks:
-- {name: purge-backups, command: /tasks/purge-backups}
+- {name: purge-backups, command: "/tasks/purge-backups"}
 - {name: one-node-running, command: "/tasks/nodes-running 1"}
 - {name: write-value, command: "/tasks/store-value testtable test-value"}
 - {name: retrieve-value, command: "/tasks/retrieve-value testtable test-value"}
+- {name: flush-xlog-wal-archives, command: "/tasks/flush-xlog-wal-archives"}
+- {name: purge-etcd, command: "/tasks/purge-etcd"}
