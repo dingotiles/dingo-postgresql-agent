@@ -74,7 +74,7 @@ RUN set -x \
     && tar xfz /tmp/patroni-${PATRONI_VERSION}.tar.gz \
     && mv /patroni-${PATRONI_VERSION} /patroni \
     && pip3 install --no-cache-dir -r /patroni/requirements.txt --upgrade \
-    && rm -rf /root/.cache
+    && rm -rf /root/.cache /tmp/*
 #    && echo "pytz" >> /patroni/requirements.txt \
 
 # 5432: PostgreSQL server
