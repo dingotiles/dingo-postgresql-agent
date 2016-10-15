@@ -45,7 +45,7 @@ bootstrap:
   - data-checksums
 
   pg_hba:  # Add following lines to pg_hba.conf after running 'initdb'
-  - host replication APPUSER_USERNAME 127.0.0.1/32 md5
+  - host replication APPUSER_USERNAME 0.0.0.0/0 md5
   - host all all 0.0.0.0/0 md5
 #  - hostssl all all 0.0.0.0/0 md5
 
