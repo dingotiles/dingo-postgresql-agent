@@ -54,7 +54,7 @@ bootstrap:
 
   # Some additional users users which needs to be created after initializing new cluster
   users:
-    admin:
+    postgres:
       password: ADMIN_PASSWORD
       options:
         - createrole
@@ -73,7 +73,7 @@ postgresql:
       username: SUPERUSER_USERNAME
       password: SUPERUSER_PASSWORD
   parameters:
-    unix_socket_directories: '.'
+    unix_socket_directories: ".,/patroni,/tmp"
 tags:
   nofailover: false
   noloadbalance: false

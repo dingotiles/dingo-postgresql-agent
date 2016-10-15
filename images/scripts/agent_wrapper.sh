@@ -14,5 +14,15 @@ indent() {
 }
 
 (
-  dingo-postgresql-agent run
+mkdir -p ${DATA_VOLUME} /patroni /config
+chown postgres:postgres -R ${DATA_VOLUME} /patroni /config
+
+export PG_DATA_DIR=${DATA_VOLUME}/postgres0
+
+if [[ -d ${PG_DATA_DIR} ]]; then
+  chown postgres:postgres -R ${PG_DATA_DIR}
+  chmod 700 $PG_DATA_DIR
+fi
+
+dingo-postgresql-agent run
 ) 2>&1 | indent

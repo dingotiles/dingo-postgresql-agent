@@ -37,10 +37,10 @@ type PatroniV11Specification struct {
 		Initdb []interface{} `yaml:"initdb"`
 		PgHba  []string      `yaml:"pg_hba"`
 		Users  struct {
-			Admin struct {
+			Postgres struct {
 				Options  []string `yaml:"options"`
 				Password string   `yaml:"password"`
-			} `yaml:"admin"`
+			} `yaml:"postgres"`
 		} `yaml:"users"`
 	} `yaml:"bootstrap"`
 	Postgresql struct {
@@ -106,10 +106,10 @@ func (patroniSpec *PatroniV11Specification) MergeClusterSpec(clusterSpec *Cluste
 	patroniSpec.Scope = clusterSpec.Cluster.Scope
 	patroniSpec.Name = clusterSpec.Cluster.Name
 	patroniSpec.Bootstrap.PgHba = []string{
-		fmt.Sprintf("host replication %s 127.0.0.1/32 md5", replicationUsername),
-		"host all all 0.0.0.0/0 md5",
+		fmt.Sprintf("host replication %s 0.0.0.0/0 md5", replicationUsername),
+		"host postgres all 0.0.0.0/0 md5",
 	}
-	patroniSpec.Bootstrap.Users.Admin.Password = clusterSpec.Postgresql.Admin.Password
+	patroniSpec.Bootstrap.Users.Postgres.Password = clusterSpec.Postgresql.Admin.Password
 	patroniSpec.Postgresql.Authentication.Replication.Username = clusterSpec.Postgresql.Appuser.Username
 	patroniSpec.Postgresql.Authentication.Replication.Password = clusterSpec.Postgresql.Appuser.Password
 	patroniSpec.Postgresql.Authentication.Superuser.Username = clusterSpec.Postgresql.Superuser.Username
