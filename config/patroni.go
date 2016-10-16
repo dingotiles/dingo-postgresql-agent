@@ -17,55 +17,79 @@ type PatroniV11Specification struct {
 	Namespace string `yaml:"namespace"`
 	Scope     string `yaml:"scope"`
 	Restapi   struct {
-		ConnectAddress string `yaml:"connect_address"`
 		Listen         string `yaml:"listen"`
+		ConnectAddress string `yaml:"connect_address"`
 	} `yaml:"restapi"`
 	Etcd struct {
 		Host string `yaml:"host"`
 	} `yaml:"etcd"`
 	Bootstrap struct {
 		Dcs struct {
+			TTL                  int `yaml:"ttl"`
 			LoopWait             int `yaml:"loop_wait"`
+			RetryTimeout         int `yaml:"retry_timeout"`
 			MaximumLagOnFailover int `yaml:"maximum_lag_on_failover"`
 			Postgresql           struct {
-				Parameters  interface{} `yaml:"parameters"`
-				UsePgRewind bool        `yaml:"use_pg_rewind"`
+				UsePgRewind bool `yaml:"use_pg_rewind"`
+				UseSlots    bool `yaml:"use_slots"`
+				Parameters  struct {
+					WalLevel            string `yaml:"wal_level"`
+					HotStandby          string `yaml:"hot_standby"`
+					WalKeepSegments     int    `yaml:"wal_keep_segments"`
+					MaxWalSenders       int    `yaml:"max_wal_senders"`
+					MaxReplicationSlots int    `yaml:"max_replication_slots"`
+					WalLogHints         string `yaml:"wal_log_hints"`
+					ArchiveMode         string `yaml:"archive_mode"`
+					ArchiveTimeout      string `yaml:"archive_timeout"`
+					ArchiveCommand      string `yaml:"archive_command"`
+				} `yaml:"parameters"`
+				RecoveryConf struct {
+					RestoreCommand string `yaml:"restore_command"`
+				} `yaml:"recovery_conf"`
+				WalE struct {
+					Command                       string `yaml:"command"`
+					Envdir                        string `yaml:"envdir"`
+					ThresholdMegabytes            int    `yaml:"threshold_megabytes"`
+					ThresholdBackupSizePercentage int    `yaml:"threshold_backup_size_percentage"`
+					Retries                       int    `yaml:"retries"`
+					UseIam                        int    `yaml:"use_iam"`
+					NoMaster                      int    `yaml:"no_master"`
+				} `yaml:"wal_e"`
 			} `yaml:"postgresql"`
-			RetryTimeout int `yaml:"retry_timeout"`
-			TTL          int `yaml:"ttl"`
 		} `yaml:"dcs"`
-		Initdb []interface{} `yaml:"initdb"`
-		PgHba  []string      `yaml:"pg_hba"`
-		Users  struct {
+		Initdb   []interface{} `yaml:"initdb"`
+		PgHba    []string      `yaml:"pg_hba"`
+		PostInit string        `yaml:"post_init"`
+		Users    struct {
 			Postgres struct {
-				Options  []string `yaml:"options"`
 				Password string   `yaml:"password"`
+				Options  []string `yaml:"options"`
 			} `yaml:"postgres"`
 		} `yaml:"users"`
 	} `yaml:"bootstrap"`
 	Postgresql struct {
-		Authentication struct {
-			Replication struct {
-				Password string `yaml:"password"`
-				Username string `yaml:"username"`
-			} `yaml:"replication"`
-			Superuser struct {
-				Password string `yaml:"password"`
-				Username string `yaml:"username"`
-			} `yaml:"superuser"`
-		} `yaml:"authentication"`
+		Listen         string `yaml:"listen"`
 		ConnectAddress string `yaml:"connect_address"`
 		DataDir        string `yaml:"data_dir"`
-		Listen         string `yaml:"listen"`
-		Parameters     struct {
+		Pgpass         string `yaml:"pgpass"`
+		Authentication struct {
+			Replication struct {
+				Username string `yaml:"username"`
+				Password string `yaml:"password"`
+			} `yaml:"replication"`
+			Superuser struct {
+				Username string `yaml:"username"`
+				Password string `yaml:"password"`
+			} `yaml:"superuser"`
+		} `yaml:"authentication"`
+		Parameters struct {
 			UnixSocketDirectories string `yaml:"unix_socket_directories"`
 		} `yaml:"parameters"`
-		Pgpass string `yaml:"pgpass"`
 	} `yaml:"postgresql"`
 	Tags struct {
-		Clonefrom     bool `yaml:"clonefrom"`
 		Nofailover    bool `yaml:"nofailover"`
 		Noloadbalance bool `yaml:"noloadbalance"`
+		Clonefrom     bool `yaml:"clonefrom"`
 	} `yaml:"tags"`
 }
 
@@ -115,8 +139,6 @@ func (patroniSpec *PatroniV11Specification) MergeClusterSpec(clusterSpec *Cluste
 	patroniSpec.Postgresql.Authentication.Superuser.Username = clusterSpec.Postgresql.Superuser.Username
 	patroniSpec.Postgresql.Authentication.Superuser.Password = clusterSpec.Postgresql.Superuser.Password
 
-	// hostDiscoverySpec.IP
-	// hostDiscoverySpec.Port5432
 	patroniSpec.Postgresql.ConnectAddress = fmt.Sprintf("%s:%s", hostDiscoverySpec.IP, hostDiscoverySpec.Port5432)
 	patroniSpec.Restapi.ConnectAddress = fmt.Sprintf("%s:%s", hostDiscoverySpec.IP, hostDiscoverySpec.Port8008)
 }
