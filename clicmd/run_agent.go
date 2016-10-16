@@ -37,8 +37,19 @@ func RunAgent(c *cli.Context) {
 	}
 	fmt.Println(*clusterSpec)
 
-	envdir := config.NewEnvdirFromStrings(clusterSpec.WaleEnv)
-	err = envdir.CreateFiles("/etc/wal-e.d/env")
+	waleEnvDir := "/etc/wal-e.d/env"
+	err = os.RemoveAll(waleEnvDir)
+	if err != nil {
+		panic(err)
+	}
+	environ := config.NewEnvironFromStrings(clusterSpec.WaleEnv)
+	environ.AddEnv(fmt.Sprintf("REPLICATION_USER=%s", clusterSpec.Postgresql.Appuser.Username))
+
+	err = environ.CreateEnvDirFiles(waleEnvDir)
+	if err != nil {
+		panic(err)
+	}
+	err = environ.CreateEnvScript("/etc/patroni.d/.envrc", "postgres")
 	if err != nil {
 		panic(err)
 	}

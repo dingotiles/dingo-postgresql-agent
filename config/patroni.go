@@ -13,9 +13,9 @@ import (
 // It is converted to a patroni.yml and used by Patroni to configure & run PostgreSQL.
 // The scheme is for Patroni v1.1
 type PatroniV11Specification struct {
-	Name      string `yaml:"name"`
-	Namespace string `yaml:"namespace"`
 	Scope     string `yaml:"scope"`
+	Namespace string `yaml:"namespace"`
+	Name      string `yaml:"name"`
 	Restapi   struct {
 		Listen         string `yaml:"listen"`
 		ConnectAddress string `yaml:"connect_address"`
@@ -46,21 +46,11 @@ type PatroniV11Specification struct {
 				RecoveryConf struct {
 					RestoreCommand string `yaml:"restore_command"`
 				} `yaml:"recovery_conf"`
-				WalE struct {
-					Command                       string `yaml:"command"`
-					Envdir                        string `yaml:"envdir"`
-					ThresholdMegabytes            int    `yaml:"threshold_megabytes"`
-					ThresholdBackupSizePercentage int    `yaml:"threshold_backup_size_percentage"`
-					Retries                       int    `yaml:"retries"`
-					UseIam                        int    `yaml:"use_iam"`
-					NoMaster                      int    `yaml:"no_master"`
-				} `yaml:"wal_e"`
 			} `yaml:"postgresql"`
 		} `yaml:"dcs"`
-		Initdb   []interface{} `yaml:"initdb"`
-		PgHba    []string      `yaml:"pg_hba"`
-		PostInit string        `yaml:"post_init"`
-		Users    struct {
+		Initdb []interface{} `yaml:"initdb"`
+		PgHba  []string      `yaml:"pg_hba"`
+		Users  struct {
 			Postgres struct {
 				Password string   `yaml:"password"`
 				Options  []string `yaml:"options"`
@@ -85,6 +75,22 @@ type PatroniV11Specification struct {
 		Parameters struct {
 			UnixSocketDirectories string `yaml:"unix_socket_directories"`
 		} `yaml:"parameters"`
+		Callbacks struct {
+			OnStart      string `yaml:"on_start"`
+			OnStop       string `yaml:"on_stop"`
+			OnRestart    string `yaml:"on_restart"`
+			OnRoleChange string `yaml:"on_role_change"`
+		} `yaml:"callbacks"`
+		CreateReplicaMethod []string `yaml:"create_replica_method"`
+		WalE                struct {
+			Command                       string `yaml:"command"`
+			Envdir                        string `yaml:"envdir"`
+			ThresholdMegabytes            int    `yaml:"threshold_megabytes"`
+			ThresholdBackupSizePercentage int    `yaml:"threshold_backup_size_percentage"`
+			Retries                       int    `yaml:"retries"`
+			UseIam                        int    `yaml:"use_iam"`
+			NoMaster                      int    `yaml:"no_master"`
+		} `yaml:"wal_e"`
 	} `yaml:"postgresql"`
 	Tags struct {
 		Nofailover    bool `yaml:"nofailover"`

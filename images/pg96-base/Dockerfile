@@ -78,6 +78,11 @@ RUN set -x \
     && rm -rf /root/.cache /tmp/*
 #    && echo "pytz" >> /patroni/requirements.txt \
 
+ENV SPRUCE_VERSION=1.8.1
+RUN set -x \
+    && curl -L https://github.com/geofffranks/spruce/releases/download/v${SPRUCE_VERSION}/spruce-linux-amd64 -o /usr/local/bin/spruce \
+    && chmod +x /usr/local/bin/spruce
+
 # 5432: PostgreSQL server
 # 8008: Patroni API
 EXPOSE 5432 8008

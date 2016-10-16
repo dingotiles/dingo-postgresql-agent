@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-if [[ "${DEBUG}X" != "X" ]]; then
+if [[ "${DEBUG:-}X" != "X" ]]; then
   set -x
 fi
 
@@ -14,8 +14,8 @@ indent() {
 }
 
 (
-mkdir -p ${DATA_VOLUME} /patroni /config
-chown postgres:postgres -R ${DATA_VOLUME} /patroni /config
+mkdir -p ${DATA_VOLUME} /patroni /config /etc/patroni.d/
+chown postgres:postgres -R ${DATA_VOLUME} /patroni /config /etc/patroni.d/
 
 export PG_DATA_DIR=${DATA_VOLUME}/postgres0
 

@@ -38,15 +38,6 @@ bootstrap:
         archive_command: "envdir /etc/wal-e.d/env wal-e wal-push \"%p\" -p 1"
       recovery_conf:
         restore_command: "envdir /etc/wal-e.d/env wal-e wal-fetch \"%f\" \"%p\" -p 1"
-      wal_e:
-        command: patroni_wale_restore
-        # {key: value} below are converted to options for wale_restore.py script
-        envdir: /etc/wal-e.d/env
-        threshold_megabytes: 1024
-        threshold_backup_size_percentage: 30
-        retries: 2
-        use_iam: 0
-        no_master: 1
 
   # some desired options for 'initdb'
   initdb:  # Note: It needs to be a list (some options need values, others are switches)
@@ -73,7 +64,7 @@ bootstrap:
 postgresql:
   listen: 0.0.0.0:5432
   connect_address: HOSTIP:5432
-  data_dir: /data/postgresql0
+  data_dir: /data/postgres0
   pgpass: /tmp/pgpass0
   authentication:
     replication:
@@ -84,6 +75,23 @@ postgresql:
       password: SUPERUSER_PASSWORD
   parameters:
     unix_socket_directories: ".,/patroni,/tmp"
+  callbacks:
+    on_start: /bin/true
+    on_stop: /bin/true
+    on_restart: /bin/true
+    on_role_change: /bin/true
+  create_replica_method:
+    - wal_e
+    - basebackup
+  wal_e:
+    command: patroni_wale_restore
+    # {key: value} below are converted to options for wale_restore.py script
+    envdir: /etc/wal-e.d/env
+    threshold_megabytes: 1024
+    threshold_backup_size_percentage: 30
+    retries: 2
+    use_iam: 0
+    no_master: 1
 tags:
   nofailover: false
   noloadbalance: false

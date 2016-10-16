@@ -58,7 +58,7 @@ func getWaleEnvVars() []string {
 
 func getWaleEnvVarsFromList(environ []string) []string {
 	waleEnvCount := 0
-	walePrefixes := []string{"WAL", "AWS", "WABS", "GOOGLE", "SWIFT"}
+	walePrefixes := []string{"WAL", "AWS", "WABS", "GOOGLE", "SWIFT", "PATRONI", "ETCD", "CONSUL"}
 	for _, envVar := range environ {
 		for _, prefix := range walePrefixes {
 			if strings.Index(envVar, prefix) == 0 && !strings.HasSuffix(envVar, "=") {

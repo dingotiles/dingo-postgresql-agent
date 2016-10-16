@@ -14,7 +14,7 @@ indent() {
   wale_env_dir=/etc/wal-e.d/env
   patroni_config=/config/patroni.yml
 
-  if [[ "${DEBUG}X" != "X" ]]; then
+  if [[ "${DEBUG:-}X" != "X" ]]; then
     set -x
 
     DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
