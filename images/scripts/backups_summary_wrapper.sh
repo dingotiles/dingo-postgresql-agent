@@ -29,15 +29,14 @@ function wait_for_config {
 }
 
 function backups_summary {
-  # display variables & enforce (set -u) that they are already set
-  echo PATRONI_SCOPE: ${PATRONI_SCOPE}
-  echo ETCD_HOST_PORT: ${ETCD_HOST_PORT}
-  echo WALE_S3_PREFIX: ${WALE_S3_PREFIX}
-  echo WAL_S3_BUCKET: ${WAL_S3_BUCKET}
-
-  wal-e backup-list 2>/dev/null
+  backup_list=$(wal-e backup-list 2>/dev/null)
   curl -s ${ETCD_HOST_PORT}/v2/keys/service/${PATRONI_SCOPE}/wale-backup-list \
-    -X PUT -d "value=$(wal-e backup-list 2>/dev/null)" > /dev/null
+    -X PUT -d "value=${backup_list}" > /dev/null
+  if [[ "$(echo $backup_list | wc -l)" == "1" ]]; then
+    echo "WARNING: No backups successful yet"
+  else
+    echo $backup_list
+  fi
 }
 
 (
@@ -54,7 +53,6 @@ function backups_summary {
   while true; do
     pg_isready >/dev/null 2>&2 || continue
     in_recovery=$(psql -tqAc "select pg_is_in_recovery()")
-    echo "in_recovery: ${in_recovery}"
     if [[ "${in_recovery}" == "f" ]]; then
       backups_summary
     fi
