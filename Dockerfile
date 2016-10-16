@@ -11,5 +11,7 @@ RUN set -x\
 
 COPY config/patroni-default-values.yml /patroni/patroni-default-values.yml
 COPY images/scripts/* /scripts/
+COPY images/motd /etc/motd
+RUN echo "source /etc/motd" >> /root/.bashrc
 COPY images/supervisord.conf /etc/supervisor/supervisord.conf
 COPY images/services/*.conf /etc/supervisor/conf.d/

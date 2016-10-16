@@ -1,0 +1,22 @@
+a lotcat <<'MOTD'
+ _____  _
+|  __ \(_)
+| |  | |_ _ __   __ _  ___
+| |  | | | '_ \ / _` |/ _ \
+| |__| | | | | | (_| | (_) |
+|_____/|_|_| |_|\__, |\___/
+                __/ |
+               |___/
+
+This container is managed by supervisord, when stopping/starting services use supervisorctl
+
+Examples:
+
+supervisorctl stop patroni
+supervisorctl restart patroni
+
+Current status: (supervisorctl status)
+
+MOTD
+
+supervisorctl status
