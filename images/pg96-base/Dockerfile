@@ -1,6 +1,6 @@
 FROM alpine:3.4
 
-ENV PG_VERSION=9.6
+ENV PG_VERSION=9.5
 
 # PostgreSQL
 RUN set -x \
@@ -45,7 +45,8 @@ RUN echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/re
 # python3, wal-3
 ENV WALE_VERSION=1.0.0
 RUN set -x \
-      && apk add --update python3 python3-dev bash sed jq curl alpine-sdk linux-headers musl-dev \
+      && echo "@community http://nl.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
+      && apk add --update python3 python3-dev bash sed jq curl alpine-sdk linux-headers musl-dev pv@community \
       && python3 -m ensurepip \
       && rm -r /usr/lib/python*/ensurepip \
       && pip3 install --upgrade pip setuptools \
