@@ -17,7 +17,7 @@
 set -e # fail fast
 
 indent() {
-  c="s/^/${PATRONI_SCOPE:0:6}-restore_leader_if_missing> /"
+  c="s/^/restore_leader_if_missing> /"
   case $(uname) in
     Darwin) sed -l "$c";; # mac/bsd sed: -l buffers on line boundaries
     *)      sed -u "$c";; # unix/gnu sed: -u unbuffered (arbitrary) chunks of data
