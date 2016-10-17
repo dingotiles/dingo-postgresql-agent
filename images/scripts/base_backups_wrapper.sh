@@ -10,6 +10,10 @@ indent() {
   esac
 }
 
+# $BACKUP_HOUR can be an hour in the day, or * to run backup each hour
+BACKUP_HOUR=${BACKUP_HOUR:-1}
+BACKUP_INTERVAL=${BACKUP_INTERVAL:-3600}
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PG_DATA_DIR=${DATA_VOLUME}/postgres0
 patroni_env=/etc/patroni.d/.envrc
