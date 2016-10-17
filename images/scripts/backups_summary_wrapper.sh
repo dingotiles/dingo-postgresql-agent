@@ -29,13 +29,16 @@ function wait_for_config {
 }
 
 function backups_summary {
-  backup_list=$(wal-e backup-list 2>/dev/null)
   curl -s ${ETCD_HOST_PORT}/v2/keys/service/${PATRONI_SCOPE}/wale-backup-list \
-    -X PUT -d "value=${backup_list}" > /dev/null
-  if [[ "$(echo $backup_list | wc -l)" == "1" ]]; then
-    echo "WARNING: No backups successful yet"
+    -X PUT -d "value=$(wal-e backup-list 2>/dev/null)" > /dev/null
+  backup_lines=$(wal-e backup-list 2>/dev/null | wc -l)
+  if [[ $backup_lines -ge 2 ]]; then
+    if [[ "${DEBUG:-}X" != "X" ]]; then
+      echo "INFO: Backup status:"
+      wal-e backup-list 2>/dev/null
+    fi
   else
-    echo $backup_list
+    echo "WARNING: No backups successful yet"
   fi
 }
 
