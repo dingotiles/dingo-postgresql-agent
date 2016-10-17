@@ -12,8 +12,6 @@ superuser_uri=$(echo ${leader_uri} \
 
 leader_state=$(etcdctl --endpoint "http://${ETCD_HOST_PORT}" get /service/${PATRONI_SCOPE}/members/${leader_name} | jq -r '.state')
 
-echo "Using superuser URI: ${superuser_uri}"
-
 if psql ${superuser_uri} -c 'SELECT current_database();' > /dev/null 2>&1; then
   leader_accessible='true'
 else
