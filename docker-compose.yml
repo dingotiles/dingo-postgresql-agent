@@ -9,7 +9,6 @@ services:
     environment:
       # DEBUG: 1
       DINGO_STARTUP_URI: http://${DOCKER_HOST_IP}:5000
-      DINGO_STARTUP_PATRONI_DEFAULT_PATH: /patroni/patroni-default-values.yml
       # in lieu of registrator, pass known host config as env vars
       DOCKER_HOST_IP: ${DOCKER_HOST_IP}
       # no registrator, no explicit DOCKER_HOST_PORT_5432/8008, so assume default ports
@@ -23,7 +22,6 @@ services:
     environment:
       # DEBUG: 1
       DINGO_STARTUP_URI: http://${DOCKER_HOST_IP}:5000
-      DINGO_STARTUP_PATRONI_DEFAULT_PATH: /patroni/patroni-default-values.yml
       # in lieu of registrator, pass known host config as env vars
       DOCKER_HOST_IP: ${DOCKER_HOST_IP}
       DOCKER_HOST_PORT_5432: 5002
@@ -32,6 +30,7 @@ services:
     depends_on: [etcd]
     command: ["/scripts/entry.sh"]
   test-api:
+    build: .
     image: dingotiles/dingo-postgresql96-agent:latest
     container_name: test-api
     ports: ["5000:8008"]

@@ -8,7 +8,7 @@ import (
 
 type APISpecification struct {
 	URI                string `required:"true"`
-	PatroniDefaultPath string `required:"true" envconfig:"patroni_default_path"`
+	PatroniDefaultPath string `default:"/patroni/patroni-default-values.yml" envconfig:"patroni_default_path"`
 }
 
 var apiSpec *APISpecification
