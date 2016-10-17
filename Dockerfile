@@ -7,7 +7,7 @@ RUN apk add --no-cache go git
 
 RUN set -x \
       && echo "@edge http://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
-      && apk add --update pstree@edge
+      && apk add --no-cache --update pstree@edge
 
 COPY config/patroni-default-values.yml /patroni/patroni-default-values.yml
 COPY images/scripts/* /scripts/
