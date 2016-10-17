@@ -19,23 +19,23 @@ services:
     # depends_on: [registrator, etcd]
     # command: ["dingo-postgresql-agent", "run"]
     command: ["/scripts/entry.sh"]
-  # patroni2:
-  #   image: dingotiles/dingo-postgresql96-agent:latest
-  #   container_name: patroni2
-  #   ports: ["5002:5432", "8002:8008"]
-  #   environment:
-  #     # DEBUG: 1
-  #     DINGO_STARTUP_URI: http://${DOCKER_HOST_IP}:5000
-  #     DINGO_STARTUP_PATRONI_DEFAULT_PATH: /patroni/patroni-default-values.yml
-  #     # in lieu of registrator, pass known host config as env vars
-  #     DOCKER_HOST_IP: ${DOCKER_HOST_IP}
-  #     DOCKER_HOST_PORT_5432: 5002
-  #     DOCKER_HOST_PORT_8008: 8002
-  #     BACKUPS_SUMMARY_WAITTIME: 10
-  #   depends_on: [etcd]
-  #   # depends_on: [registrator, etcd]
-  #   # command: ["dingo-postgresql-agent", "run"]
-  #   command: ["/scripts/entry.sh"]
+  patroni2:
+    image: dingotiles/dingo-postgresql96-agent:latest
+    container_name: patroni2
+    ports: ["5002:5432", "8002:8008"]
+    environment:
+      # DEBUG: 1
+      DINGO_STARTUP_URI: http://${DOCKER_HOST_IP}:5000
+      DINGO_STARTUP_PATRONI_DEFAULT_PATH: /patroni/patroni-default-values.yml
+      # in lieu of registrator, pass known host config as env vars
+      DOCKER_HOST_IP: ${DOCKER_HOST_IP}
+      DOCKER_HOST_PORT_5432: 5002
+      DOCKER_HOST_PORT_8008: 8002
+      BACKUPS_SUMMARY_WAITTIME: 10
+    depends_on: [etcd]
+    # depends_on: [registrator, etcd]
+    # command: ["dingo-postgresql-agent", "run"]
+    command: ["/scripts/entry.sh"]
   test-api:
     image: dingotiles/dingo-postgresql96-agent:latest
     container_name: test-api

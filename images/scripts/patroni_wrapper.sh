@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -e -u
 
 indent() {
   c="s/^/patroni> /"
@@ -10,14 +10,27 @@ indent() {
   esac
 }
 
-(
-  wale_env_dir=/etc/wal-e.d/env
-  patroni_config=/config/patroni.yml
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+wale_env_dir=/etc/wal-e.d/env
+patroni_config=/config/patroni.yml
+patroni_env=/etc/patroni.d/.envrc
 
+function wait_for_config {
+  # wait for /config/patroni.yml to ensure that all variables stored in /etc/wal-e.d/env files
+  wait_message="WARN: Waiting until ${patroni_env} and ${patroni_config} are created..."
+  if [[ ! -f ${patroni_env} || ! -f ${patroni_config} ]]; then
+    if [[ "${wait_message}X" != "X" ]]; then
+      echo ${wait_message} >&2
+    fi
+    sleep 1
+    wait_message="" # only show wait_message once
+  fi
+}
+
+(
   if [[ "${DEBUG:-}X" != "X" ]]; then
     set -x
 
-    DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
     echo "\nInstalled alpine/apk packages:"
     apk -vv info | sort
@@ -53,7 +66,17 @@ indent() {
   echo "/config/patroni.yml:"
   cat ${patroni_config}
 
+  source ${patroni_env}
   env | sort
+
+  # NOTE: env vars printed also ensures they are set (set -u)
+  echo PATRONI_SCOPE: ${PATRONI_SCOPE}
+  echo PG_DATA_DIR: ${PG_DATA_DIR}
+  echo ETCD_HOST_PORT: ${ETCD_HOST_PORT}
+  echo WALE_S3_PREFIX: ${WALE_S3_PREFIX}
+  echo WAL_S3_BUCKET: ${WAL_S3_BUCKET}
+
+  $DIR/restore_leader_if_missing.sh
 
   # runs as postgres user via supervisor
   python3 /patroni/patroni.py /config/patroni.yml

@@ -44,6 +44,7 @@ func RunAgent(c *cli.Context) {
 	}
 	environ := config.NewEnvironFromStrings(clusterSpec.WaleEnv)
 	environ.AddEnv(fmt.Sprintf("REPLICATION_USER=%s", clusterSpec.Postgresql.Appuser.Username))
+	environ.AddEnv("PG_DATA_DIR=/data/postgres0")
 
 	err = environ.CreateEnvDirFiles(waleEnvDir)
 	if err != nil {

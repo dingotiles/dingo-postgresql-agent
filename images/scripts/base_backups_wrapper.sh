@@ -31,6 +31,7 @@ function wait_for_config {
 }
 
 function base_backups {
+  # NOTE: env vars printed also ensures they are set (set -u)
   echo PATRONI_SCOPE: ${PATRONI_SCOPE}
   echo PG_DATA_DIR: ${PG_DATA_DIR}
   echo ETCD_HOST_PORT: ${ETCD_HOST_PORT}

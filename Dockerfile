@@ -5,6 +5,9 @@ ENV PATH /go/bin:$PATH
 
 RUN apk add --no-cache go git
 
+# busybox-suid is to allow privilege escalation from a non-root user for setting up crontab for postgres
+# RUN apk add --no-cache busybox-suid
+
 RUN set -x \
       && echo "@edge http://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
       && apk add --no-cache --update pstree@edge
