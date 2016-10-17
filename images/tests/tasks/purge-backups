@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e -u -x
+set -e -u
 
 echo "Deleting all backups for cluster '${PATRONI_SCOPE}'..."
 region=$(aws s3api get-bucket-location --bucket ${WAL_S3_BUCKET} | jq -r '.LocationConstraint')
@@ -8,4 +8,5 @@ if [[ ${region} != 'null' ]]; then
   region_option="--region ${region}"
 fi
 
+set -x
 aws s3 ${region_option:-} rm --recursive "s3://${WAL_S3_BUCKET}/backups/${PATRONI_SCOPE}"

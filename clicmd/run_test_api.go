@@ -27,9 +27,8 @@ func RunTestAPI(c *cli.Context) {
 			// 	AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID
 			// 	AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY
 			// 	WAL_S3_BUCKET=WAL_S3_BUCKET
-			// 	AWS_REGION=us-east-1
 			// 	WALE_S3_ENDPOINT=https+path://s3.amazonaws.com:443
-			// 	WALE_S3_PREFIX=s3://${WAL_S3_BUCKET}/backups/cluster-scope/wal/
+			// 	WALE_S3_PREFIX=s3://${WAL_S3_BUCKET}/backups/test-cluster-scope/wal/
 			"postgresql": map[string]interface{}{
 				"admin": map[string]interface{}{
 					"password": "admin-password",

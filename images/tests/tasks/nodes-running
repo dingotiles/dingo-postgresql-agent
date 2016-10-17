@@ -15,6 +15,9 @@ leader_state=$(etcdctl --endpoint "http://${ETCD_HOST_PORT}" get /service/${PATR
 if psql ${superuser_uri} -c 'SELECT current_database();' > /dev/null 2>&1; then
   leader_accessible='true'
 else
+  if [[ "${leader_accessible}X" == "X" ]]; then
+    echo "Trying to access database at URI ${superuser_uri} ..."
+  fi
   leader_accessible='false'
 fi
 
