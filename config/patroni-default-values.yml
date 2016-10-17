@@ -84,7 +84,7 @@ postgresql:
     - wal_e
     - basebackup
   wal_e:
-    command: patroni_wale_restore
+    command: "python3 /patroni/patroni/scripts/wale_restore.py"
     # {key: value} below are converted to options for wale_restore.py script
     envdir: /etc/wal-e.d/env
     threshold_megabytes: 1024
