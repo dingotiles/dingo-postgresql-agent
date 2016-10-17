@@ -16,6 +16,7 @@ COPY config/patroni-default-values.yml /patroni/patroni-default-values.yml
 COPY images/scripts/* /scripts/
 COPY images/motd /etc/motd
 RUN echo "source /etc/motd" >> /root/.bashrc
+RUN echo "[[ -f /etc/patroni.d/.envrc ]] && source /etc/patroni.d/.envrc" >> /root/.bashrc
 COPY images/supervisord.conf /etc/supervisor/supervisord.conf
 COPY images/services/*.conf /etc/supervisor/conf.d/
 
