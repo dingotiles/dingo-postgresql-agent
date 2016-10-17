@@ -8,6 +8,8 @@ services:
     ports: ["5432:5432", "8008:8008"]
     environment:
       # DEBUG: 1
+      DINGO_CLUSTER: test-cluster
+      DINGO_ORG_TOKEN: test-org-token
       DINGO_STARTUP_URI: http://${DOCKER_HOST_IP}:5000
       # in lieu of registrator, pass known host config as env vars
       DOCKER_HOST_IP: ${DOCKER_HOST_IP}
@@ -21,6 +23,8 @@ services:
     ports: ["5002:5432", "8002:8008"]
     environment:
       # DEBUG: 1
+      DINGO_CLUSTER: test-cluster
+      DINGO_ORG_TOKEN: test-org-token
       DINGO_STARTUP_URI: http://${DOCKER_HOST_IP}:5000
       # in lieu of registrator, pass known host config as env vars
       DOCKER_HOST_IP: ${DOCKER_HOST_IP}

@@ -34,7 +34,7 @@ type ClusterSpecification struct {
 
 func FetchClusterSpec() (cluster *ClusterSpecification, err error) {
 	apiSpec := APISpec()
-	apiClusterSpec := fmt.Sprintf("%s/api", apiSpec.URI)
+	apiClusterSpec := fmt.Sprintf("%s/api", apiSpec.APIURI)
 	var netClient = &http.Client{
 		Timeout: time.Second * 10,
 	}
