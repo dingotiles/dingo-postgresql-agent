@@ -20,14 +20,14 @@ patroni_env=/etc/patroni.d/.envrc
 
 function wait_for_config {
   # wait for /config/patroni.yml to ensure that all variables stored in /etc/wal-e.d/env files
-  wait_message="WARN: Waiting until ${patroni_env} are created..."
-  if [[ ! -f ${patroni_env} ]]; then
+  wait_message="WARN: Waiting until ${patroni_env} is created..."
+  while [[ ! -f ${patroni_env} ]]; do
     if [[ "${wait_message}X" != "X" ]]; then
       echo ${wait_message} >&2
     fi
     sleep 1
     wait_message="" # only show wait_message once
-  fi
+  done
 }
 
 function base_backups {

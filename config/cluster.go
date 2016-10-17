@@ -32,9 +32,12 @@ type ClusterSpecification struct {
 	WaleEnv []string `json:"wale_env"`
 }
 
+// TODO: POST ClusterName & OrgAuthToken to API
+
 func FetchClusterSpec() (cluster *ClusterSpecification, err error) {
 	apiSpec := APISpec()
 	apiClusterSpec := fmt.Sprintf("%s/api", apiSpec.APIURI)
+	fmt.Printf("Loading configuration from %s...", apiClusterSpec)
 	var netClient = &http.Client{
 		Timeout: time.Second * 10,
 	}

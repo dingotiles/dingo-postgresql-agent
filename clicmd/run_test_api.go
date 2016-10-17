@@ -66,6 +66,7 @@ func getWaleEnvVarsFromList(environ []string) []string {
 		}
 	}
 	waleEnvVars := make([]string, waleEnvCount)
+	// waleEnvVars[0] = fmt.Sprintf("PATRONI_SCOPE=%s", patroniScope)
 	waleEnvIndex := 0
 	for _, envVar := range environ {
 		for _, prefix := range walePrefixes {
