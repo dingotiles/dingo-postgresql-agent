@@ -74,7 +74,7 @@ postgresql:
       username: SUPERUSER_USERNAME
       password: SUPERUSER_PASSWORD
   parameters:
-    unix_socket_directories: ".,/patroni,/tmp"
+    unix_socket_directories: "/tmp"
   callbacks:
     on_start: /bin/true
     on_stop: /bin/true
