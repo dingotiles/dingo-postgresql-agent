@@ -47,7 +47,6 @@ services:
       AWS_ACCESS_KEY_ID: ~
       AWS_SECRET_ACCESS_KEY: ~
       WAL_S3_BUCKET: ~
-      AWS_REGION: ~
       WALE_S3_ENDPOINT: ~
       WALE_S3_PREFIX: ~
     command: [dingo-postgresql-agent, test-api]
