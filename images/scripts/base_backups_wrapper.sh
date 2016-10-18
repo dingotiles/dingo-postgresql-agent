@@ -95,7 +95,7 @@ function base_backups {
       pg_controldata ${PG_DATA_DIR} | grep "Database system identifier" | cut -d ":" -f2 | awk '{print $1}' > /tmp/sysids/sysid
 
       if [[ ${AWS_REGION} != 'null' ]]; then
-        region_option="--region ${region}"
+        region_option="--region ${AWS_REGION}"
       fi
       aws s3 ${region_option:-} sync /tmp/sysids ${WALE_S3_PREFIX}sysids
       SYSID_UPLOADED=1
