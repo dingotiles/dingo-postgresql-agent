@@ -1,10 +1,13 @@
 package clicmd
 
 import (
+	"fmt"
 	"os"
 	"strings"
 
 	"github.com/codegangsta/cli"
+	"github.com/codegangsta/martini-contrib/binding"
+	"github.com/dingotiles/dingo-postgresql-agent/config"
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
 )
@@ -16,7 +19,8 @@ func RunTestAPI(c *cli.Context) {
 	m.Use(render.Renderer(render.Options{
 		IndentJSON: true, // Output human readable JSON
 	}))
-	m.Get("/api", func(r render.Render) {
+	m.Post("/api", binding.Bind(config.ContainerStartupRequest{}), func(req config.ContainerStartupRequest, r render.Render) {
+		fmt.Printf("Recv: container start request: %v\n", req)
 		staticResponse := map[string]interface{}{
 			"cluster": map[string]interface{}{
 				"name":  "patroni1",

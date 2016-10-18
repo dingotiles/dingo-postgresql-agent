@@ -1,12 +1,19 @@
 package config
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"time"
 )
+
+// ContainerStartupRequest is the expected inbound data when each Dingo Agent starts
+type ContainerStartupRequest struct {
+	ClusterName  string `json:"cluster"`
+	OrgAuthToken string `json:"org_token"`
+}
 
 type ClusterSpecification struct {
 	Cluster struct {
@@ -41,7 +48,12 @@ func FetchClusterSpec() (cluster *ClusterSpecification, err error) {
 	var netClient = &http.Client{
 		Timeout: time.Second * 10,
 	}
-	resp, err := netClient.Get(apiClusterSpec)
+
+	startupReq := ContainerStartupRequest{}
+	b := new(bytes.Buffer)
+	json.NewEncoder(b).Encode(startupReq)
+
+	resp, err := netClient.Post(apiClusterSpec, "application/json", b)
 	if err != nil {
 		return nil, err
 	}
