@@ -41,8 +41,17 @@ The project includes a sample `docker-compose.yml` to run a sample cluster of an
 
 ```
 DOCKER_HOST_IP=$(docker-machine ip <machine-name>)
-docker-compose up
+docker-compose up test-api patroni1
 ```
+
+To clear out all backups from all clusters after testing/playtime:
+
+```
+docker rm -f test-api patroni1 etcd
+aws s3 rm --recursive s3://${WAL_S3_BUCKET}/backups
+```
+
+If you do not clear out backups, then `patroni1` will be recreated from previous archive. Which is a good thing. Unless you want it to be fresh and new; in which case you need to delete all the backups :)
 
 ## Development
 
