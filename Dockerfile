@@ -24,3 +24,5 @@ COPY . /go/src/github.com/dingotiles/dingo-postgresql-agent
 RUN set -x \
     && go install github.com/dingotiles/dingo-postgresql-agent \
     && rm -rf $GOPATH/src
+
+env DINGO_IMAGE_VERSION=0.0.1
