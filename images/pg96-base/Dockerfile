@@ -83,6 +83,11 @@ RUN set -x \
     && curl -L https://github.com/geofffranks/spruce/releases/download/v${SPRUCE_VERSION}/spruce-linux-amd64 -o /usr/local/bin/spruce \
     && chmod +x /usr/local/bin/spruce
 
+ENV S3CLI_VERSION=0.0.51
+RUN set -x \
+      && curl -L https://s3.amazonaws.com/s3cli-artifacts/s3cli-${S3CLI_VERSION}-linux-amd64 -o /usr/local/bin/s3cli \
+      && chmod +x /usr/local/bin/s3cli
+
 # 5432: PostgreSQL server
 # 8008: Patroni API
 EXPOSE 5432 8008
