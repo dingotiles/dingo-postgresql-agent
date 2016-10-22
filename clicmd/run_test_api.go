@@ -26,7 +26,7 @@ func RunTestAPI(c *cli.Context) {
 				"name":  "patroni1",
 				"scope": "test-cluster-scope",
 			},
-			"wale_env": getWaleEnvVars(),
+			"wale_env": filterWaleEnvVars(),
 			// Example:
 			// 	AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID
 			// 	AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY
@@ -55,11 +55,11 @@ func RunTestAPI(c *cli.Context) {
 	m.Run()
 }
 
-func getWaleEnvVars() []string {
-	return getWaleEnvVarsFromList(os.Environ())
+func filterWaleEnvVars() []string {
+	return filterWaleEnvVarsFromList(os.Environ())
 }
 
-func getWaleEnvVarsFromList(environ []string) []string {
+func filterWaleEnvVarsFromList(environ []string) []string {
 	waleEnvCount := 0
 	walePrefixes := []string{"WAL", "AWS", "WABS", "GOOGLE", "SWIFT", "PATRONI", "ETCD", "CONSUL"}
 	for _, envVar := range environ {
