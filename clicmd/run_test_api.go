@@ -21,12 +21,15 @@ func RunTestAPI(c *cli.Context) {
 	}))
 	m.Post("/api", binding.Bind(config.ContainerStartupRequest{}), func(req config.ContainerStartupRequest, r render.Render) {
 		fmt.Printf("Recv: container start request: %v\n", req)
+		name := "patroni1"
+		patroniScope := "test-cluster-scope"
+		waleEnvVars := constructReturnedEnvVars(patroniScope, filterWaleEnvVars())
 		staticResponse := map[string]interface{}{
 			"cluster": map[string]interface{}{
-				"name":  "patroni1",
-				"scope": "test-cluster-scope",
+				"name":  name,
+				"scope": patroniScope,
 			},
-			"wale_env": filterWaleEnvVars(),
+			"wale_env": waleEnvVars,
 			// Example:
 			// 	AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID
 			// 	AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY
@@ -81,4 +84,17 @@ func filterWaleEnvVarsFromList(environ []string) []string {
 		}
 	}
 	return waleEnvVars
+}
+
+// Some returned env vars are constructed based on other values
+//   WALE_S3_PREFIX=s3://${WAL_S3_BUCKET}/backups/{{patroniScope}}/wal/
+func constructReturnedEnvVars(patroniScope string, environ []string) []string {
+	for _, envVar := range environ {
+		if strings.Index(envVar, "WAL_S3_BUCKET") == 0 {
+			parts := strings.Split(envVar, "=")
+			waleS3Prefix := fmt.Sprintf("WALE_S3_PREFIX=s3://%s/backups/%s/wal/", parts[1], patroniScope)
+			environ = append(environ, waleS3Prefix)
+		}
+	}
+	return environ
 }
