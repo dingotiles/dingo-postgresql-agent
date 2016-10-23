@@ -24,5 +24,7 @@ if [[ -d ${PG_DATA_DIR} ]]; then
   chmod 700 $PG_DATA_DIR
 fi
 
+export PATRONI_POSTGRES_START_COMMAND="supervisorctl start postgres:"
+
 dingo-postgresql-agent run
 ) 2>&1 | indent

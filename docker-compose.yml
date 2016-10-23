@@ -34,7 +34,7 @@ services:
     depends_on: [etcd]
     command: ["/scripts/entry.sh"]
   test-api:
-    build: .
+    # build: .
     image: dingotiles/dingo-postgresql96-agent:latest
     container_name: test-api
     ports: ["5000:8008"]

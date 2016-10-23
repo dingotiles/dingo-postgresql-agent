@@ -4,18 +4,22 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/codegangsta/cli"
+	"github.com/codeskyblue/go-sh"
 	"github.com/dingotiles/dingo-postgresql-agent/config"
 	"github.com/go-martini/martini"
+	"github.com/hashicorp/errwrap"
 	"github.com/martini-contrib/render"
 )
 
 // RunAgent runs the agent which fetches credentials/configuration,
 // configures & runs Patroni, which in turn configures & runs PostgreSQL
 func RunAgent(c *cli.Context) {
-	fmt.Println(*config.APISpec())
+	startupConfig := config.APISpec()
+	fmt.Println(*startupConfig)
 	fmt.Println(*config.HostDiscoverySpec())
 	retryCount := 0
 	var err error
@@ -25,7 +29,7 @@ func RunAgent(c *cli.Context) {
 		if err == nil && clusterSpec != nil {
 			break
 		}
-		fmt.Printf("Error trying to connect to API %s, retrying...\n", config.APISpec().APIURI)
+		fmt.Printf("Error trying to connect to API %s, retrying...\n", startupConfig.APIURI)
 		time.Sleep(time.Second)
 		retryCount++
 	}
@@ -33,10 +37,15 @@ func RunAgent(c *cli.Context) {
 		panic(err)
 	}
 	if clusterSpec == nil {
-		fmt.Println("Cannot connect to API", config.APISpec().APIURI)
+		fmt.Println("Cannot connect to API", startupConfig.APIURI)
 		os.Exit(1)
 	}
 	err = createPatroniPostgresConfigFiles(clusterSpec, "/", "postgres")
+	if err != nil {
+		panic(err)
+	}
+
+	err = startPatroniPostgres(startupConfig)
 	if err != nil {
 		panic(err)
 	}
@@ -70,6 +79,19 @@ func createPatroniPostgresConfigFiles(clusterSpec *config.ClusterSpecification, 
 		return
 	}
 	err = patroniSpec.CreateConfigFile(path.Join(rootPath, "/config/patroni.yml"))
+	return
+}
+
+func startPatroniPostgres(apiSpec *config.APISpecification) (err error) {
+	if apiSpec.PatroniPostgresStartCmd == "" {
+		fmt.Println("Assuming patroni & backup processes already runnning. No $PATRONI_POSTGRES_START_COMMAND start command provided.")
+		return
+	}
+	cmdParts := strings.Split(apiSpec.PatroniPostgresStartCmd, " ")
+	err = sh.Command(cmdParts[0], cmdParts[1:]).Run()
+	if err != nil {
+		return errwrap.Wrapf("Failed to run start command: {{err}}", err)
+	}
 	return
 }
 
