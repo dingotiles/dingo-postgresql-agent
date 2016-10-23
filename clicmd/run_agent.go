@@ -3,6 +3,7 @@ package clicmd
 import (
 	"fmt"
 	"os"
+	"path"
 	"time"
 
 	"github.com/codegangsta/cli"
@@ -35,12 +36,21 @@ func RunAgent(c *cli.Context) {
 		fmt.Println("Cannot connect to API", config.APISpec().APIURI)
 		os.Exit(1)
 	}
-	fmt.Println(*clusterSpec)
-
-	waleEnvDir := "/etc/wal-e.d/env"
-	err = os.RemoveAll(waleEnvDir)
+	err = createPatroniPostgresConfigFiles(clusterSpec, "/", "postgres")
 	if err != nil {
 		panic(err)
+	}
+
+	startLongRunningAgent()
+}
+
+func createPatroniPostgresConfigFiles(clusterSpec *config.ClusterSpecification, rootPath string, postgresUser string) (err error) {
+	fmt.Println(*clusterSpec)
+
+	waleEnvDir := path.Join(rootPath, "/etc/wal-e.d/env")
+	err = os.RemoveAll(waleEnvDir)
+	if err != nil {
+		return
 	}
 	environ := config.NewEnvironFromStrings(clusterSpec.WaleEnv)
 	environ.AddEnv(fmt.Sprintf("REPLICATION_USER=%s", clusterSpec.Postgresql.Appuser.Username))
@@ -48,22 +58,22 @@ func RunAgent(c *cli.Context) {
 
 	err = environ.CreateEnvDirFiles(waleEnvDir)
 	if err != nil {
-		panic(err)
+		return
 	}
-	err = environ.CreateEnvScript("/etc/patroni.d/.envrc", "postgres")
+	err = environ.CreateEnvScript(path.Join(rootPath, "/etc/patroni.d/.envrc"), postgresUser)
 	if err != nil {
-		panic(err)
+		return
 	}
 
 	patroniSpec, err := config.BuildPatroniSpec(clusterSpec, config.HostDiscoverySpec())
 	if err != nil {
-		panic(err)
+		return
 	}
-	err = patroniSpec.CreateConfigFile("/config/patroni.yml")
-	if err != nil {
-		panic(err)
-	}
+	err = patroniSpec.CreateConfigFile(path.Join(rootPath, "/config/patroni.yml"))
+	return
+}
 
+func startLongRunningAgent() {
 	m := martini.Classic()
 	m.Use(render.Renderer(render.Options{
 		IndentJSON: true, // Output human readable JSON

@@ -9,6 +9,7 @@ func TestStartupHostDiscovery(t *testing.T) {
 	t.Parallel()
 
 	os.Clearenv()
+	os.Setenv("DINGO_IMAGE_VERSION", "0.0.1")
 	os.Setenv("DOCKER_HOST_IP", "10.11.12.13")
 	os.Setenv("DOCKER_HOST_PORT_5432", "5000")
 	os.Setenv("DOCKER_HOST_PORT_8008", "8000")

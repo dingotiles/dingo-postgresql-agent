@@ -8,6 +8,8 @@ import (
 	"path"
 	"strconv"
 	"strings"
+
+	"github.com/hashicorp/errwrap"
 )
 
 // Generates a folder for consumption by envdir,
@@ -58,39 +60,44 @@ func (environ *Environ) CreateEnvDirFiles(dir string) (err error) {
 }
 
 func (environ *Environ) CreateEnvScript(filePath string, chownUser string) (err error) {
-	err = os.MkdirAll(path.Dir(filePath), 0644)
+	err = os.MkdirAll(path.Dir(filePath), 0755)
 	if err != nil {
-		return
+		return errwrap.Wrapf("Cannot mkdir: {{err}}", err)
 	}
 
 	var f *os.File
 	f, err = os.Create(filePath)
 	if err != nil {
-		return
+		return errwrap.Wrapf("Cannot create file: {{err}}", err)
 	}
 
 	for name, value := range *environ {
 		env := fmt.Sprintf("export %s=%s\n", name, value)
 		_, err = f.WriteString(env)
 		if err != nil {
-			return
+			return errwrap.Wrapf("Cannot create write string to file: {{err}}", err)
 		}
 	}
 	f.Sync()
 
-	u, err := user.Lookup(chownUser)
-	if err != nil {
-		return err
+	if chownUser != "" {
+		u, err := user.Lookup(chownUser)
+		if err != nil {
+			return errwrap.Wrapf("Cannot lookup user: {{err}}", err)
+		}
+		uid, err := strconv.Atoi(u.Uid)
+		if err != nil {
+			return errwrap.Wrapf("Cannot get user Uid: {{err}}", err)
+		}
+		gid, err := strconv.Atoi(u.Gid)
+		if err != nil {
+			return errwrap.Wrapf("Cannot get user group Gid: {{err}}", err)
+		}
+		err = os.Chown(filePath, uid, gid)
+		if err != nil {
+			return errwrap.Wrapf("Cannot chown file: {{err}}", err)
+		}
 	}
-	uid, err := strconv.Atoi(u.Uid)
-	if err != nil {
-		return err
-	}
-	gid, err := strconv.Atoi(u.Gid)
-	if err != nil {
-		return err
-	}
-	err = os.Chown(filePath, uid, gid)
 
 	return
 }
