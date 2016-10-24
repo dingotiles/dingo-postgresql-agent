@@ -1,13 +1,5 @@
 FROM dingotiles/dingo-postgresql95-agent-base:latest
 
-ENV GOPATH /go
-ENV PATH /go/bin:$PATH
-
-RUN apk add --no-cache go git
-
-# busybox-suid is to allow privilege escalation from a non-root user for setting up crontab for postgres
-# RUN apk add --no-cache busybox-suid
-
 # slug generates GUIDs
 RUN set -x \
       && go get github.com/taskcluster/slugid-go/slug \
