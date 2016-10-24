@@ -1,0 +1,58 @@
+---
+groups:
+- name: images
+  jobs: [build-pg95-base-image]
+- name: ci-image
+  jobs: [build-task-image]
+
+jobs:
+- name: build-pg95-base-image
+  public: true
+  serial: true
+  plan:
+  - get: agent
+  - put: pg95-base-image-latest
+    params:
+      build: agent/images/postgresql95-base
+
+- name: build-task-image
+  public: true
+  serial: true
+  plan:
+  - {get: agent-ci-task, trigger: true}
+  - put: docker-image-ci
+    params:
+      build: agent-ci-task/ci/ci_image
+
+resources:
+- name: agent
+  type: git
+  source:
+    uri: git@github.com:dingotiles/dingo-postgresql-agent.git
+    branch: {{pipeline-branch}}
+    private_key: {{github-private-key}}
+
+- name: agent-ci-task
+  type: git
+  source:
+    uri: git@github.com:dingotiles/dingo-postgresql-agent.git
+    branch: {{pipeline-branch}}
+    private_key: {{github-private-key}}
+    paths: [ci/ci_image/*]
+
+- name: pg95-base-image-latest
+  type: docker-image
+  source:
+    email: {{docker-hub-email}}
+    username: {{docker-hub-username}}
+    password: {{docker-hub-password}}
+    repository: dingotiles/dingo-postgresql95-agent-base
+    tag: latest
+
+- name: docker-image-ci
+  type: docker-image
+  source:
+    email: {{docker-hub-email}}
+    username: {{docker-hub-username}}
+    password: {{docker-hub-password}}
+    repository: dingotiles/dingo-postgresql-agent-pipeline
