@@ -82,6 +82,10 @@ func createPatroniPostgresConfigFiles(clusterSpec *config.ClusterSpecification, 
 	if err != nil {
 		return errwrap.Wrapf("Cannot create patroni.yml config file: {{err}}", err)
 	}
+	err = patroniSpec.CreateURIFile(path.Join(rootPath, "/config/uri"))
+	if err != nil {
+		return errwrap.Wrapf("Cannot create files with easy access to URIs: {{err}}", err)
+	}
 	return
 }
 

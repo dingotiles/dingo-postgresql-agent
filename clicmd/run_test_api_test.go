@@ -29,7 +29,7 @@ func TestTestAPI_AddWALE_S3_PREFIX(t *testing.T) {
 	patroniScope := "patroni-scope"
 	filteredWaleEnvVars := []string{"WAL_S3_BUCKET=test"}
 	result := constructReturnedEnvVars(patroniScope, filteredWaleEnvVars)
-	if !testutil.TestEqStringArray(result, []string{"WAL_S3_BUCKET=test", "WALE_S3_PREFIX=s3://test/backups/patroni-scope/wal/"}) {
-		t.Fatalf("result should return 2 items, returned: %#v", result)
+	if !testutil.TestEqStringArray(result, []string{"WAL_S3_BUCKET=test", "PATRONI_SCOPE=patroni-scope", "WALE_S3_PREFIX=s3://test/backups/patroni-scope/wal/"}) {
+		t.Fatalf("result should return 3 items, returned: %#v", result)
 	}
 }

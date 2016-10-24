@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path"
 	"path/filepath"
+
+	"github.com/hashicorp/errwrap"
 
 	"gopkg.in/yaml.v1"
 )
@@ -167,5 +170,20 @@ func (patroniSpec *PatroniV11Specification) CreateConfigFile(path string) (err e
 		return
 	}
 	err = ioutil.WriteFile(path, data, 0644)
+	return
+}
+
+func (patroniSpec *PatroniV11Specification) CreateURIFile(createPath string) (err error) {
+	err = os.MkdirAll(path.Dir(createPath), 0755)
+	if err != nil {
+		return errwrap.Wrapf("Cannot mkdir: {{err}}", err)
+	}
+
+	username := patroniSpec.Postgresql.Authentication.Superuser.Username
+	password := patroniSpec.Postgresql.Authentication.Superuser.Password
+	host := os.Getenv("DOCKER_HOST_IP")
+	port := os.Getenv("DOCKER_HOST_PORT_5432")
+	uri := fmt.Sprintf("postgres://%s:%s@%s:%s/postgres", username, password, host, port)
+	err = ioutil.WriteFile(createPath, []byte(uri), 0644)
 	return
 }
