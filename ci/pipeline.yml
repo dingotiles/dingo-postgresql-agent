@@ -1,20 +1,68 @@
 ---
 groups:
 - name: images
-  jobs: [pg95-base-image, pg95-image]
+  jobs: [rc, pg95-image, shipit, minor, major, patch]
+- name: base-images
+  jobs: [pg95-base-image]
 - name: ci-image
   jobs: [build-task-image]
 
 jobs:
+- name: rc
+  public: true
+  plan:
+    - {get: agent}
+    - {get: version, params: {pre: rc}}
+    - {put: version, params: {file: version/number}}
+
 - name: pg95-image
   public: true
   serial: true
   plan:
-  - {get: agent, trigger: true}
-  - put: pg95-image-latest
-    params:
-      build: agent
-      cache: true
+    - {get: agent, trigger: true}
+    - {get: version, passed: [rc]}
+    - put: pg95-image-latest
+      params:
+        build: agent
+        cache: true
+
+- name: shipit
+  public: true
+  serial: true
+  plan:
+    - {get: agent-ci}
+    - {get: agent, passed: [pg95-image]}
+    - {get: version, passed: [pg95-image], params: {bump: final}}
+    - {put: version, params: {file: version/number}}
+
+- name: major
+  public: true
+  serial_groups: [version]
+  plan:
+  - get: version
+    params: {bump: major, pre: rc}
+  - put: version
+    params: {file: version/number}
+
+- name: minor
+  public: true
+  serial_groups: [version]
+  plan:
+  - get: version
+    params: {bump: minor, pre: rc}
+  - put: version
+    params: {file: version/number}
+
+- name: patch
+  public: true
+  serial_groups: [version]
+  plan:
+  - get: version
+    passed: [shipit]
+    trigger: true
+    params: {bump: patch, pre: rc}
+  - put: version
+    params: {file: version/number}
 
 - name: pg95-base-image
   public: true
@@ -36,8 +84,16 @@ jobs:
     params:
       build: agent-ci-task/ci/ci_image
 
+
 resources:
 - name: agent
+  type: git
+  source:
+    uri: git@github.com:dingotiles/dingo-postgresql-agent.git
+    branch: {{pipeline-branch}}
+    private_key: {{github-private-key}}
+
+- name: agent-ci
   type: git
   source:
     uri: git@github.com:dingotiles/dingo-postgresql-agent.git
@@ -85,3 +141,13 @@ resources:
     username: {{docker-hub-username}}
     password: {{docker-hub-password}}
     repository: dingotiles/dingo-postgresql-agent-pipeline
+
+- name: version
+  type: semver
+  source:
+    driver: git
+    initial_version: 0.0.1
+    uri: git@github.com:dingotiles/dingo-postgresql-agent.git
+    branch: version
+    file: version
+    private_key: {{github-private-key}}
