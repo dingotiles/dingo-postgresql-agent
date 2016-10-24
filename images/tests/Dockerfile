@@ -1,4 +1,4 @@
-FROM dingotiles/dingo-postgresql96-agent-base:latest
+FROM dingotiles/dingo-postgresql95-agent-base:latest
 
 COPY ./tasks/  /tasks
 

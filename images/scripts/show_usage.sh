@@ -22,7 +22,7 @@ How to run:
 USAGE
 echo "    -e DINGO_CLUSTER=${sample_cluster_name} \\"
 cat <<'USAGE'
-    dingotiles/dingo-postgresql96-agent:latest
+    dingotiles/dingo-postgresql:latest
 USAGE
 }
 

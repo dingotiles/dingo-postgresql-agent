@@ -89,6 +89,7 @@ func filterWaleEnvVarsFromList(environ []string) []string {
 // Some returned env vars are constructed based on other values
 //   WALE_S3_PREFIX=s3://${WAL_S3_BUCKET}/backups/{{patroniScope}}/wal/
 func constructReturnedEnvVars(patroniScope string, environ []string) []string {
+	environ = append(environ, fmt.Sprintf("PATRONI_SCOPE=%s", patroniScope))
 	for _, envVar := range environ {
 		if strings.Index(envVar, "WAL_S3_BUCKET") == 0 {
 			parts := strings.Split(envVar, "=")

@@ -3,7 +3,7 @@ version: '2'
 services:
   patroni1:
     build: .
-    image: dingotiles/dingo-postgresql96-agent:latest
+    image: dingotiles/dingo-postgresql:latest
     container_name: patroni1
     ports: ["5432:5432", "8008:8008"]
     environment:
@@ -11,14 +11,14 @@ services:
       DINGO_CLUSTER: test-cluster
       DINGO_ORG_TOKEN: test-org-token
       DINGO_API_URI: http://${DOCKER_HOST_IP}:5000
-      # in lieu of registrator, pass known host config as env vars
       DOCKER_HOST_IP: ${DOCKER_HOST_IP}
-      # no registrator, no explicit DOCKER_HOST_PORT_5432/8008, so assume default ports
+      DOCKER_HOST_PORT_5432: 5432
+      DOCKER_HOST_PORT_8008: 8008
       BACKUPS_SUMMARY_WAITTIME: 10
     depends_on: [etcd]
     command: ["/scripts/entry.sh"]
   patroni2:
-    image: dingotiles/dingo-postgresql96-agent:latest
+    image: dingotiles/dingo-postgresql:latest
     container_name: patroni2
     ports: ["5002:5432", "8002:8008"]
     environment:
@@ -26,7 +26,6 @@ services:
       DINGO_CLUSTER: test-cluster
       DINGO_ORG_TOKEN: test-org-token
       DINGO_API_URI: http://${DOCKER_HOST_IP}:5000
-      # in lieu of registrator, pass known host config as env vars
       DOCKER_HOST_IP: ${DOCKER_HOST_IP}
       DOCKER_HOST_PORT_5432: 5002
       DOCKER_HOST_PORT_8008: 8002
@@ -34,7 +33,7 @@ services:
     depends_on: [etcd]
   test-api:
     # build: .
-    image: dingotiles/dingo-postgresql96-agent:latest
+    image: dingotiles/dingo-postgresql:latest
     container_name: test-api
     ports: ["5000:8008"]
     environment:

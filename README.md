@@ -58,8 +58,8 @@ If you do not clear out backups, then `patroni1` will be recreated from previous
 To build:
 
 ```
-docker build -t dingotiles/dingo-postgresql96-agent-base:latest images/pg96-base
-docker build -t dingotiles/dingo-postgresql96-agent:latest .
+docker build -t dingotiles/dingo-postgresql95-agent-base:latest images/postgresql95-base
+docker build -t dingotiles/dingo-postgresql:latest .
 ```
 
 Sanity check:
