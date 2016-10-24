@@ -16,7 +16,7 @@ Dingo PostgreSQL continuously archived from Day 1.
 How to run:
 
   PUBLIC_PORT=5000
-  docker run \
+  docker run -d \
     --name dingo-postgresql \
     -e DOCKER_HOST_IP=${DOCKER_HOST_IP:?required} \
     -e DOCKER_HOST_PORT_5432=${PUBLIC_PORT} -p ${PUBLIC_PORT}:5432 \
@@ -28,7 +28,8 @@ cat <<'USAGE'
 
 How to get direct PostgreSQL URI:
 
-  docker exec dingo-postgresql cat /config/uri
+  uri=$(docker exec dingo-postgresql cat /config/uri)
+  psql $uri
 USAGE
 }
 
