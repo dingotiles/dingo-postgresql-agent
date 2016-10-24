@@ -20,7 +20,7 @@ jobs:
   serial: true
   plan:
     - {get: agent, trigger: true}
-    - {get: version, passed: [rc]}
+    - {get: version, passed: [rc], trigger: true}
     - put: pg95-image-latest
       params:
         build: agent
