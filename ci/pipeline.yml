@@ -1,16 +1,16 @@
 ---
 groups:
 - name: images
-  jobs: [build-pg95-base-image]
+  jobs: [pg95-base-image]
 - name: ci-image
   jobs: [build-task-image]
 
 jobs:
-- name: build-pg95-base-image
+- name: pg95-base-image
   public: true
   serial: true
   plan:
-  - {get: agent-pg95-base-image, trigger: true}
+  - {get: agent-base, trigger: true}
   - {get: agent}
   - put: pg95-base-image-latest
     params:
@@ -33,7 +33,7 @@ resources:
     branch: {{pipeline-branch}}
     private_key: {{github-private-key}}
 
-- name: agent-pg95-base-image
+- name: agent-base
   type: git
   source:
     uri: git@github.com:dingotiles/dingo-postgresql-agent.git
