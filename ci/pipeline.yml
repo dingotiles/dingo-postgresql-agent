@@ -14,6 +14,7 @@ jobs:
   - put: pg95-image-latest
     params:
       build: agent
+      cache: true
 
 - name: pg95-base-image
   public: true
@@ -24,6 +25,7 @@ jobs:
   - put: pg95-base-image-latest
     params:
       build: agent/images/postgresql95-base
+      cache: true
 
 - name: build-task-image
   public: true
