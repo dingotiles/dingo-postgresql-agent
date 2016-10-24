@@ -18,3 +18,11 @@ Current status: (supervisorctl status)
 MOTD
 
 supervisorctl status
+
+cat <<'MOTD'
+
+PostgreSQL URI: (cat /config/uri)
+
+MOTD
+
+cat /config/uri; echo
