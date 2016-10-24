@@ -63,10 +63,11 @@ RUN set -x \
       && pip install --no-cache-dir supervisor==${SUPERVISOR_VERSION} dumb-init --upgrade
 
 # etcdctl
+ENV ETCD_VERSION=2.3.7
 RUN set -x \
-      && curl -sL https://github.com/coreos/etcd/releases/download/v2.3.4/etcd-v2.3.4-linux-amd64.tar.gz -o /tmp/etcd-v2.3.4-linux-amd64.tar.gz \
-      && tar xzvf /tmp/etcd-v2.3.4-linux-amd64.tar.gz -C /tmp \
-      && mv /tmp/etcd-v2.3.4-linux-amd64/etcdctl /usr/local/bin \
+      && curl -sL https://github.com/coreos/etcd/releases/download/v${ETCD_VERSION}/etcd-v${ETCD_VERSION}-linux-amd64.tar.gz -o /tmp/etcd-v${ETCD_VERSION}-linux-amd64.tar.gz \
+      && tar xzvf /tmp/etcd-v${ETCD_VERSION}-linux-amd64.tar.gz -C /tmp \
+      && mv /tmp/etcd-v${ETCD_VERSION}-linux-amd64/etcdctl /usr/local/bin \
       && rm -rf /tmp/etcd*
 
 ENV PATRONI_VERSION=1.1
