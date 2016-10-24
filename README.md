@@ -74,3 +74,11 @@ postgres (PostgreSQL) 9.6.0
 ```
 
 See images/pg96-base/README.md for additional sanity checking of contents.
+
+## Tests
+
+Run local tests:
+
+```
+go test $(go list ./... | grep -v /vendor/)
+```
