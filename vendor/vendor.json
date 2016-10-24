@@ -1,0 +1,31 @@
+{
+	"comment": "",
+	"ignore": "",
+	"package": [
+		{
+			"checksumSHA1": "djNQ2nOeJvp7lNnnIiPuPuI2A3g=",
+			"path": "github.com/codegangsta/martini",
+			"revision": "c8e367e964da242333b34f0cc2b01b91e16fa52a",
+			"revisionTime": "2016-01-15T12:46:33Z"
+		},
+		{
+			"checksumSHA1": "wW+yDGrmjjXRifWGdIhhf1RGTWo=",
+			"path": "github.com/codegangsta/martini-contrib/binding",
+			"revision": "8ce6181c2609699e4c7cd30994b76a850a9cdadc",
+			"revisionTime": "2014-02-08T23:45:50Z"
+		},
+		{
+			"checksumSHA1": "EpNJm7DT4r8Qseme57ASNy2gb+8=",
+			"path": "github.com/codeskyblue/go-sh",
+			"revision": "ceb46ec4630a726eeed51d0a70066c9e1102c48f",
+			"revisionTime": "2016-05-28T10:32:55Z"
+		},
+		{
+			"checksumSHA1": "asmDhX/+sXdmgxWwi0wJNzaDhwo=",
+			"path": "github.com/hashicorp/errwrap",
+			"revision": "7554cd9344cec97297fa6649b055a8c98c2a1e55",
+			"revisionTime": "2014-10-28T05:47:10Z"
+		}
+	],
+	"rootPath": "github.com/dingotiles/dingo-postgresql-agent"
+}
