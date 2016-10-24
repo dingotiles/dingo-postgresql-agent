@@ -32,7 +32,6 @@ services:
       DOCKER_HOST_PORT_8008: 8002
       BACKUPS_SUMMARY_WAITTIME: 10
     depends_on: [etcd]
-    command: ["/scripts/entry.sh"]
   test-api:
     # build: .
     image: dingotiles/dingo-postgresql96-agent:latest

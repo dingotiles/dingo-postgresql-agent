@@ -1,10 +1,8 @@
 #!/usr/bin/dumb-init /bin/bash
 
-# echo "Running any available init scripts:"
-# for init in /config/init/*; do
-#   echo " -- Running $init..."
-#   $init
-# done
-#
+set -e
+
+/scripts/show_usage.sh
+
 echo "Starting supervisor"
 supervisord -c /etc/supervisor/supervisord.conf
