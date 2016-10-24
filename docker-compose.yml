@@ -39,7 +39,6 @@ services:
     container_name: test-api
     ports: ["5000:8008"]
     environment:
-      PATRONI_SCOPE: test-cluster-scope
       PORT: 8008
       ETCD_HOST_PORT: ${DOCKER_HOST_IP}:4001
       AWS_ACCESS_KEY_ID: ~
