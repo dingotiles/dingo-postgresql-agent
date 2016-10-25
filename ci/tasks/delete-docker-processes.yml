@@ -13,12 +13,7 @@ params:
   MACHINE_EXPORT_AWS_REGION:
   MACHINE_EXPORT_AWS_BUCKET:
   MACHINE_NAME: dingo-postgresql-agent-pipeline
-  AWS_ACCESS_KEY_ID:
-  AWS_SECRET_ACCESS_KEY:
-  AWS_REGION:
-  WALE_S3_ENDPOINT:
-  WAL_S3_BUCKET:
 
 run:
   path: /entrypoint.sh
-  args: [delmo, --only-build-task, -f, agent-ci/delmo.yml, -m, dingo-postgresql-agent-pipeline]
+  args: [/agent-ci/tasks/delete-docker-processes.sh]
