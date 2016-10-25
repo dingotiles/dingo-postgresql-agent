@@ -24,7 +24,7 @@ How to run:
 USAGE
 echo "    -e DINGO_CLUSTER=${sample_cluster_name} \\"
 cat <<'USAGE'
-    dingotiles/dingo-postgresql:latest
+    dingotiles/dingo-postgresql
 
 How to get direct PostgreSQL URI:
 
