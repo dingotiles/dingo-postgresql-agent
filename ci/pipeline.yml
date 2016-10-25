@@ -21,7 +21,7 @@ jobs:
   plan:
     - {get: agent}
     - {get: version, passed: [rc], trigger: true}
-    - put: pg95-image-latest
+    - put: pg95-image
       params:
         build: agent
         cache: true
@@ -30,10 +30,20 @@ jobs:
   public: true
   serial: true
   plan:
-    - {get: agent-ci}
-    - {get: agent, passed: [pg95-image]}
-    - {get: version, passed: [pg95-image], params: {bump: final}}
-    - {put: version, params: {file: version/number}}
+    - aggregate:
+      - {get: agent-ci}
+      - {get: agent, passed: [pg95-image]}
+      - {get: version, passed: [pg95-image], params: {bump: final}}
+    - put: pg95-image
+      params:
+        cache: true
+        cache_tag: latest
+        pull_tag: latest
+        build: dockerfile
+        tag: version/number
+        tag_prefix: v
+
+    # - {put: version, params: {file: version/number}}
 
 - name: major
   public: true
@@ -70,7 +80,7 @@ jobs:
   plan:
   - {get: agent-base, trigger: true}
   - {get: agent}
-  - put: pg95-base-image-latest
+  - put: pg95-base-image
     params:
       build: agent/images/postgresql95-base
       cache: true
@@ -116,7 +126,7 @@ resources:
     private_key: {{github-private-key}}
     paths: [ci/ci_image/*]
 
-- name: pg95-image-latest
+- name: pg95-image
   type: docker-image
   source:
     email: {{docker-hub-email}}
@@ -125,7 +135,7 @@ resources:
     repository: dingotiles/dingo-postgresql
     tag: latest
 
-- name: pg95-base-image-latest
+- name: pg95-base-image
   type: docker-image
   source:
     email: {{docker-hub-email}}

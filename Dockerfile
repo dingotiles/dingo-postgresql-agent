@@ -23,4 +23,4 @@ RUN set -x \
     && go install github.com/dingotiles/dingo-postgresql-agent \
     && rm -rf $GOPATH/src
 
-ENV DINGO_API_URI=https://api.dingotiles.com DINGO_IMAGE_VERSION=0.0.1
+ENV DINGO_API_URI=https://api.dingotiles.com DINGO_IMAGE_VERSION=0.0.0
