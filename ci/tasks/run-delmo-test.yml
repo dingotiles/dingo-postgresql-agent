@@ -1,0 +1,23 @@
+---
+platform: linux
+image_resource:
+  type: docker-image
+  source: { repository: bodymindarts/delmo-concourse }
+
+inputs:
+- name: agent-ci
+
+params:
+  MACHINE_EXPORT_AWS_ACCESS_KEY_ID:
+  MACHINE_EXPORT_AWS_SECRET_ACCESS_KEY:
+  MACHINE_EXPORT_AWS_REGION:
+  MACHINE_EXPORT_AWS_BUCKET:
+  MACHINE_NAME: dingo-postgresql-pipeline
+  WAL_S3_BUCKET:
+  AWS_REGION:
+  AWS_ACCESS_KEY_ID:
+  AWS_SECRET_ACCESS_KEY:
+
+run:
+  path: /entrypoint.sh
+  args: [delmo, --only-build-task, -f, agent-ci/delmo.yml, -m, dingo-postgresql-agent-pipeline]

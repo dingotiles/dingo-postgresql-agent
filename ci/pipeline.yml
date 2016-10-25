@@ -1,7 +1,7 @@
 ---
 groups:
 - name: images
-  jobs: [rc, pg95-image, shipit, minor, major, patch, docker-machine-setup]
+  jobs: [rc, pg95-image, test-pg95, shipit, minor, major, patch, docker-machine-setup]
 - name: base-images
   jobs: [pg95-base-image]
 - name: ci-image
@@ -15,7 +15,7 @@ jobs:
     - {get: version, params: {pre: rc}}
     - {put: version, params: {file: version/number}}
 
-- name: pg95-image
+- name: build-image
   public: true
   serial: true
   plan:
@@ -25,6 +25,32 @@ jobs:
       params:
         build: agent
         cache: true
+        tag: pre-test
+
+- name: test-image
+  serial_groups: [delmo]
+  plan:
+  - aggregate:
+    - {get: agent-ci}
+    - {get: pg95-image, passed: [build-image], trigger: true, params: {skip_download: true}}
+    - {get: version, passed: [build-image]}
+  - task: run-delmo-test
+    file: agent-ci/ci/tasks/run-delmo-test.yml
+    params:
+      MACHINE_EXPORT_AWS_ACCESS_KEY_ID: {{docker-machine-access-key-id}}
+      MACHINE_EXPORT_AWS_SECRET_ACCESS_KEY: {{docker-machine-secret-access-key}}
+      MACHINE_EXPORT_AWS_REGION: {{docker-machine-region}}
+      MACHINE_EXPORT_AWS_BUCKET: {{docker-machine-bucket}}
+      WAL_S3_BUCKET: {{backups-testflight-backups-bucket}}
+      AWS_REGION: {{delmo-test-wal-aws-region}}
+      AWS_ACCESS_KEY_ID: {{dingotiles-aws-access}}
+      AWS_SECRET_ACCESS_KEY: {{dingotiles-aws-secret}}
+  - put: pg95-image
+    params:
+      pull_repository: dingotiles/dingo-postgresql
+      pull_tag: pre-test
+      cache: true
+      tag: tested
 
 - name: shipit
   public: true
@@ -32,8 +58,8 @@ jobs:
   plan:
     - aggregate:
       - {get: agent-ci}
-      - {get: agent, passed: [pg95-image]}
-      - {get: version, passed: [pg95-image], params: {bump: final}}
+      - {get: agent, passed: [test-image]}
+      - {get: version, passed: [test-image], params: {bump: final}}
     - task: dockerfile-versioned
       file: agent-ci/ci/tasks/dockerfile-versioned.yml
     - put: pg95-image
