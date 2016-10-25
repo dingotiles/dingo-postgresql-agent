@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -e -u
 
 expected_number_of_nodes=${1}
 

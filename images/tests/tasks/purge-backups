@@ -2,6 +2,12 @@
 
 set -e -u
 
+: ${AWS_ACCESS_KEY_ID:?required}
+: ${AWS_SECRET_ACCESS_KEY:?required}
+: ${AWS_REGION:?required}
+: ${WAL_S3_BUCKET:?required}
+: ${PATRONI_SCOPE:?required}
+
 echo "Deleting all backups for cluster '${PATRONI_SCOPE}'..."
 region=$(aws s3api get-bucket-location --bucket ${WAL_S3_BUCKET} | jq -r '.LocationConstraint')
 if [[ ${region} != 'null' ]]; then

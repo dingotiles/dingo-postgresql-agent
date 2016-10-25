@@ -1,4 +1,5 @@
 #!/bin/bash
 
-set -x
+set -x -u
+
 curl -XDELETE "http://${ETCD_HOST_PORT}/v2/keys/service/${PATRONI_SCOPE}?dir=true&recursive=true"
