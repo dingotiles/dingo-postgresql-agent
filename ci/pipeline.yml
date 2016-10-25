@@ -34,6 +34,8 @@ jobs:
       - {get: agent-ci}
       - {get: agent, passed: [pg95-image]}
       - {get: version, passed: [pg95-image], params: {bump: final}}
+    - task: dockerfile-versioned
+      file: agent-ci/ci/tasks/dockerfile-versioned.yml
     - put: pg95-image
       params:
         cache: true
