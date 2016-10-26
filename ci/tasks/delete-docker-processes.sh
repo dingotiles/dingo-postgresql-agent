@@ -3,11 +3,10 @@
 set -e -u
 
 DOCKER_VERSION=1.12.2
-mkdir /tmp/
-curl -L https://get.docker.com/builds/Linux/x86_64/docker-${DOCKER_VERSION}.tgz -o /tmp/docker-${DOCKER_VERSION}.tgz
-tar xfz /tmp/docker-${DOCKER_VERSION}.tgz /tmp/
-mv /tmp/docker/docker /usr/local/bin/
-rm -rf /tmp/docker
+curl -L https://get.docker.com/builds/Linux/x86_64/docker-${DOCKER_VERSION}.tgz -o docker-${DOCKER_VERSION}.tgz
+tar xfz docker-${DOCKER_VERSION}.tgz
+mv docker/docker /usr/local/bin/
+rm -rf docker
 
 docker ps -a
 
