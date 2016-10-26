@@ -8,11 +8,11 @@ inputs:
 - name: agent-ci
 
 params:
+  MACHINE_NAME: dingo-postgresql-agent-pipeline
   MACHINE_EXPORT_AWS_ACCESS_KEY_ID:
   MACHINE_EXPORT_AWS_SECRET_ACCESS_KEY:
   MACHINE_EXPORT_AWS_REGION:
   MACHINE_EXPORT_AWS_BUCKET:
-  MACHINE_NAME: dingo-postgresql-agent-pipeline
 
 run:
   path: /entrypoint.sh
