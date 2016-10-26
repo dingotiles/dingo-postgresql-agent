@@ -62,14 +62,12 @@ jobs:
     - aggregate:
       - {get: agent-ci}
       - {get: agent, passed: [test-image]}
+      - {get: image, resource: pg95-image, passed: [test-image], params: {skip_download: true}}
       - {get: version, passed: [test-image], params: {bump: final}}
     - task: dockerfile-versioned
       file: agent-ci/ci/tasks/dockerfile-versioned.yml
     - put: pg95-image
       params:
-        cache: true
-        cache_tag: tested
-        pull_tag: tested
         build: dockerfile
         tag: version/number
         tag_prefix: v

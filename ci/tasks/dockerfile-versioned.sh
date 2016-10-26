@@ -2,9 +2,10 @@
 
 set -e -u
 
-VERSION=$(cat version/number)
+version=$(cat version/number)
+image_id=$(cat image/image-id)
 
 cat > dockerfile/Dockerfile << EOF
-FROM dingotiles/dingo-postgresql:tested
+FROM dingotiles/dingo-postgresql:${image_id}
 ENV DINGO_IMAGE_VERSION=${VERSION}
 EOF
