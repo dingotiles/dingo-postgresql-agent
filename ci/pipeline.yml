@@ -68,8 +68,8 @@ jobs:
     - put: pg95-image
       params:
         cache: true
-        cache_tag: latest
-        pull_tag: latest
+        cache_tag: tested
+        pull_tag: tested
         build: dockerfile
         tag: version/number
         tag_prefix: v
