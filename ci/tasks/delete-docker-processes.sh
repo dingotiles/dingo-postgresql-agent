@@ -8,6 +8,8 @@ tar xfz docker-${DOCKER_VERSION}.tgz
 mv docker/docker /usr/local/bin/
 rm -rf docker
 
+eval $(docker-machine env $MACHINE_NAME)
+
 docker ps -a
 
 docker ps -a | awk '{print $1}' | xargs -L1 docker rm -f
