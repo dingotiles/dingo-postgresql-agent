@@ -3,9 +3,9 @@
 set -e -u
 
 version=$(cat version/number)
-image_id=$(cat image/image-id)
+digest=$(cat image/digest)
 
 cat > dockerfile/Dockerfile << EOF
-FROM dingotiles/dingo-postgresql:${image_id}
+FROM dingotiles/dingo-postgresql@${digest}
 ENV DINGO_IMAGE_VERSION=${VERSION}
 EOF
