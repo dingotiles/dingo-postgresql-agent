@@ -16,4 +16,4 @@ params:
 
 run:
   path: /entrypoint.sh
-  args: [agent-ci/ci/tasks/delete-docker-processes.sh]
+  args: [./agent-ci/ci/tasks/delete-docker-processes.sh]
