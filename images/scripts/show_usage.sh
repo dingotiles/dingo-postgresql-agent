@@ -15,11 +15,11 @@ Dingo PostgreSQL continuously archived from Day 1.
 
 How to run:
 
-  PUBLIC_PORT=5000
   docker run -d \
     --name dingo-postgresql \
     -e DOCKER_HOST_IP=${DOCKER_HOST_IP:?required} \
-    -e DOCKER_HOST_PORT_5432=${PUBLIC_PORT} -p ${PUBLIC_PORT}:5432 \
+    -e DOCKER_HOST_PORT_5432=${PUBLIC_PORT:-5000} \
+    -p ${PUBLIC_PORT:-5000}:5432 \
     -e DINGO_ORG_TOKEN=global-org \
 USAGE
 echo "    -e DINGO_CLUSTER=${sample_cluster_name} \\"
