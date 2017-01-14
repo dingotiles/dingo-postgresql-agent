@@ -103,7 +103,7 @@ RUN set -x \
 # waiting for v1.2
 ENV PATRONI_VERSION=4a91558bf6b0d6b68b747836e5235f5b7e2d2beb
 RUN set -x \
-    && https://github.com/zalando/patroni/archive/$PATRONI_VERSION.tar.gz -o /tmp/patroni-${PATRONI_VERSION}.tar.gz \
+    && curl -sL https://github.com/zalando/patroni/archive/$PATRONI_VERSION.tar.gz -o /tmp/patroni-${PATRONI_VERSION}.tar.gz \
     && tar xfz /tmp/patroni-${PATRONI_VERSION}.tar.gz \
     && mv /patroni-${PATRONI_VERSION} /patroni \
     && pip3 install --no-cache-dir -r /patroni/requirements.txt --upgrade \
