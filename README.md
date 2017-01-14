@@ -41,7 +41,7 @@ The project includes a sample `docker-compose.yml` to run a sample cluster of an
 
 ```
 DOCKER_HOST_IP=$(docker-machine ip <machine-name>)
-docker-compose up test-api patroni1
+docker-compose up --abort-on-container-exit test-api patroni1
 ```
 
 To clear out all backups from all clusters after testing/playtime:
@@ -59,13 +59,13 @@ To build:
 
 ```
 docker build -t dingotiles/dingo-postgresql95-agent-base:latest images/postgresql95-base
-docker build -t dingotiles/dingo-postgresql:latest .
+docker build -t dingotiles/dingo-postgresql:pre-test .
 ```
 
 Sanity check:
 
 ```
-image=dingotiles/dingo-postgresql96-agent:latest
+image=dingotiles/dingo-postgresql95-agent:latest
 $ docker run -ti $image dingo-postgresql-agent --version
 dingo-postgresql-agent version 0.1.0
 
