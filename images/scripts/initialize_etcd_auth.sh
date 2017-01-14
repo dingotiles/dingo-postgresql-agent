@@ -22,5 +22,9 @@ if [[ "${ETCD_PASSWORD}X" != "X" ]]; then
   curl -s -u ${ETCD_USERNAME:-root}:${ETCD_PASSWORD:?required} ${ETCD_HOST_PORT}/v2/auth/users
 else
   echo "Verifying that no credentials are required..."
-  curl -s ${ETCD_HOST_PORT}/v2/auth/enable
+  curl -v ${ETCD_HOST_PORT}/v2/keys
+  if [[ "$(curl -s ${ETCD_HOST_PORT}/v2/auth/users |  jq -r .message)" == "Insufficient credentials" ]]; then
+    echo "Etcd credentials are required"
+    exit 1
+  fi
 fi
