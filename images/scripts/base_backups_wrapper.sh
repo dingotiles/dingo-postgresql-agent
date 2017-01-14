@@ -34,7 +34,6 @@ function base_backups {
   # NOTE: env vars printed also ensures they are set (set -u)
   echo PATRONI_SCOPE: ${PATRONI_SCOPE}
   echo PG_DATA_DIR: ${PG_DATA_DIR}
-  echo ETCD_HOST_PORT: ${ETCD_HOST_PORT}
   echo WALE_S3_PREFIX: ${WALE_S3_PREFIX}
   echo WAL_S3_BUCKET: ${WAL_S3_BUCKET}
 

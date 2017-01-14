@@ -16,6 +16,11 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PG_DATA_DIR=${DATA_VOLUME}/postgres0
 patroni_env=/etc/patroni.d/.envrc
 
+ETCD_AUTH=
+if [[ "${ETCD_PASSWORD:-}X" != "X" ]]; then
+  ETCD_AUTH=" -u${ETCD_USERNAME:-root}:${ETCD_PASSWORD}"
+fi
+
 function wait_for_config {
   # TODO: wait for "supervisorctl status agent" to be RUNNING
   # wait for /config/patroni.yml to ensure that all variables stored in /etc/wal-e.d/env files
@@ -30,7 +35,7 @@ function wait_for_config {
 }
 
 function backups_summary {
-  curl -s ${ETCD_HOST_PORT}/v2/keys/service/${PATRONI_SCOPE}/wale-backup-list \
+  curl -s ${ETCD_AUTH} ${ETCD_HOST_PORT}/v2/keys/service/${PATRONI_SCOPE}/wale-backup-list \
     -X PUT -d "value=$(wal-e backup-list 2>/dev/null)" > /dev/null
   backup_lines=$(wal-e backup-list 2>/dev/null | wc -l)
   if [[ $backup_lines -ge 2 ]]; then

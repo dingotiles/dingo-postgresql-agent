@@ -15,6 +15,11 @@ wale_env_dir=/etc/wal-e.d/env
 patroni_config=/config/patroni.yml
 patroni_env=/etc/patroni.d/.envrc
 
+ETCD_AUTH=
+if [[ "${ETCD_PASSWORD:-}X" != "X" ]]; then
+  ETCD_AUTH=" -u${ETCD_USERNAME:-root}:${ETCD_PASSWORD}"
+fi
+
 function wait_for_config {
   # wait for /config/patroni.yml to ensure that all variables stored in /etc/wal-e.d/env files
   wait_message="WARN: Waiting until ${patroni_env} and ${patroni_config} are created..."
@@ -73,6 +78,7 @@ function wait_for_config {
   echo PATRONI_SCOPE: ${PATRONI_SCOPE}
   echo PG_DATA_DIR: ${PG_DATA_DIR}
   echo ETCD_HOST_PORT: ${ETCD_HOST_PORT}
+  echo ETCD_USERNAME: ${ETCD_USERNAME}
   echo WALE_S3_PREFIX: ${WALE_S3_PREFIX}
   echo WAL_S3_BUCKET: ${WAL_S3_BUCKET}
 
