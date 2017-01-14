@@ -65,15 +65,15 @@ docker build -t dingotiles/dingo-postgresql:pre-test .
 Sanity check:
 
 ```
-image=dingotiles/dingo-postgresql95-agent:latest
-$ docker run -ti $image dingo-postgresql-agent --version
+$ image=dingotiles/dingo-postgresql:pre-test
+$ docker run -ti $image dingo-postgresql --version
 dingo-postgresql-agent version 0.1.0
 
 $ docker run -ti $image postgres --version
-postgres (PostgreSQL) 9.6.0
+postgres (PostgreSQL) 9.5.4
 ```
 
-See images/pg96-base/README.md for additional sanity checking of contents.
+See images/postgresql95-base/README.md for additional sanity checking of contents.
 
 ## Tests
 
