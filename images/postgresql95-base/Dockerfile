@@ -92,14 +92,22 @@ RUN set -x \
       && mv /tmp/etcd-v${ETCD_VERSION}-linux-amd64/etcdctl /usr/local/bin \
       && rm -rf /tmp/etcd*
 
-ENV PATRONI_VERSION=1.1
+# ENV PATRONI_VERSION=1.1
+# RUN set -x \
+#     && curl -sL https://github.com/zalando/patroni/archive/v${PATRONI_VERSION}.tar.gz -o /tmp/patroni-${PATRONI_VERSION}.tar.gz \
+#     && tar xfz /tmp/patroni-${PATRONI_VERSION}.tar.gz \
+#     && mv /patroni-${PATRONI_VERSION} /patroni \
+#     && pip3 install --no-cache-dir -r /patroni/requirements.txt --upgrade \
+#     && rm -rf /root/.cache /tmp/*
+
+# waiting for v1.2
+ENV PATRONI_VERSION=4a91558bf6b0d6b68b747836e5235f5b7e2d2beb
 RUN set -x \
-    && curl -sL https://github.com/zalando/patroni/archive/v${PATRONI_VERSION}.tar.gz -o /tmp/patroni-${PATRONI_VERSION}.tar.gz \
+    && https://github.com/zalando/patroni/archive/$PATRONI_VERSION.tar.gz -o /tmp/patroni-${PATRONI_VERSION}.tar.gz \
     && tar xfz /tmp/patroni-${PATRONI_VERSION}.tar.gz \
     && mv /patroni-${PATRONI_VERSION} /patroni \
     && pip3 install --no-cache-dir -r /patroni/requirements.txt --upgrade \
     && rm -rf /root/.cache /tmp/*
-#    && echo "pytz" >> /patroni/requirements.txt \
 
 ENV SPRUCE_VERSION=1.8.7
 RUN set -x \
