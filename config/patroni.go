@@ -107,6 +107,7 @@ type PatroniV11Specification struct {
 
 var defaultPatroniSpec *PatroniV11Specification
 
+// BuildPatroniSpec merges cluster config with defaults
 func BuildPatroniSpec(clusterSpec *ClusterSpecification, hostDiscoverySpec *HostDiscoverySpecification) (patroniSpec *PatroniV11Specification, err error) {
 	patroniSpec, err = DefaultPatroniSpec()
 	if err != nil {
@@ -116,6 +117,7 @@ func BuildPatroniSpec(clusterSpec *ClusterSpecification, hostDiscoverySpec *Host
 	return
 }
 
+// DefaultPatroniSpec provides default patroni v1.1 config
 func DefaultPatroniSpec() (*PatroniV11Specification, error) {
 	if defaultPatroniSpec == nil {
 		filename, err := filepath.Abs(APISpec().PatroniDefaultPath)
@@ -135,6 +137,7 @@ func DefaultPatroniSpec() (*PatroniV11Specification, error) {
 	return defaultPatroniSpec, nil
 }
 
+// MergeClusterSpec builds patroni v1.1 config specification
 func (patroniSpec *PatroniV11Specification) MergeClusterSpec(clusterSpec *ClusterSpecification, hostDiscoverySpec *HostDiscoverySpecification) {
 	appuserName := clusterSpec.Postgresql.Appuser.Username
 	replicationUsername := appuserName
@@ -166,6 +169,7 @@ func (patroniSpec *PatroniV11Specification) String() string {
 	return string(bytes[:])
 }
 
+// CreateConfigFile creates a config file from patroni specification
 func (patroniSpec *PatroniV11Specification) CreateConfigFile(path string) (err error) {
 	data, err := yaml.Marshal(patroniSpec)
 	if err != nil {
@@ -179,6 +183,7 @@ func (patroniSpec *PatroniV11Specification) CreateConfigFile(path string) (err e
 	return
 }
 
+// CreateURIFile creates a file containing superuser URI
 func (patroniSpec *PatroniV11Specification) CreateURIFile(createPath string) (err error) {
 	err = os.MkdirAll(path.Dir(createPath), 0755)
 	if err != nil {
