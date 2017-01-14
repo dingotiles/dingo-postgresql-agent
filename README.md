@@ -26,7 +26,7 @@ docker run -ti \
 You can poll to check when PostgreSQL is running and is successfully continuously archiving itself:
 
 ```
-uri=postgres://superuser:password@${DOCKER_HOST_IP}:5000/postgres
+uri=postgres://superuser-username:superuser-password@${DOCKER_HOST_IP}:5000/postgres
 psql $url -c "SELECT current_database();"
 ```
 

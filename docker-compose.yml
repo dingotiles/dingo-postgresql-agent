@@ -39,6 +39,8 @@ services:
     environment:
       PORT: 8008
       ETCD_HOST_PORT: ${DOCKER_HOST_IP}:4001
+      ETCD_HOST_USERNAME: root
+      ETCD_HOST_PASSWORD: password
       AWS_ACCESS_KEY_ID: ~
       AWS_SECRET_ACCESS_KEY: ~
       WAL_S3_BUCKET: ~
