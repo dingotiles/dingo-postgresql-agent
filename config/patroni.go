@@ -24,7 +24,10 @@ type PatroniV11Specification struct {
 		ConnectAddress string `yaml:"connect_address"`
 	} `yaml:"restapi"`
 	Etcd struct {
-		Host string `yaml:"host"`
+		Host     string `yaml:"host"`
+		Protocol string `yaml:"protocol"`
+		Username string `yaml:"username"`
+		Password string `yaml:"password"`
 	} `yaml:"etcd"`
 	Bootstrap struct {
 		Dcs struct {
@@ -136,6 +139,9 @@ func (patroniSpec *PatroniV11Specification) MergeClusterSpec(clusterSpec *Cluste
 	appuserName := clusterSpec.Postgresql.Appuser.Username
 	replicationUsername := appuserName
 	patroniSpec.Etcd.Host = clusterSpec.Etcd.URI
+	patroniSpec.Etcd.Protocol = clusterSpec.Etcd.Protocol
+	patroniSpec.Etcd.Username = clusterSpec.Etcd.Username
+	patroniSpec.Etcd.Password = clusterSpec.Etcd.Password
 	patroniSpec.Scope = clusterSpec.Cluster.Scope
 	patroniSpec.Name = clusterSpec.Cluster.Name
 	patroniSpec.Bootstrap.PgHba = []string{

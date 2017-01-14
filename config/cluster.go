@@ -22,7 +22,10 @@ type ClusterSpecification struct {
 		Scope string `json:"scope"`
 	} `json:"cluster"`
 	Etcd struct {
-		URI string `json:"uri"`
+		URI      string `json:"uri"`
+		Protocol string `yaml:"protocol"`
+		Username string `yaml:"username"`
+		Password string `yaml:"password"`
 	} `json:"etcd"`
 	Postgresql struct {
 		Admin struct {
