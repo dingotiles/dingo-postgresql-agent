@@ -25,9 +25,15 @@ type PatroniV11Specification struct {
 	} `yaml:"restapi"`
 	Etcd struct {
 		Host     string `yaml:"host"`
-		Protocol string `yaml:"protocol"`
-		Username string `yaml:"username"`
-		Password string `yaml:"password"`
+		URL      string `yaml:"url,omitempty"`
+		Protocol string `yaml:"protocol,omitempty"`
+		Username string `yaml:"username,omitempty"`
+		Password string `yaml:"password,omitempty"`
+		Cacert   string `yaml:"cacert,omitempty"`
+		Cert     string `yaml:"cert,omitempty"`
+		Key      string `yaml:"key,omitempty"`
+		Srv      string `yaml:"srv,omitempty"`
+		Proxy    string `yaml:"proxy,omitempty"`
 	} `yaml:"etcd"`
 	Bootstrap struct {
 		Dcs struct {
