@@ -10,8 +10,8 @@ This container is managed by supervisord, when stopping/starting services use su
 
 Examples:
 
-supervisorctl stop patroni
-supervisorctl restart patroni
+supervisorctl stop all
+supervisorctl restart agent
 
 Current status: (supervisorctl status)
 

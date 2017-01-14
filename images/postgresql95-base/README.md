@@ -30,7 +30,7 @@ Sanity check of installed tools:
 $ image=dingotiles/dingo-postgresql96-agent-base:latest
 
 $ docker run -ti $image postgres --version
-postgres (PostgreSQL) 9.6.0
+postgres (PostgreSQL) 9.5.4
 $ docker run -ti $image psql --version
 psql (PostgreSQL) 9.5.4
 $ docker run -ti $image jq --version
