@@ -6,6 +6,7 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
+// HostDiscoverySpecification describes the host machine's ports mapped into this agent's container
 type HostDiscoverySpecification struct {
 	IP       string `required:"true" envconfig:"docker_host_ip"`
 	Port5432 string `default:"5432" envconfig:"docker_host_port_5432"`
@@ -14,6 +15,9 @@ type HostDiscoverySpecification struct {
 
 var hostDiscoverySpec *HostDiscoverySpecification
 
+// HostDiscoverySpec discovers the host machine's ports mapped into this agent's container
+// from env vars that prefix with DOCKER_HOST_
+// E.g. DOCKER_HOST_IP, DOCKER_HOST_PORT_5432, DOCKER_HOST_PORT_8008
 func HostDiscoverySpec() *HostDiscoverySpecification {
 	if hostDiscoverySpec == nil {
 		hostDiscoverySpec = &HostDiscoverySpecification{}

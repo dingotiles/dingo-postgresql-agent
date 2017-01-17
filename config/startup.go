@@ -6,6 +6,7 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
+// APISpecification configures access to the central API
 type APISpecification struct {
 	ImageVersion            string `required:"true" envconfig:"image_version"`
 	ClusterName             string `required:"true" envconfig:"cluster"`
@@ -17,6 +18,8 @@ type APISpecification struct {
 
 var apiSpec *APISpecification
 
+// APISpec creates an APISpecification from environment variables prefixed with DINGO
+// E.g. DINGO_IMAGE_VERSION=1.1 is placed in APISpecification{ImageVersion: "1.1"}
 func APISpec() *APISpecification {
 	if apiSpec == nil {
 		apiSpec = &APISpecification{}
