@@ -63,6 +63,7 @@ func createPatroniPostgresConfigFiles(clusterSpec *config.ClusterSpecification, 
 
 	environ := config.NewEnvironFromStrings(clusterSpec.WaleEnv)
 	if clusterSpec.UsingWale() {
+		fmt.Println("Configuring continuous archives via wal-e")
 		waleEnvDir := path.Join(rootPath, "/etc/wal-e.d/env")
 		err = os.RemoveAll(waleEnvDir)
 		if err != nil {
@@ -75,6 +76,10 @@ func createPatroniPostgresConfigFiles(clusterSpec *config.ClusterSpecification, 
 		if err != nil {
 			return errwrap.Wrapf("Cannot create /etc/wal-e.d/env files: {{err}}", err)
 		}
+	} else if clusterSpec.UsingRsync() {
+		fmt.Println("Configuring continuous archives via rsync")
+	} else {
+		return fmt.Errorf("agent must be provided with wale_env or rsync_archives from API")
 	}
 
 	err = environ.CreateEnvScript(path.Join(rootPath, "/etc/patroni.d/.envrc"), postgresUser)

@@ -9,7 +9,7 @@ RUN set -x \
       && echo "@edge http://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
       && apk add --no-cache --update pstree@edge
 
-COPY config/patroni-default-values.yml /patroni/patroni-default-values.yml
+COPY config/patroni-wale-default-values.yml /patroni/patroni-default-values.yml
 COPY images/motd /etc/motd
 RUN echo "source /etc/motd" >> /root/.bashrc
 RUN echo "[[ -f /etc/patroni.d/.envrc ]] && source /etc/patroni.d/.envrc" >> /root/.bashrc
