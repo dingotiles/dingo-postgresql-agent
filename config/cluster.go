@@ -16,6 +16,7 @@ type ContainerStartupRequest struct {
 	OrgAuthToken string `json:"org_token"`
 }
 
+// ClusterSpecification describes the cluster configuration provided by central API
 type ClusterSpecification struct {
 	Cluster struct {
 		Name  string `json:"name"`
@@ -45,6 +46,7 @@ type ClusterSpecification struct {
 
 // TODO: POST ClusterName & OrgAuthToken to API
 
+// FetchClusterSpec retrieves the new/existing configuration for a cluster from central API
 func FetchClusterSpec() (cluster *ClusterSpecification, err error) {
 	apiSpec := APISpec()
 	apiClusterSpec := fmt.Sprintf("%s/api", apiSpec.APIURI)
