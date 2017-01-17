@@ -2,8 +2,7 @@
 
 set -e -x
 
-cd $GOPATH
-tree .
+export GOPATH=$PWD/gopath
 
 cd $GOPATH/src/github.com/dingotiles/dingo-postgresql-agent
 
