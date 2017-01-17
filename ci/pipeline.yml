@@ -1,17 +1,25 @@
 ---
 groups:
 - name: images
-  jobs: [rc, build-image, test-image, shipit, minor, major, patch, docker-machine-setup]
+  jobs: [test-agent, rc, build-image, test-image, shipit, minor, major, patch, docker-machine-setup]
 - name: base-images
   jobs: [pg95-base-image]
 - name: ci-image
   jobs: [build-task-image]
 
 jobs:
+- name: test-agent
+  public: true
+  plan:
+    - {get: agent, trigger: true}
+    - {get: agent-ci}
+    - task: test-agent
+      file: agent-ci/ci/tasks/test-agent.yml
+
 - name: rc
   public: true
   plan:
-    - {get: agent}
+    - {get: agent, passed: [test-agent]}
     - {get: version, params: {pre: rc}}
     - {put: version, params: {file: version/number}}
 
