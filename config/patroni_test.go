@@ -11,7 +11,7 @@ func TestPatroni_(t *testing.T) {
 	os.Setenv("DOCKER_HOST_IP", "10.11.12.13")
 	os.Setenv("DOCKER_HOST_PORT_5432", "5000")
 
-	patroniSpec := &PatroniV11Specification{}
+	patroniSpec := &PatroniV12Specification{}
 	patroniSpec.Postgresql.Authentication.Superuser.Username = "username"
 	patroniSpec.Postgresql.Authentication.Superuser.Password = "password"
 	uriFile := "/tmp/test_patroni/config/uri"
