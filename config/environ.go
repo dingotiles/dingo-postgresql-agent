@@ -21,12 +21,13 @@ type Environ map[string]string
 func NewEnvironFromStrings(envvars []string) (environ *Environ) {
 	environ = &Environ{}
 	for _, envvar := range envvars {
-		environ.addEnv(envvar)
+		environ.AddEnv(envvar)
 	}
 	return
 }
 
-func (environ *Environ) addEnv(envvar string) {
+// AddEnv adds an addition KEY=VALUE pair
+func (environ *Environ) AddEnv(envvar string) {
 	if !strings.Contains(envvar, "=") {
 		fmt.Fprintf(os.Stderr, "Format error for env var '%s', must be 'KEY=VALUE'", envvar)
 		return
