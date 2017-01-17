@@ -24,9 +24,9 @@ type ClusterSpecification struct {
 	} `json:"cluster"`
 	Etcd struct {
 		URI      string `json:"uri"`
-		Protocol string `yaml:"protocol"`
-		Username string `yaml:"username"`
-		Password string `yaml:"password"`
+		Protocol string `json:"protocol"`
+		Username string `json:"username"`
+		Password string `json:"password"`
 	} `json:"etcd"`
 	Postgresql struct {
 		Admin struct {
@@ -41,7 +41,14 @@ type ClusterSpecification struct {
 			Username string `json:"username"`
 		} `json:"superuser"`
 	} `json:"postgresql"`
-	WaleEnv []string `json:"wale_env"`
+	WaleEnv       []string `json:"wale_env"`
+	RsyncArchives struct {
+		Hostname             string `json:"hostname"`
+		Username             string `json:"username"`
+		SSHPort              string `json:"ssh_port"`
+		DestinationDirectory string `json:"dest_dir"`
+		PrivateKey           string `json:"private_key"`
+	} `json:"rsync_archives"`
 }
 
 // TODO: POST ClusterName & OrgAuthToken to API
@@ -75,4 +82,14 @@ func FetchClusterSpec() (cluster *ClusterSpecification, err error) {
 	json.Unmarshal(body, &cluster)
 
 	return
+}
+
+// UsingWale summarizes whether central API wants patroni to be configured for wal-e to ship backups/WAL
+func (cluster *ClusterSpecification) UsingWale() bool {
+	return len(cluster.WaleEnv) > 0
+}
+
+// UsingRsync summarizes whether central API wants patroni to be configured for rysnc ship backups/WAL to remote host
+func (cluster *ClusterSpecification) UsingRsync() bool {
+	return cluster.RsyncArchives.Hostname != ""
 }

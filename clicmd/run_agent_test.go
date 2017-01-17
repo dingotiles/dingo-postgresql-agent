@@ -15,7 +15,7 @@ func TestRunAgent_createPatroniPostgresConfigFiles(t *testing.T) {
 	os.Setenv("DINGO_CLUSTER", "test-cluster")
 	os.Setenv("DINGO_ORG_TOKEN", "test-org-token")
 	os.Setenv("DINGO_API_URI", "localhost:3000")
-	os.Setenv("DINGO_PATRONI_DEFAULT_PATH", "../config/patroni-default-values.yml")
+	os.Setenv("DINGO_PATRONI_DEFAULT_PATH", "../config/patroni-wale-default-values.yml")
 	os.Setenv("DOCKER_HOST_IP", "10.11.12.13")
 	os.Setenv("DOCKER_HOST_PORT_5432", "5000")
 	os.Setenv("DOCKER_HOST_PORT_8008", "8000")
