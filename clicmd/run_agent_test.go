@@ -20,9 +20,10 @@ func TestRunAgent_createPatroniPostgresConfigFiles(t *testing.T) {
 	os.Setenv("DOCKER_HOST_PORT_5432", "5000")
 	os.Setenv("DOCKER_HOST_PORT_8008", "8000")
 
-	clusterSpec := &config.ClusterSpecification{
-		WaleEnv: []string{"WAL_S3_BUCKET=test-bucket"},
-	}
+	clusterSpec := &config.ClusterSpecification{}
+	clusterSpec.WaleEnv = []string{"WAL_S3_BUCKET=test-bucket"}
+	clusterSpec.Postgresql.Appuser.Username = "appuser"
+
 	err := createPatroniPostgresConfigFiles(clusterSpec, "/tmp/run_agent_test", "")
 	if err != nil {
 		t.Fatalf("createPatroniPostgresConfigFiles should not error; returned %s", err)

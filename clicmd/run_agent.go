@@ -56,28 +56,32 @@ func RunAgent(c *cli.Context) {
 func createPatroniPostgresConfigFiles(clusterSpec *config.ClusterSpecification, rootPath string, postgresUser string) (err error) {
 	fmt.Println(*clusterSpec)
 
-	waleEnvDir := path.Join(rootPath, "/etc/wal-e.d/env")
-	err = os.RemoveAll(waleEnvDir)
+	patroniSpec, err := config.BuildPatroniSpec(clusterSpec, config.HostDiscoverySpec())
 	if err != nil {
-		return errwrap.Wrapf("Cannot delete /etc/wal-e.d/env directory: {{err}}", err)
+		return errwrap.Wrapf("Cannot BuildPatroniSpec: {{err}}", err)
 	}
-	environ := config.NewEnvironFromStrings(clusterSpec.WaleEnv)
-	environ.AddEnv(fmt.Sprintf("REPLICATION_USER=%s", clusterSpec.Postgresql.Appuser.Username))
-	environ.AddEnv("PG_DATA_DIR=/data/postgres0")
 
-	err = environ.CreateEnvDirFiles(waleEnvDir)
-	if err != nil {
-		return errwrap.Wrapf("Cannot create /etc/wal-e.d/env files: {{err}}", err)
+	environ := config.NewEnvironFromStrings(clusterSpec.WaleEnv)
+	if clusterSpec.UsingWale() {
+		waleEnvDir := path.Join(rootPath, "/etc/wal-e.d/env")
+		err = os.RemoveAll(waleEnvDir)
+		if err != nil {
+			return errwrap.Wrapf("Cannot delete /etc/wal-e.d/env directory: {{err}}", err)
+		}
+		environ.AddEnv(fmt.Sprintf("REPLICATION_USER=%s", clusterSpec.Postgresql.Appuser.Username))
+		environ.AddEnv("PG_DATA_DIR=/data/postgres0")
+
+		err = environ.CreateEnvDirFiles(waleEnvDir)
+		if err != nil {
+			return errwrap.Wrapf("Cannot create /etc/wal-e.d/env files: {{err}}", err)
+		}
 	}
+
 	err = environ.CreateEnvScript(path.Join(rootPath, "/etc/patroni.d/.envrc"), postgresUser)
 	if err != nil {
 		return errwrap.Wrapf("Cannot create /etc/patroni.d/.envrc: {{err}}", err)
 	}
 
-	patroniSpec, err := config.BuildPatroniSpec(clusterSpec, config.HostDiscoverySpec())
-	if err != nil {
-		return errwrap.Wrapf("Cannot BuildPatroniSpec: {{err}}", err)
-	}
 	err = patroniSpec.CreateConfigFile(path.Join(rootPath, "/config/patroni.yml"))
 	if err != nil {
 		return errwrap.Wrapf("Cannot create patroni.yml config file: {{err}}", err)
