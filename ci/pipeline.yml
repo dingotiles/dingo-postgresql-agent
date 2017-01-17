@@ -19,7 +19,7 @@ jobs:
 - name: rc
   public: true
   plan:
-    - {get: agent, passed: [test-agent]}
+    - {get: agent, passed: [test-agent], trigger: true}
     - {get: version, params: {pre: rc}}
     - {put: version, params: {file: version/number}}
 
