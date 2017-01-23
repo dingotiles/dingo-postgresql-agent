@@ -35,9 +35,9 @@ bootstrap:
         wal_log_hints: "on"
         archive_mode: "on"
         archive_timeout: 10min
-        archive_command: "envdir /etc/wal-e.d/env wal-e wal-push \"%p\" -p 1"
+        archive_command: "/scripts/archive_command.sh \"%p\" \"%f\""
       recovery_conf:
-        restore_command: "envdir /etc/wal-e.d/env wal-e wal-fetch \"%f\" \"%p\" -p 1"
+        restore_command: "/scripts/restore_command.sh \"%p\" \"%f\""
 
   # some desired options for 'initdb'
   initdb:  # Note: It needs to be a list (some options need values, others are switches)

@@ -41,7 +41,8 @@ function wait_for_config {
     apk -vv info | sort
 
     echo "\nInstalled python3/pip3 packages":
-    ${DIR}/pip-versions.sh
+    # ${DIR}/pip-versions.sh
+    echo "TODO: re-enable pip-versions.sh"
 
   fi
 

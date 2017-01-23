@@ -62,6 +62,9 @@ func createPatroniPostgresConfigFiles(clusterSpec *config.ClusterSpecification, 
 	}
 
 	environ := config.NewEnvironFromStrings(clusterSpec.WaleEnv)
+	environ.AddEnv(fmt.Sprintf("REPLICATION_USER=%s", clusterSpec.Postgresql.Appuser.Username))
+	environ.AddEnv(fmt.Sprintf("PATRONI_SCOPE=%s", clusterSpec.Cluster.Scope))
+	environ.AddEnv("PG_DATA_DIR=/data/postgres0")
 	if clusterSpec.UsingWale() {
 		fmt.Println("Configuring continuous archives via wal-e")
 		waleEnvDir := path.Join(rootPath, "/etc/wal-e.d/env")
@@ -69,8 +72,6 @@ func createPatroniPostgresConfigFiles(clusterSpec *config.ClusterSpecification, 
 		if err != nil {
 			return errwrap.Wrapf("Cannot delete /etc/wal-e.d/env directory: {{err}}", err)
 		}
-		environ.AddEnv(fmt.Sprintf("REPLICATION_USER=%s", clusterSpec.Postgresql.Appuser.Username))
-		environ.AddEnv("PG_DATA_DIR=/data/postgres0")
 
 		err = environ.CreateEnvDirFiles(waleEnvDir)
 		if err != nil {

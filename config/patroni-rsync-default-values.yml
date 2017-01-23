@@ -35,9 +35,9 @@ bootstrap:
         wal_log_hints: "on"
         archive_mode: "on"
         archive_timeout: 10min
-        archive_command: "rsync -a %p dingo@standbyhost:/path/to/wal_archive/%f"
+        archive_command: "/scripts/archive_command.sh \"%p\" \"%f\""
       recovery_conf:
-        restore_command: "rsync -a dingo@standbyhost:/path/to/wal_archive/%f %p"
+        restore_command: "/scripts/restore_command.sh \"%p\" \"%f\""
 
   # some desired options for 'initdb'
   initdb:  # Note: It needs to be a list (some options need values, others are switches)
