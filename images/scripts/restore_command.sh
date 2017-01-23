@@ -14,7 +14,7 @@ set -e -u
 path_name_of_file_to_archive=$1 # %p
 file_name=$2                    # %f
 
-if [[ "${WALE_S3_ENDPOINT:-X}" != "X" ]]; then
+if [[ -d /etc/wal-e.d/env ]]; then
   envdir /etc/wal-e.d/env wal-e wal-fetch \"%f\" \"${}\" -p 1
 elif [[ "${RSYNC_HOSTNAME:-X}" != "X" ]]; then
   rsync -a ${RSYNC_USERNAME}@${RSYNC_HOSTNAME}:${RSYNC_DEST_DIR}/wal_archive/$file_name $path_name_of_file_to_archive
