@@ -54,6 +54,7 @@ services:
     ports: ["5000:8008"]
     environment:
       PORT: 8008
+      ETCD_URI: "http://root:password@${DOCKER_HOST_IP}:4001"
       ETCD_HOST_PORT: ${DOCKER_HOST_IP}:4001
       ETCD_PROTOCOL: http
       ETCD_USERNAME: root
@@ -89,6 +90,7 @@ services:
     image: dingotiles/dingo-pg-agent-container-tests
     environment:
       DOCKER_HOST_IP:
+      ETCD_URI: "http://root:password@${DOCKER_HOST_IP}:4001"
       ETCD_HOST_PORT: ${DOCKER_HOST_IP}:4001
       ETCD_PROTOCOL: http
       ETCD_USERNAME: root

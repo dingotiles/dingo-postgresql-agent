@@ -7,17 +7,17 @@ tests:
 - name: read-write
   before_startup: [purge-backups]
   spec:
-  - stop: [patroni2]
+  - stop: [patroni2, patroni3RsyncBackup]
   - wait: one-node-running
-  - exec: [write-value]
+  - exec: [store-value]
   - assert: [retrieve-value]
 
 - name: restoration
   before_startup: [purge-backups]
   spec:
-  - stop: [patroni2]
+  - stop: [patroni2, patroni3RsyncBackup]
   - wait: one-node-running
-  - exec: [write-value, flush-xlog-wal-archives]
+  - exec: [store-value, flush-xlog-wal-archives]
   - stop: [patroni1]
   - exec: [purge-etcd]
   - start: [patroni2]
@@ -27,7 +27,7 @@ tests:
 tasks:
 - {name: purge-backups, command: "/tasks/purge-backups"}
 - {name: one-node-running, command: "/tasks/nodes-running 1"}
-- {name: write-value, command: "/tasks/store-value testtable test-value"}
+- {name: store-value, command: "/tasks/store-value testtable test-value"}
 - {name: retrieve-value, command: "/tasks/retrieve-value testtable test-value"}
 - {name: flush-xlog-wal-archives, command: "/tasks/flush-xlog-wal-archives"}
 - {name: purge-etcd, command: "/tasks/purge-etcd"}

@@ -2,4 +2,4 @@
 
 set -x -u
 
-curl -XDELETE "http://${ETCD_HOST_PORT}/v2/keys/service/${PATRONI_SCOPE}?dir=true&recursive=true"
+curl -XDELETE "${ETCD_URI:?required}/v2/keys/service/${PATRONI_SCOPE}?dir=true&recursive=true"
