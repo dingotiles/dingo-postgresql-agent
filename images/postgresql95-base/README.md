@@ -21,7 +21,7 @@ ENV SPRUCE_VERSION=1.8.1
 To build:
 
 ```
-docker build -t dingotiles/dingo-postgresql96-agent-base:latest images/pg96-base
+docker build -t dingotiles/dingo-postgresql95-agent-base:latest images/postgresql95-base
 ```
 
 Sanity check of installed tools:
@@ -47,6 +47,8 @@ $ docker run -ti $image spruce -v
 spruce - Version 1.8.1
 $ docker run -ti $image dumb-init --version
 dumb-init v1.2.0
+$ docker run -ti $image bash -c 'echo $PATRONI_VERSION'
+1.2.3
 $ docker run -ti $image python3 /patroni/patroni.py
 Usage: /patroni/patroni.py config.yml
        	Patroni may also read the configuration from the PATRONI_CONFIGURATION environment variable
