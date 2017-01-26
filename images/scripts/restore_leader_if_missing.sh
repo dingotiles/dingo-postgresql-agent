@@ -33,6 +33,10 @@ indent() {
     echo "local database exists; no additional preparation required to restart container"
     exit 0
   fi
+
+  echo Looking up existing backups:
+  wal-e backup-list
+
   backups_lines=$(wal-e backup-list 2>/dev/null | wc -l)
   if [[ $backups_lines -lt 2 ]]; then
     echo "new cluster, no existing backup to restore"

@@ -15,7 +15,7 @@ tests:
 - name: restoration
   before_startup: [purge-backups]
   spec:
-  - stop: [patroni2, patroni3RsyncBackup]
+  - stop: [patroni2]
   - wait: one-node-running
   - exec: [store-value, flush-xlog-wal-archives]
   - stop: [patroni1]

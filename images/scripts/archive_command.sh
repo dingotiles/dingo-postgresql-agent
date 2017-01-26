@@ -19,6 +19,6 @@ if [[ -d /etc/wal-e.d/env ]]; then
 elif [[ "${RSYNC_HOSTNAME:-X}" != "X" ]]; then
   rsync -a $path_name_of_file_to_archive ${RSYNC_USERNAME}@${RSYNC_HOSTNAME}:${RSYNC_DEST_DIR}/wal_archive/$file_name
 else
-  (>&2 echo "archive_command.sh has not been provided \$WALE_S3_ENDPOINT nor \$RSYNC_HOSTNAME, exiting...")
+  (>&2 echo "archive_command.sh has not been provided /etc/wal-e.d/env nor \$RSYNC_HOSTNAME, exiting...")
   exit 1
 fi

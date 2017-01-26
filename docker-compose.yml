@@ -31,22 +31,22 @@ services:
       DOCKER_HOST_PORT_8008: 8002
       BACKUPS_SUMMARY_WAITTIME: 10
     depends_on: [etcd]
-  patroni3RsyncBackup:
-    build: .
-    image: dingotiles/dingo-postgresql:pre-test
-    container_name: patroni3RsyncBackup
-    ports: ["5003:5432", "8003:8008"]
-    environment:
-      DEBUG: 1
-      DINGO_CLUSTER: test-cluster-rsync-backup
-      DINGO_ORG_TOKEN: test-org-token
-      DINGO_API_URI: http://${DOCKER_HOST_IP}:5000/rsync-backup
-      DOCKER_HOST_IP: ${DOCKER_HOST_IP}
-      DOCKER_HOST_PORT_5432: 5003
-      DOCKER_HOST_PORT_8008: 8003
-      BACKUPS_SUMMARY_WAITTIME: 10
-    depends_on: [etcd]
-    command: ["/scripts/entry.sh"]
+  # patroni3RsyncBackup:
+  #   build: .
+  #   image: dingotiles/dingo-postgresql:pre-test
+  #   container_name: patroni3RsyncBackup
+  #   ports: ["5003:5432", "8003:8008"]
+  #   environment:
+  #     DEBUG: 1
+  #     DINGO_CLUSTER: test-cluster-rsync-backup
+  #     DINGO_ORG_TOKEN: test-org-token
+  #     DINGO_API_URI: http://${DOCKER_HOST_IP}:5000/rsync-backup
+  #     DOCKER_HOST_IP: ${DOCKER_HOST_IP}
+  #     DOCKER_HOST_PORT_5432: 5003
+  #     DOCKER_HOST_PORT_8008: 8003
+  #     BACKUPS_SUMMARY_WAITTIME: 10
+  #   depends_on: [etcd]
+  #   command: ["/scripts/entry.sh"]
   test-api:
     build: .
     image: dingotiles/dingo-postgresql:pre-test
