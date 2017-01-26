@@ -5,8 +5,8 @@ set -e -u
 table_name=$1
 value=$2
 
-leader_name=$(etcdctl --endpoint "http://${ETCD_HOST_PORT}" get /service/${PATRONI_SCOPE}/leader)
-leader_uri=$(etcdctl --endpoint "http://${ETCD_HOST_PORT}" get /service/${PATRONI_SCOPE}/members/${leader_name} | jq -r '.conn_url')
+leader_name=$(curl -sk ${ETCD_URI:?required}/v2/keys/service/${PATRONI_SCOPE}/leader | jq -r '.node.value')
+leader_uri=$(curl -sk ${ETCD_URI:?required}/v2/keys/service/${PATRONI_SCOPE}/members/${leader_name} | jq -r '.node.value' | jq -r '.conn_url')
 uri=$(echo ${leader_uri} \
   | sed "s%postgres://%postgres://${APPUSER_USERNAME}:${APPUSER_PASSWORD}@%")
 

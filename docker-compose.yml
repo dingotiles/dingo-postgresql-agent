@@ -10,7 +10,7 @@ services:
       # DEBUG: 1
       DINGO_CLUSTER: test-cluster
       DINGO_ORG_TOKEN: test-org-token
-      DINGO_API_URI: http://${DOCKER_HOST_IP}:5000
+      DINGO_API_URI: http://${DOCKER_HOST_IP}:5000/wal-e
       DOCKER_HOST_IP: ${DOCKER_HOST_IP}
       DOCKER_HOST_PORT_5432: 5432
       DOCKER_HOST_PORT_8008: 8008
@@ -25,19 +25,36 @@ services:
       # DEBUG: 1
       DINGO_CLUSTER: test-cluster
       DINGO_ORG_TOKEN: test-org-token
-      DINGO_API_URI: http://${DOCKER_HOST_IP}:5000
+      DINGO_API_URI: http://${DOCKER_HOST_IP}:5000/wal-e
       DOCKER_HOST_IP: ${DOCKER_HOST_IP}
       DOCKER_HOST_PORT_5432: 5002
       DOCKER_HOST_PORT_8008: 8002
       BACKUPS_SUMMARY_WAITTIME: 10
     depends_on: [etcd]
+  # patroni3RsyncBackup:
+  #   build: .
+  #   image: dingotiles/dingo-postgresql:pre-test
+  #   container_name: patroni3RsyncBackup
+  #   ports: ["5003:5432", "8003:8008"]
+  #   environment:
+  #     DEBUG: 1
+  #     DINGO_CLUSTER: test-cluster-rsync-backup
+  #     DINGO_ORG_TOKEN: test-org-token
+  #     DINGO_API_URI: http://${DOCKER_HOST_IP}:5000/rsync-backup
+  #     DOCKER_HOST_IP: ${DOCKER_HOST_IP}
+  #     DOCKER_HOST_PORT_5432: 5003
+  #     DOCKER_HOST_PORT_8008: 8003
+  #     BACKUPS_SUMMARY_WAITTIME: 10
+  #   depends_on: [etcd]
+  #   command: ["/scripts/entry.sh"]
   test-api:
-    # build: .
+    build: .
     image: dingotiles/dingo-postgresql:pre-test
     container_name: test-api
     ports: ["5000:8008"]
     environment:
       PORT: 8008
+      ETCD_URI: "http://root:password@${DOCKER_HOST_IP}:4001"
       ETCD_HOST_PORT: ${DOCKER_HOST_IP}:4001
       ETCD_PROTOCOL: http
       ETCD_USERNAME: root
@@ -47,6 +64,12 @@ services:
       WAL_S3_BUCKET: ~
       WALE_S3_ENDPOINT: ~
       WALE_S3_PREFIX: ~
+      RSYNC_HOSTNAME: ~
+      RSYNC_USERNAME: dingo
+      RSYNC_PORT: 22
+      RSYNC_PRIVATE_KEY: ~
+      RSYNC_DEST_DIR: ~
+    depends_on: [etcd]
     command: [/scripts/test-api.sh]
   etcd:
     container_name: etcd
@@ -67,6 +90,7 @@ services:
     image: dingotiles/dingo-pg-agent-container-tests
     environment:
       DOCKER_HOST_IP:
+      ETCD_URI: "http://root:password@${DOCKER_HOST_IP}:4001"
       ETCD_HOST_PORT: ${DOCKER_HOST_IP}:4001
       ETCD_PROTOCOL: http
       ETCD_USERNAME: root

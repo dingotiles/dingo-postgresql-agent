@@ -19,8 +19,8 @@ func RunTestAPI(c *cli.Context) {
 	m.Use(render.Renderer(render.Options{
 		IndentJSON: true, // Output human readable JSON
 	}))
-	m.Post("/api", binding.Bind(config.ContainerStartupRequest{}), func(req config.ContainerStartupRequest, r render.Render) {
-		fmt.Printf("Recv: container start request: %v\n", req)
+	m.Post("/wal-e/api", binding.Bind(config.ContainerStartupRequest{}), func(req config.ContainerStartupRequest, r render.Render) {
+		fmt.Printf("Recv [wal-e]: container start request: %v\n", req)
 		name := "patroni1"
 		patroniScope := "test-cluster-scope"
 		waleEnvVars := constructReturnedEnvVars(patroniScope, filterWaleEnvVars())
@@ -58,6 +58,46 @@ func RunTestAPI(c *cli.Context) {
 		}
 		r.JSON(200, staticResponse)
 	})
+	if os.Getenv("RSYNC_HOSTNAME") != "" && os.Getenv("RSYNC_PRIVATE_KEY") != "" {
+		m.Post("/rsync-backup/api", binding.Bind(config.ContainerStartupRequest{}), func(req config.ContainerStartupRequest, r render.Render) {
+			fmt.Printf("Recv [rsync-backup]: container start request: %v\n", req)
+			name := "patroni3RsyncBackup"
+			patroniScope := "rsync-backup-cluster-scope"
+			staticResponse := map[string]interface{}{
+				"cluster": map[string]interface{}{
+					"name":  name,
+					"scope": patroniScope,
+				},
+				"rsync_archives": rsyncArchiveTarget(),
+				// Example:
+				// 	AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID
+				// 	AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY
+				// 	WAL_S3_BUCKET=WAL_S3_BUCKET
+				// 	WALE_S3_ENDPOINT=https+path://s3.amazonaws.com:443
+				// 	WALE_S3_PREFIX=s3://${WAL_S3_BUCKET}/backups/test-cluster-scope/wal/
+				"postgresql": map[string]interface{}{
+					"admin": map[string]interface{}{
+						"password": "admin-password",
+					},
+					"superuser": map[string]interface{}{
+						"username": "superuser-username",
+						"password": "superuser-password",
+					},
+					"appuser": map[string]interface{}{
+						"username": "appuser-username",
+						"password": "appuser-password",
+					},
+				},
+				"etcd": map[string]interface{}{
+					"uri":      os.Getenv("ETCD_HOST_PORT"),
+					"protocol": os.Getenv("ETCD_PROTOCOL"),
+					"username": os.Getenv("ETCD_USERNAME"),
+					"password": os.Getenv("ETCD_PASSWORD"),
+				},
+			}
+			r.JSON(200, staticResponse)
+		})
+	}
 	m.Run()
 }
 
@@ -76,7 +116,6 @@ func filterWaleEnvVarsFromList(environ []string) []string {
 		}
 	}
 	waleEnvVars := make([]string, waleEnvCount)
-	// waleEnvVars[0] = fmt.Sprintf("PATRONI_SCOPE=%s", patroniScope)
 	waleEnvIndex := 0
 	for _, envVar := range environ {
 		for _, prefix := range walePrefixes {
@@ -92,7 +131,6 @@ func filterWaleEnvVarsFromList(environ []string) []string {
 // Some returned env vars are constructed based on other values
 //   WALE_S3_PREFIX=s3://${WAL_S3_BUCKET}/backups/{{patroniScope}}/wal/
 func constructReturnedEnvVars(patroniScope string, environ []string) []string {
-	environ = append(environ, fmt.Sprintf("PATRONI_SCOPE=%s", patroniScope))
 	for _, envVar := range environ {
 		if strings.Index(envVar, "WAL_S3_BUCKET") == 0 {
 			parts := strings.Split(envVar, "=")
@@ -101,4 +139,15 @@ func constructReturnedEnvVars(patroniScope string, environ []string) []string {
 		}
 	}
 	return environ
+}
+
+func rsyncArchiveTarget() map[string]interface{} {
+	privateKey := strings.Replace(os.Getenv("RSYNC_PRIVATE_KEY"), "\\n", "\n", -1)
+	return map[string]interface{}{
+		"hostname":    os.Getenv("RSYNC_HOSTNAME"),
+		"username":    os.Getenv("RSYNC_USERNAME"),
+		"ssh_port":    os.Getenv("RSYNC_PORT"),
+		"dest_dir":    os.Getenv("RSYNC_DEST_DIR"),
+		"private_key": privateKey,
+	}
 }

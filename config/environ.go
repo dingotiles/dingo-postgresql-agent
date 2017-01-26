@@ -36,11 +36,11 @@ func (environ *Environ) AddEnv(envvar string) {
 	key := parts[0]
 	value := parts[1]
 	if len(key) == 0 {
-		fmt.Fprintf(os.Stderr, "Missing env variable name in '%s'", envvar)
+		fmt.Fprintf(os.Stderr, "Missing env variable name in '%s'\n", envvar)
 		return
 	}
 	if len(value) == 0 {
-		fmt.Fprintf(os.Stderr, "Missing env variable value in '%s'", envvar)
+		fmt.Fprintf(os.Stderr, "Missing env variable value in '%s'\n", envvar)
 		return
 	}
 	(*environ)[key] = value

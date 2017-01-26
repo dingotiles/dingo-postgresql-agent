@@ -30,7 +30,7 @@ function wait_for_config {
   done
 }
 
-function base_backups {
+function wale_s3_base_backups {
   # NOTE: env vars printed also ensures they are set (set -u)
   echo PATRONI_SCOPE: ${PATRONI_SCOPE}
   echo PG_DATA_DIR: ${PG_DATA_DIR}
@@ -136,6 +136,13 @@ function base_backups {
   done
 }
 
+function noop_base_backups {
+  while true; do
+    echo "TODO: implement base_backups_wrapper.sh"
+    sleep 5
+  done
+}
+
 (
   echo Waiting for configuration from agent...
   wait_for_config
@@ -146,5 +153,9 @@ function base_backups {
     env | sort
   fi
 
-  base_backups
+  if [[ "${WALE_S3_PREFIX:-X}" != "X" ]]; then
+    wale_s3_base_backups
+  else
+    noop_base_backups
+  fi
 ) 2>&1 | indent
