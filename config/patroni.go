@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strconv"
 
 	"github.com/hashicorp/errwrap"
 
@@ -26,7 +27,7 @@ type PatroniV12Specification struct {
 	Etcd struct {
 		URI      string `yaml:"uri"`
 		Host     string `yaml:"host"`
-		Port     int16  `yaml:"port,omitempty"`
+		Port     int    `yaml:"port,omitempty"`
 		Protocol string `yaml:"protocol,omitempty"`
 		Username string `yaml:"username,omitempty"`
 		Password string `yaml:"password,omitempty"`
@@ -150,7 +151,11 @@ func (patroniSpec *PatroniV12Specification) MergeClusterSpec(clusterSpec *Cluste
 	replicationUsername := appuserName
 	patroniSpec.Etcd.URI = clusterSpec.Etcd.URI
 	patroniSpec.Etcd.Host = clusterSpec.Etcd.Host
-	patroniSpec.Etcd.Port = clusterSpec.Etcd.Port
+	if clusterSpec.Etcd.Port != "" {
+		var err error
+		patroniSpec.Etcd.Port, err = strconv.Atoi(clusterSpec.Etcd.Port)
+		fmt.Fprintf(os.Stderr, "Could not parse etcd.port into integer '%s': %s", clusterSpec.Etcd.Port, err)
+	}
 	patroniSpec.Etcd.Protocol = clusterSpec.Etcd.Protocol
 	patroniSpec.Etcd.Username = clusterSpec.Etcd.Username
 	patroniSpec.Etcd.Password = clusterSpec.Etcd.Password

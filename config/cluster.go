@@ -25,7 +25,7 @@ type ClusterSpecification struct {
 	Etcd struct {
 		URI      string `json:"uri"`
 		Host     string `json:"host"`
-		Port     int16  `json:"port"`
+		Port     string `json:"port"`
 		Protocol string `json:"protocol"`
 		Username string `json:"username"`
 		Password string `json:"password"`
