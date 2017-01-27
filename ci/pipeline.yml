@@ -33,7 +33,7 @@ jobs:
     - put: pg95-image
       params:
         build: agent
-        cache: true
+        # cache: true -- causing https://ci.starkandwayne.com/teams/main/pipelines/dingo-postgresql-agent/jobs/build-image/builds/16
         tag: agent-ci/ci/tags/pre-test
 
 - name: test-image
