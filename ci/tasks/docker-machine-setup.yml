@@ -2,17 +2,23 @@
 platform: linux
 image_resource:
   type: docker-image
-  source: {repository: bodymindarts/docker-machine-setup}
+  source: {repository: dingotiles/delmo-docker-machine-setup}
 
 
 params:
   AWS_ACCESS_KEY_ID:
   AWS_SECRET_ACCESS_KEY:
   AWS_DEFAULT_REGION:
-  AWS_BUCKET:
+  AWS_VPC_ID:
+  AWS_SUBNET_ID:
+  AWS_ZONE:
   AWS_INSTANCE_TYPE: t2.large
-  MACHINE_NAME: dingo-postgresql-agent-pipeline
+  AWS_SECURITY_GROUP:
+  AWS_ROOT_SIZE: 40
+  AWS_VOLUME_TYPE: gp2
+  MACHINE_NAME: delmo-dingo-postgresql-agent-pipeline
   OPEN_TCP_PORTS: 2300-6000
+  AWS_BUCKET:
 
 run:
   path: /setup-aws
