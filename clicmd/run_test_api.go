@@ -50,7 +50,9 @@ func RunTestAPI(c *cli.Context) {
 				},
 			},
 			"etcd": map[string]interface{}{
-				"uri":      os.Getenv("ETCD_HOST_PORT"),
+				"uri":      os.Getenv("ETCD_URI"),
+				"host":     os.Getenv("ETCD_HOST"),
+				"port":     os.Getenv("ETCD_PORT"),
 				"protocol": os.Getenv("ETCD_PROTOCOL"),
 				"username": os.Getenv("ETCD_USERNAME"),
 				"password": os.Getenv("ETCD_PASSWORD"),
@@ -89,7 +91,9 @@ func RunTestAPI(c *cli.Context) {
 					},
 				},
 				"etcd": map[string]interface{}{
-					"uri":      os.Getenv("ETCD_HOST_PORT"),
+					"uri":      os.Getenv("ETCD_URI"),
+					"host":     os.Getenv("ETCD_HOST"),
+					"port":     os.Getenv("ETCD_PORT"),
 					"protocol": os.Getenv("ETCD_PROTOCOL"),
 					"username": os.Getenv("ETCD_USERNAME"),
 					"password": os.Getenv("ETCD_PASSWORD"),

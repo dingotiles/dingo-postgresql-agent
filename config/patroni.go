@@ -24,8 +24,9 @@ type PatroniV12Specification struct {
 		ConnectAddress string `yaml:"connect_address"`
 	} `yaml:"restapi"`
 	Etcd struct {
+		URI      string `yaml:"uri"`
 		Host     string `yaml:"host"`
-		URL      string `yaml:"url,omitempty"`
+		Port     int16  `yaml:"port,omitempty"`
 		Protocol string `yaml:"protocol,omitempty"`
 		Username string `yaml:"username,omitempty"`
 		Password string `yaml:"password,omitempty"`
@@ -147,7 +148,9 @@ func DefaultPatroniSpec() (*PatroniV12Specification, error) {
 func (patroniSpec *PatroniV12Specification) MergeClusterSpec(clusterSpec *ClusterSpecification, hostDiscoverySpec *HostDiscoverySpecification) {
 	appuserName := clusterSpec.Postgresql.Appuser.Username
 	replicationUsername := appuserName
-	patroniSpec.Etcd.Host = clusterSpec.Etcd.URI
+	patroniSpec.Etcd.URI = clusterSpec.Etcd.URI
+	patroniSpec.Etcd.Host = clusterSpec.Etcd.Host
+	patroniSpec.Etcd.Port = clusterSpec.Etcd.Port
 	patroniSpec.Etcd.Protocol = clusterSpec.Etcd.Protocol
 	patroniSpec.Etcd.Username = clusterSpec.Etcd.Username
 	patroniSpec.Etcd.Password = clusterSpec.Etcd.Password

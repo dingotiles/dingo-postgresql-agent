@@ -55,7 +55,8 @@ services:
     environment:
       PORT: 8008
       ETCD_URI: "http://root:password@${DOCKER_HOST_IP}:4001"
-      ETCD_HOST_PORT: ${DOCKER_HOST_IP}:4001
+      ETCD_HOST: ${DOCKER_HOST_IP}
+      ETCD_PORT: 4001
       ETCD_PROTOCOL: http
       ETCD_USERNAME: root
       ETCD_PASSWORD: password
@@ -91,7 +92,8 @@ services:
     environment:
       DOCKER_HOST_IP:
       ETCD_URI: "http://root:password@${DOCKER_HOST_IP}:4001"
-      ETCD_HOST_PORT: ${DOCKER_HOST_IP}:4001
+      ETCD_HOST: ${DOCKER_HOST_IP}
+      ETCD_PORT: 4001
       ETCD_PROTOCOL: http
       ETCD_USERNAME: root
       ETCD_PASSWORD: password
