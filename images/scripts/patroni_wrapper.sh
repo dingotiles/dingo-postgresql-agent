@@ -78,8 +78,7 @@ function wait_for_config {
   # NOTE: env vars printed also ensures they are set (set -u)
   echo PATRONI_SCOPE: ${PATRONI_SCOPE}
   echo PG_DATA_DIR: ${PG_DATA_DIR}
-  echo ETCD_HOST_PORT: ${ETCD_HOST_PORT}
-  echo ETCD_USERNAME: ${ETCD_USERNAME:-}
+  echo ETCD_URI: ${ETCD_URI}
   echo WALE_S3_PREFIX: ${WALE_S3_PREFIX}
   echo WAL_S3_BUCKET: ${WAL_S3_BUCKET}
 
