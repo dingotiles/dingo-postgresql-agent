@@ -1,6 +1,5 @@
 # dingo-postgresql-agent
 
-**PRIVATE: active AWS credentials in `.envrc` that need to be rotated before making repo public**
 **PRIVATE: still in pre-alpha development; will be OSS later**
 
 This WIP repo is to create a new agent to manage the configuration/lifecycle of Patroni; which in turn manages the configuration/lifecycle of PostgreSQL server.
