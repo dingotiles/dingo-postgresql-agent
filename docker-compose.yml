@@ -47,6 +47,13 @@ services:
   #     BACKUPS_SUMMARY_WAITTIME: 10
   #   depends_on: [etcd]
   #   command: ["/scripts/entry.sh"]
+  backup_storage:
+    build: images/backup_storage
+    image: dingotiles/backup-storage
+    container_name: backup_storage
+    ports: ["4022:22", "4873:873"]
+    environment:
+      SSH_USERNAME: dingo
   test-api:
     build: .
     image: dingotiles/dingo-postgresql:pre-test
