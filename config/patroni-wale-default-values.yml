@@ -14,6 +14,7 @@ restapi:
 
 etcd:
   host: REMOTE-ETCD:2379
+  cacert: /etc/ssl/certs/ca-certificates.crt
 
 bootstrap:
   # this section will be written into Etcd:/<namespace>/<scope>/config after initializing new cluster
