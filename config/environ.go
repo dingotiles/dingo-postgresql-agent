@@ -17,13 +17,22 @@ import (
 // exposing them into PostgreSQL itself.
 type Environ map[string]string
 
-// NewEnvironFromStrings extracts environment variables
-func NewEnvironFromStrings(envvars []string) (environ *Environ) {
-	environ = &Environ{}
-	for _, envvar := range envvars {
-		environ.AddEnv(envvar)
-	}
-	return
+// NewPatroniEnvironFromClusterSpec setups up environment variables for patroni + scripts
+func NewPatroniEnvironFromClusterSpec(clusterSpec *ClusterSpecification) *Environ {
+	environ := Environ{}
+	environ["REPLICATION_USER"] = clusterSpec.Postgresql.Appuser.Username
+	environ["PATRONI_SCOPE"] = clusterSpec.Cluster.Scope
+	environ["PG_DATA_DIR"] = "/data/postgres0"
+
+	environ["ARCHIVE_METHOD"] = clusterSpec.Archives.Method
+	environ["AWS_ACCESS_KEY_ID"] = clusterSpec.Archives.WalE.AWSAccessKeyID
+	environ["AWS_SECRET_ACCESS_KEY"] = clusterSpec.Archives.WalE.AWSSecretAccessID
+	environ["WAL_S3_BUCKET"] = clusterSpec.Archives.WalE.S3Bucket
+	environ["WALE_S3_PREFIX"] = clusterSpec.waleS3Prefix()
+	environ["WALE_S3_ENDPOINT"] = clusterSpec.Archives.WalE.S3Endpoint
+	environ["RSYNC_URI"] = clusterSpec.Archives.Rsync.URI
+
+	return &environ
 }
 
 // AddEnv adds an addition KEY=VALUE pair
@@ -48,6 +57,11 @@ func (environ *Environ) AddEnv(envvar string) {
 
 // CreateEnvDirFiles creates a directory with one file per env var
 func (environ *Environ) CreateEnvDirFiles(dir string) (err error) {
+	err = os.RemoveAll(dir)
+	if err != nil {
+		return errwrap.Wrapf("Cannot delete directory: {{err}}", err)
+	}
+
 	err = os.MkdirAll(dir, 0755)
 	if err != nil {
 		return

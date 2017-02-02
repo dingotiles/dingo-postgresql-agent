@@ -19,8 +19,8 @@ func TestRunAgent_createPatroniPostgresConfigFilesForWale(t *testing.T) {
 	os.Setenv("DOCKER_HOST_PORT_8008", "8000")
 
 	clusterSpec := &config.ClusterSpecification{}
-	clusterSpec.WaleEnv = []string{"WAL_S3_BUCKET=test-bucket"}
 	clusterSpec.Postgresql.Appuser.Username = "appuser"
+	clusterSpec.Archives.Method = "wal-e"
 
 	err := createPatroniPostgresConfigFiles(clusterSpec, "/tmp/run_agent_test", "")
 	if err != nil {
@@ -41,7 +41,8 @@ func TestRunAgent_createPatroniPostgresConfigFilesForRsync(t *testing.T) {
 
 	clusterSpec := &config.ClusterSpecification{}
 	clusterSpec.Postgresql.Appuser.Username = "appuser"
-	clusterSpec.RsyncArchives.Hostname = "localhost"
+	clusterSpec.Archives.Method = "rsync"
+	clusterSpec.Archives.Rsync.URI = "rsync://localhost:873/volume"
 
 	err := createPatroniPostgresConfigFiles(clusterSpec, "/tmp/run_agent_test", "")
 	if err != nil {

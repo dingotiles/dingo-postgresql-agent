@@ -22,13 +22,20 @@ type ClusterSpecification struct {
 		Name  string `json:"name"`
 		Scope string `json:"scope"`
 	} `json:"cluster"`
+	Archives struct {
+		Method string `json:"method"`
+		WalE   struct {
+			AWSAccessKeyID    string `json:"aws_access_key_id,omitempty"`
+			AWSSecretAccessID string `json:"aws_secret_access_id,omitempty"`
+			S3Bucket          string `json:"s3_bucket,omitempty"`
+			S3Endpoint        string `json:"s3_endpoint,omitempty"`
+		} `json:"wale,omitempty"`
+		Rsync struct {
+			URI string `json:"uri,omitempty"`
+		} `json:"rsync,omitempty"`
+	} `json:"archives"`
 	Etcd struct {
-		URI      string `json:"uri"`
-		Host     string `json:"host"`
-		Port     string `json:"port"`
-		Protocol string `json:"protocol"`
-		Username string `json:"username"`
-		Password string `json:"password"`
+		URI string `json:"uri"`
 	} `json:"etcd"`
 	Postgresql struct {
 		Admin struct {
@@ -43,14 +50,6 @@ type ClusterSpecification struct {
 			Username string `json:"username"`
 		} `json:"superuser"`
 	} `json:"postgresql"`
-	WaleEnv       []string `json:"wale_env"`
-	RsyncArchives struct {
-		Hostname             string `json:"hostname"`
-		Username             string `json:"username"`
-		SSHPort              string `json:"ssh_port"`
-		DestinationDirectory string `json:"dest_dir"`
-		PrivateKey           string `json:"private_key"`
-	} `json:"rsync_archives"`
 }
 
 // TODO: POST ClusterName & OrgAuthToken to API
@@ -88,10 +87,14 @@ func FetchClusterSpec() (cluster *ClusterSpecification, err error) {
 
 // UsingWale summarizes whether central API wants patroni to be configured for wal-e to ship backups/WAL
 func (cluster *ClusterSpecification) UsingWale() bool {
-	return len(cluster.WaleEnv) > 0
+	return cluster.Archives.Method == "wal-e"
 }
 
 // UsingRsync summarizes whether central API wants patroni to be configured for rysnc ship backups/WAL to remote host
 func (cluster *ClusterSpecification) UsingRsync() bool {
-	return cluster.RsyncArchives.Hostname != ""
+	return cluster.Archives.Method == "rsync"
+}
+
+func (cluster *ClusterSpecification) waleS3Prefix() string {
+	return fmt.Sprintf("s3://%s/backups/%s/wal/", cluster.Archives.WalE.S3Bucket, cluster.Cluster.Scope)
 }

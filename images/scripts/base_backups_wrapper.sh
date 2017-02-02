@@ -33,7 +33,6 @@ function wait_for_config {
 function wale_s3_base_backups {
   # NOTE: env vars printed also ensures they are set (set -u)
   echo PATRONI_SCOPE: ${PATRONI_SCOPE}
-  echo PG_DATA_DIR: ${PG_DATA_DIR}
   echo WALE_S3_PREFIX: ${WALE_S3_PREFIX}
   echo WAL_S3_BUCKET: ${WAL_S3_BUCKET}
 
