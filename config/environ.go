@@ -24,13 +24,19 @@ func NewPatroniEnvironFromClusterSpec(clusterSpec *ClusterSpecification) *Enviro
 	environ["PATRONI_SCOPE"] = clusterSpec.Cluster.Scope
 	environ["PG_DATA_DIR"] = "/data/postgres0"
 
+	environ["ETCD_URI"] = clusterSpec.Etcd.URI
+
 	environ["ARCHIVE_METHOD"] = clusterSpec.Archives.Method
-	environ["AWS_ACCESS_KEY_ID"] = clusterSpec.Archives.WalE.AWSAccessKeyID
-	environ["AWS_SECRET_ACCESS_KEY"] = clusterSpec.Archives.WalE.AWSSecretAccessID
-	environ["WAL_S3_BUCKET"] = clusterSpec.Archives.WalE.S3Bucket
-	environ["WALE_S3_PREFIX"] = clusterSpec.waleS3Prefix()
-	environ["WALE_S3_ENDPOINT"] = clusterSpec.Archives.WalE.S3Endpoint
-	environ["RSYNC_URI"] = clusterSpec.Archives.Rsync.URI
+	if clusterSpec.UsingWale() {
+		environ["AWS_ACCESS_KEY_ID"] = clusterSpec.Archives.WalE.AWSAccessKeyID
+		environ["AWS_SECRET_ACCESS_KEY"] = clusterSpec.Archives.WalE.AWSSecretAccessID
+		environ["WAL_S3_BUCKET"] = clusterSpec.Archives.WalE.S3Bucket
+		environ["WALE_S3_PREFIX"] = clusterSpec.waleS3Prefix()
+		environ["WALE_S3_ENDPOINT"] = clusterSpec.Archives.WalE.S3Endpoint
+	}
+	if clusterSpec.UsingRsync() {
+		environ["RSYNC_URI"] = clusterSpec.Archives.Rsync.URI
+	}
 
 	return &environ
 }

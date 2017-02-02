@@ -61,7 +61,7 @@ RUN echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/re
             gcc make libgcc g++
 
 # python3, wal-3
-ENV WALE_VERSION=1.0.0
+ENV WALE_VERSION=1.0.2
 RUN set -x \
       && echo "@community http://nl.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
       && apk add --update python3 python3-dev bash sed jq curl alpine-sdk linux-headers musl-dev pv@community \

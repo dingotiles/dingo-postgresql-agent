@@ -45,7 +45,7 @@ indent() {
 
   # must have /initialize set
   if [[ "$(curl -s ${ETCD_URI}/v2/keys/service/${PATRONI_SCOPE}/initialize | jq -r .node.value)" == "null" ]]; then
-    echo "etcd missing /initialize system ID, fetching from ${WALE_S3_PREFIX}sysids"
+    echo "etcd missing /initialize system ID, fetching from ${WALE_S3_PREFIX:?required}sysids"
     region=$(aws s3api get-bucket-location --bucket ${WAL_S3_BUCKET} | jq -r '.LocationConstraint')
     if [[ ${region} != 'null' ]]; then
       region_option="--region ${region}"

@@ -68,14 +68,12 @@ function wait_for_config {
   source ${patroni_env}
   env | sort
 
-  # NOTE: env vars printed also ensures they are set (set -u)
-  echo PATRONI_SCOPE: ${PATRONI_SCOPE}
-  echo PG_DATA_DIR: ${PG_DATA_DIR}
-  echo ETCD_URI: ${ETCD_URI}
-  echo WALE_S3_PREFIX: ${WALE_S3_PREFIX}
-  echo WAL_S3_BUCKET: ${WAL_S3_BUCKET}
+  : ${PATRONI_SCOPE:?required}
+  : ${PG_DATA_DIR:?required}
+  : ${ETCD_URI:?required}
+  : ${ARCHIVE_METHOD:?required}
 
-  $DIR/restore_leader_if_missing.sh
+  $DIR/archives/$ARCHIVE_METHOD/restore_leader_if_missing.sh
 
   # runs as postgres user via supervisor
   python3 /patroni/patroni.py /config/patroni.yml

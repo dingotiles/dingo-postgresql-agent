@@ -93,6 +93,10 @@ postgresql:
     retries: 2
     use_iam: 0
     no_master: 1
+  rsync:
+    command: "/scripts/archives/rsync/create_replica.sh"
+    # {key: value} below are converted to options for wale_restore.py script
+    envdir: /etc/rsync.d/env
 tags:
   nofailover: false
   noloadbalance: false

@@ -136,7 +136,7 @@ function wale_s3_base_backups {
 }
 
 function todo_base_backups {
-  echo "TODO: implement base_backups_wrapper.sh"
+  echo "TODO: implement base_backups_wrapper.sh for $ARCHIVE_METHOD"
   exit 1
 }
 
@@ -150,8 +150,10 @@ function todo_base_backups {
     env | sort
   fi
 
-  if [[ "${WALE_S3_PREFIX:-X}" != "X" ]]; then
+  if [[ "${ARCHIVE_METHOD:?required}" == "wal-e" ]]; then
     wale_s3_base_backups
+  elif [[ "${ARCHIVE_METHOD}" == "rsync" ]]; then
+      todo_base_backups
   else
     todo_base_backups
   fi
