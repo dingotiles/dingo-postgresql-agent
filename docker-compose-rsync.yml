@@ -10,43 +10,27 @@ services:
       # DEBUG: 1
       DINGO_CLUSTER: test-cluster
       DINGO_ORG_TOKEN: test-org-token
-      DINGO_API_URI: http://${DOCKER_HOST_IP}:5000/wal-e
+      DINGO_API_URI: http://${DOCKER_HOST_IP}:5000/rsync-backup
       DOCKER_HOST_IP: ${DOCKER_HOST_IP}
       DOCKER_HOST_PORT_5432: 5432
       DOCKER_HOST_PORT_8008: 8008
       BACKUPS_SUMMARY_WAITTIME: 10
-    depends_on: [etcd]
+    depends_on: [etcd, backup_storage]
     command: ["/scripts/entry.sh"]
-  patroni2:
-    image: dingotiles/dingo-postgresql:pre-test
-    container_name: patroni2
-    ports: ["5002:5432", "8002:8008"]
-    environment:
-      # DEBUG: 1
-      DINGO_CLUSTER: test-cluster
-      DINGO_ORG_TOKEN: test-org-token
-      DINGO_API_URI: http://${DOCKER_HOST_IP}:5000/wal-e
-      DOCKER_HOST_IP: ${DOCKER_HOST_IP}
-      DOCKER_HOST_PORT_5432: 5002
-      DOCKER_HOST_PORT_8008: 8002
-      BACKUPS_SUMMARY_WAITTIME: 10
-    depends_on: [etcd]
-  # patroni3RsyncBackup:
-  #   build: .
+  # patroni2:
   #   image: dingotiles/dingo-postgresql:pre-test
-  #   container_name: patroni3RsyncBackup
-  #   ports: ["5003:5432", "8003:8008"]
+  #   container_name: patroni2
+  #   ports: ["5002:5432", "8002:8008"]
   #   environment:
-  #     DEBUG: 1
-  #     DINGO_CLUSTER: test-cluster-rsync-backup
+  #     # DEBUG: 1
+  #     DINGO_CLUSTER: test-cluster
   #     DINGO_ORG_TOKEN: test-org-token
   #     DINGO_API_URI: http://${DOCKER_HOST_IP}:5000/rsync-backup
   #     DOCKER_HOST_IP: ${DOCKER_HOST_IP}
-  #     DOCKER_HOST_PORT_5432: 5003
-  #     DOCKER_HOST_PORT_8008: 8003
+  #     DOCKER_HOST_PORT_5432: 5002
+  #     DOCKER_HOST_PORT_8008: 8002
   #     BACKUPS_SUMMARY_WAITTIME: 10
-  #   depends_on: [etcd]
-  #   command: ["/scripts/entry.sh"]
+  #   depends_on: [etcd, backup_storage]
   backup_storage:
     build: images/backup_storage
     image: dingotiles/backup-storage
@@ -67,16 +51,7 @@ services:
       ETCD_PROTOCOL: http
       ETCD_USERNAME: root
       ETCD_PASSWORD: password
-      AWS_ACCESS_KEY_ID: ~
-      AWS_SECRET_ACCESS_KEY: ~
-      WAL_S3_BUCKET: ~
-      WALE_S3_ENDPOINT: ~
-      WALE_S3_PREFIX: ~
-      RSYNC_HOSTNAME: ~
-      RSYNC_USERNAME: dingo
-      RSYNC_PORT: 22
-      RSYNC_PRIVATE_KEY: ~
-      RSYNC_DEST_DIR: ~
+      RSYNC_URI: rsync://${DOCKER_HOST_IP}:4873/volume/
     depends_on: [etcd]
     command: [/scripts/test-api.sh]
   etcd:
@@ -106,10 +81,7 @@ services:
       ETCD_PASSWORD: password
       PATRONI_SCOPE: test-cluster-scope
       TEST_VOLUME: /test-volume
-      AWS_ACCESS_KEY_ID: ~
-      AWS_SECRET_ACCESS_KEY: ~
-      WAL_S3_BUCKET: ~
-      AWS_REGION: ~
+      RSYNC_URI: rsync://${DOCKER_HOST_IP}:4873/volume/
       APPUSER_USERNAME: appuser-username
       APPUSER_PASSWORD: appuser-password
       SUPERUSER_USERNAME: superuser-username

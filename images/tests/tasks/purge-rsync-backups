@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -e -u -x
+
+rsync --delete -d ${RSYNC_URI:?required}

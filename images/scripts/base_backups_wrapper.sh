@@ -136,11 +136,9 @@ function wale_s3_base_backups {
   done
 }
 
-function noop_base_backups {
-  while true; do
-    echo "TODO: implement base_backups_wrapper.sh"
-    sleep 5
-  done
+function todo_base_backups {
+  echo "TODO: implement base_backups_wrapper.sh"
+  exit 1
 }
 
 (
@@ -156,6 +154,6 @@ function noop_base_backups {
   if [[ "${WALE_S3_PREFIX:-X}" != "X" ]]; then
     wale_s3_base_backups
   else
-    noop_base_backups
+    todo_base_backups
   fi
 ) 2>&1 | indent

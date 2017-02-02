@@ -16,9 +16,9 @@ file_name=$2                    # %f
 
 if [[ -d /etc/wal-e.d/env ]]; then
   envdir /etc/wal-e.d/env wal-e wal-push "$path_name_of_file_to_archive" -p 1
-elif [[ "${RSYNC_HOSTNAME:-X}" != "X" ]]; then
-  rsync -a $path_name_of_file_to_archive ${RSYNC_USERNAME}@${RSYNC_HOSTNAME}:${RSYNC_DEST_DIR}/wal_archive/$file_name
+elif [[ -d /etc/rsync.d/env ]]; then
+  envdir /etc/rsync.d/env /scripts/rsync.sh push $path_name_of_file_to_archive $file_name
 else
-  (>&2 echo "archive_command.sh has not been provided /etc/wal-e.d/env nor \$RSYNC_HOSTNAME, exiting...")
+  (>&2 echo "archive_command.sh has not been provided /etc/wal-e.d/env nor /etc/rsync.d/env, exiting...")
   exit 1
 fi
