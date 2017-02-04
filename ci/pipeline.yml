@@ -165,6 +165,7 @@ jobs:
   - put: pg95-image-wale-files
     params:
       build: agent-ci/images/wale-fork
+      tag: agent-ci/ci/tags/wale-files
 
 resources:
 - name: agent
@@ -247,4 +248,3 @@ resources:
     username: {{docker-hub-username}}
     password: {{docker-hub-password}}
     repository: dingotiles/dingo-postgresql
-    tag: wale-files
