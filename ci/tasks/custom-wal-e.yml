@@ -1,0 +1,14 @@
+---
+platform: linux
+image_resource:
+  type: docker-image
+  source: {repository: dingotiles/dingo-postgresql-agent-pipeline}
+
+inputs:
+- name: wal-e
+- name: agent-ci
+outputs:
+- name: dockerfile
+
+run:
+  path: agent-ci/ci/tasks/custom-wal-e.sh

@@ -160,9 +160,12 @@ jobs:
   - aggregate:
     - {get: agent-ci}
     - {get: wal-e, resource: wale-files, trigger: true}
+  - task: custom-wal-e
+    file: agent-ci/ci/tasks/custom-wal-e.yml
   - put: pg95-image-wale-files
     params:
-      build: agent-ci/images/wale-fork
+      build: dockerfile
+      tag: agent-ci/taags/wale-files
 
 resources:
 - name: agent
@@ -244,4 +247,4 @@ resources:
     email: {{docker-hub-email}}
     username: {{docker-hub-username}}
     password: {{docker-hub-password}}
-    repository: drnic/pg95-image-wale-files
+    repository: dingotiles/dingo-postgresql
