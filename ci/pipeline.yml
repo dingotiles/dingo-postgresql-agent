@@ -87,8 +87,6 @@ jobs:
         params:
           build: dockerfile
 
-    # - {put: version, params: {file: version/number}}
-
 - name: major
   public: true
   serial_groups: [version]
@@ -165,7 +163,6 @@ jobs:
   - put: pg95-image-wale-files
     params:
       build: agent-ci/images/wale-fork
-      tag: agent-ci/ci/tags/wale-files
 
 resources:
 - name: agent
@@ -247,4 +244,4 @@ resources:
     email: {{docker-hub-email}}
     username: {{docker-hub-username}}
     password: {{docker-hub-password}}
-    repository: dingotiles/dingo-postgresql
+    repository: drnic/pg95-image-wale-files
