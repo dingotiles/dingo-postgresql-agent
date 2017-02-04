@@ -2,6 +2,8 @@
 groups:
 - name: images
   jobs: [test-agent, rc, build-image, test-image, shipit, minor, major, patch, docker-machine-setup]
+- name: storage
+  jobs: [wale-files]
 - name: base-images
   jobs: [pg95-base-image]
 - name: ci-image
@@ -154,6 +156,16 @@ jobs:
       AWS_SECURITY_GROUP: {{docker-machine-security-group}}
       AWS_AMI: ami-fd6e3bea
 
+- name: wale-files
+  public: true
+  plan:
+  - aggregate:
+    - {get: agent-ci}
+    - {get: wal-e, resource: wale-files, trigger: true}
+  - put: pg95-image-wale-files
+    params:
+      build: agent-ci/images/wale-fork
+
 resources:
 - name: agent
   type: git
@@ -220,3 +232,19 @@ resources:
     branch: version
     file: version
     private_key: {{github-private-key}}
+
+- name: wale-files
+  type: git
+  source:
+    uri: https://github.com/drnic/wal-e.git
+    branch: files_scheme
+    private_key: {{github-private-key}}
+
+- name: pg95-image-wale-files
+  type: docker-image
+  source:
+    email: {{docker-hub-email}}
+    username: {{docker-hub-username}}
+    password: {{docker-hub-password}}
+    repository: dingotiles/dingo-postgresql
+    tag: wale-files
