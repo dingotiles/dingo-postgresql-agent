@@ -165,7 +165,7 @@ jobs:
   - put: pg95-image-wale-files
     params:
       build: dockerfile
-      tag: agent-ci/taags/wale-files
+      tag: agent-ci/ci/tags/wale-files
 
 resources:
 - name: agent
