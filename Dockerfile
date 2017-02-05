@@ -15,12 +15,18 @@ RUN echo "source /etc/motd" >> /root/.bashrc
 RUN echo "[[ -f /etc/patroni.d/.envrc ]] && source /etc/patroni.d/.envrc" >> /root/.bashrc
 COPY images/supervisord.conf /etc/supervisor/supervisord.conf
 COPY images/services/*.conf /etc/supervisor/conf.d/
-CMD ["/scripts/entry.sh"]
+
 COPY images/scripts /scripts
+CMD ["/scripts/entry.sh"]
+
+ENV DINGO_API_URI=https://api.dingotiles.com DINGO_IMAGE_VERSION=0.0.0
+VOLUME ["/backups"]
 
 COPY . /go/src/github.com/dingotiles/dingo-postgresql-agent
 RUN set -x \
     && go install github.com/dingotiles/dingo-postgresql-agent \
     && rm -rf $GOPATH/src
 
-ENV DINGO_API_URI=https://api.dingotiles.com DINGO_IMAGE_VERSION=0.0.0
+COPY wal-e /tmp/wal-e
+
+RUN cd /tmp/wal-e && pip3 install . --upgrade

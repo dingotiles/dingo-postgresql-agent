@@ -3,7 +3,7 @@ version: '2'
 services:
   patroni1:
     build: .
-    image: dingotiles/dingo-postgresql:wale-files
+    image: dingotiles/dingo-postgresql:pre-test
     container_name: patroni1
     ports: ["5432:5432", "8008:8008"]
     volumes:
@@ -20,7 +20,7 @@ services:
     depends_on: [etcd]
     command: ["/scripts/entry.sh"]
   patroni2:
-    image: dingotiles/dingo-postgresql:wale-files
+    image: dingotiles/dingo-postgresql:pre-test
     container_name: patroni2
     ports: ["5002:5432", "8002:8008"]
     environment:
