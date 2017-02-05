@@ -55,11 +55,6 @@ function wait_for_config {
     echo "Environment variables provided to wal-e:"
     ls /etc/wal-e.d/env
   fi
-  if [[ -d /etc/rsync.d/env ]]; then
-    echo "Environment variables provided to rsync:"
-    ls /etc/rsync.d/env
-  fi
-
 
 
   echo "/config/patroni.yml:"

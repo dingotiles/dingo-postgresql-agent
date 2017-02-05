@@ -16,9 +16,7 @@ file_name=$2                    # %f
 
 if [[ -d /etc/wal-e.d/env ]]; then
   envdir /etc/wal-e.d/env wal-e wal-fetch "$file_name" "$path_name_of_file_to_archive" -p 1
-elif [[ -d /etc/rsync.d/env ]]; then
-  envdir /etc/rsync.d/env /scripts/rsync.sh fetch $file_name $path_name_of_file_to_archive
 else
-  (>&2 echo "restore_command.sh has not been provided /etc/wal-e.d/env nor /etc/rsync.d/env, exiting...")
+  (>&2 echo "restore_command.sh has not been provided /etc/wal-e.d/env, exiting...")
   exit 1
 fi
