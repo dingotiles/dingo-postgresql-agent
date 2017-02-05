@@ -27,15 +27,17 @@ func NewPatroniEnvironFromClusterSpec(clusterSpec *ClusterSpecification) *Enviro
 	environ["ETCD_URI"] = clusterSpec.Etcd.URI
 
 	environ["ARCHIVE_METHOD"] = clusterSpec.Archives.Method
-	if clusterSpec.UsingWale() {
-		environ["AWS_ACCESS_KEY_ID"] = clusterSpec.Archives.WalE.AWSAccessKeyID
-		environ["AWS_SECRET_ACCESS_KEY"] = clusterSpec.Archives.WalE.AWSSecretAccessID
-		environ["WAL_S3_BUCKET"] = clusterSpec.Archives.WalE.S3Bucket
+	if clusterSpec.UsingWaleS3() {
+		environ["AWS_ACCESS_KEY_ID"] = clusterSpec.Archives.S3.AWSAccessKeyID
+		environ["AWS_SECRET_ACCESS_KEY"] = clusterSpec.Archives.S3.AWSSecretAccessID
+		environ["WAL_S3_BUCKET"] = clusterSpec.Archives.S3.S3Bucket
 		environ["WALE_S3_PREFIX"] = clusterSpec.waleS3Prefix()
-		environ["WALE_S3_ENDPOINT"] = clusterSpec.Archives.WalE.S3Endpoint
+		environ["WALE_S3_ENDPOINT"] = clusterSpec.Archives.S3.S3Endpoint
 	}
-	if clusterSpec.UsingRsync() {
-		environ["RSYNC_URI"] = clusterSpec.Archives.Rsync.URI
+	if clusterSpec.UsingWaleLocal() {
+		volume := clusterSpec.Archives.Local.LocalBackupVolume
+		environ["WALE_FILES_PREFIX"] = fmt.Sprintf("files://%s", volume)
+		environ["LOCAL_BACKUP_VOLUME"] = volume
 	}
 
 	return &environ

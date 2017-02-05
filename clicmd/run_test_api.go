@@ -22,20 +22,21 @@ func RunTestAPI(c *cli.Context) {
 		IndentJSON: true, // Output human readable JSON
 	}))
 
-	m.Post("/wal-e/api", binding.Bind(config.ContainerStartupRequest{}), func(req config.ContainerStartupRequest, r render.Render) {
+	m.Post("/wal-e/s3/api", binding.Bind(config.ContainerStartupRequest{}), func(req config.ContainerStartupRequest, r render.Render) {
 		fmt.Printf("Recv [wal-e]: container start request: %v\n", req)
 		name := "patroni1"
 		patroniScope := "test-cluster-scope"
+		missingRequiredEnvs = []string{}
 
 		clusterSpec := config.ClusterSpecification{}
 		clusterSpec.Cluster.Name = name
 		clusterSpec.Cluster.Scope = patroniScope
 
-		clusterSpec.Archives.Method = "wal-e"
-		clusterSpec.Archives.WalE.AWSAccessKeyID = requiredEnv("AWS_ACCESS_KEY_ID")
-		clusterSpec.Archives.WalE.AWSSecretAccessID = requiredEnv("AWS_SECRET_ACCESS_KEY")
-		clusterSpec.Archives.WalE.S3Bucket = requiredEnv("WAL_S3_BUCKET")
-		clusterSpec.Archives.WalE.S3Endpoint = requiredEnv("WALE_S3_ENDPOINT")
+		clusterSpec.Archives.Method = "s3"
+		clusterSpec.Archives.S3.AWSAccessKeyID = requiredEnv("AWS_ACCESS_KEY_ID")
+		clusterSpec.Archives.S3.AWSSecretAccessID = requiredEnv("AWS_SECRET_ACCESS_KEY")
+		clusterSpec.Archives.S3.S3Bucket = requiredEnv("WAL_S3_BUCKET")
+		clusterSpec.Archives.S3.S3Endpoint = requiredEnv("WALE_S3_ENDPOINT")
 
 		clusterSpec.Etcd.URI = requiredEnv("ETCD_URI")
 
@@ -54,17 +55,19 @@ func RunTestAPI(c *cli.Context) {
 		r.JSON(200, clusterSpec)
 	})
 
-	m.Post("/rsync-backup/api", binding.Bind(config.ContainerStartupRequest{}), func(req config.ContainerStartupRequest, r render.Render) {
-		fmt.Printf("Recv [rsync-backup]: container start request: %v\n", req)
+	m.Post("/wal-e/local/api", binding.Bind(config.ContainerStartupRequest{}), func(req config.ContainerStartupRequest, r render.Render) {
+		fmt.Printf("Recv [wal-e]: container start request: %v\n", req)
 		name := "patroni1"
-		patroniScope := "rsync-backup-cluster-scope"
+		patroniScope := "test-cluster-scope"
+
+		missingRequiredEnvs = []string{}
 
 		clusterSpec := config.ClusterSpecification{}
 		clusterSpec.Cluster.Name = name
 		clusterSpec.Cluster.Scope = patroniScope
 
-		clusterSpec.Archives.Method = "rsync"
-		clusterSpec.Archives.Rsync.URI = requiredEnv("RSYNC_URI")
+		clusterSpec.Archives.Method = "local"
+		clusterSpec.Archives.Local.LocalBackupVolume = requiredEnv("LOCAL_BACKUP_VOLUME")
 
 		clusterSpec.Etcd.URI = requiredEnv("ETCD_URI")
 

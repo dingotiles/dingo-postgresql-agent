@@ -161,12 +161,6 @@ func (patroniSpec *PatroniV12Specification) MergeClusterSpec(clusterSpec *Cluste
 	patroniSpec.Postgresql.Authentication.Superuser.Username = clusterSpec.Postgresql.Superuser.Username
 	patroniSpec.Postgresql.Authentication.Superuser.Password = clusterSpec.Postgresql.Superuser.Password
 
-	if clusterSpec.UsingWale() {
-		patroniSpec.Postgresql.CreateReplicaMethod = []string{"wal_e", "basebackup"}
-	} else if clusterSpec.UsingRsync() {
-		patroniSpec.Postgresql.CreateReplicaMethod = []string{"rsync", "basebackup"}
-	}
-
 	patroniSpec.Postgresql.ConnectAddress = fmt.Sprintf("%s:%s", hostDiscoverySpec.IP, hostDiscoverySpec.Port5432)
 	patroniSpec.Restapi.ConnectAddress = fmt.Sprintf("%s:%s", hostDiscoverySpec.IP, hostDiscoverySpec.Port8008)
 }

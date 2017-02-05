@@ -24,15 +24,15 @@ type ClusterSpecification struct {
 	} `json:"cluster"`
 	Archives struct {
 		Method string `json:"method"`
-		WalE   struct {
+		S3     struct {
 			AWSAccessKeyID    string `json:"aws_access_key_id,omitempty"`
 			AWSSecretAccessID string `json:"aws_secret_access_id,omitempty"`
 			S3Bucket          string `json:"s3_bucket,omitempty"`
 			S3Endpoint        string `json:"s3_endpoint,omitempty"`
-		} `json:"wale,omitempty"`
-		Rsync struct {
-			URI string `json:"uri,omitempty"`
-		} `json:"rsync,omitempty"`
+		} `json:"s3,omitempty"`
+		Local struct {
+			LocalBackupVolume string `json:"local_backup_volume,omitempty"`
+		} `json:"local,omitempty"`
 	} `json:"archives"`
 	Etcd struct {
 		URI string `json:"uri"`
@@ -85,16 +85,16 @@ func FetchClusterSpec() (cluster *ClusterSpecification, err error) {
 	return
 }
 
-// UsingWale summarizes whether central API wants patroni to be configured for wal-e to ship backups/WAL
-func (cluster *ClusterSpecification) UsingWale() bool {
-	return cluster.Archives.Method == "wal-e"
+// UsingWaleS3 summarizes whether central API wants patroni to be configured for wal-e to ship backups/WAL
+func (cluster *ClusterSpecification) UsingWaleS3() bool {
+	return cluster.Archives.Method == "s3"
 }
 
-// UsingRsync summarizes whether central API wants patroni to be configured for rysnc ship backups/WAL to remote host
-func (cluster *ClusterSpecification) UsingRsync() bool {
-	return cluster.Archives.Method == "rsync"
+// UsingWaleLocal true if wal-e will push/fetch files to a local filesystem volume
+func (cluster *ClusterSpecification) UsingWaleLocal() bool {
+	return cluster.Archives.Method == "local"
 }
 
 func (cluster *ClusterSpecification) waleS3Prefix() string {
-	return fmt.Sprintf("s3://%s/backups/%s/wal/", cluster.Archives.WalE.S3Bucket, cluster.Cluster.Scope)
+	return fmt.Sprintf("s3://%s/backups/%s/wal/", cluster.Archives.S3.S3Bucket, cluster.Cluster.Scope)
 }
