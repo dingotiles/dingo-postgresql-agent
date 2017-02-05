@@ -72,7 +72,7 @@ services:
       AWS_SECRET_ACCESS_KEY: ~
       WAL_S3_BUCKET: ~
       AWS_REGION: ~
-      LOCAL_BACKUP_VOLUME: ~
+      LOCAL_BACKUP_VOLUME: /backups/
       APPUSER_USERNAME: appuser-username
       APPUSER_PASSWORD: appuser-password
       SUPERUSER_USERNAME: superuser-username

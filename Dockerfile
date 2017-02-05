@@ -21,6 +21,7 @@ CMD ["/scripts/entry.sh"]
 
 ENV DINGO_API_URI=https://api.dingotiles.com DINGO_IMAGE_VERSION=0.0.0
 VOLUME ["/backups"]
+ENV LOCAL_BACKUP_VOLUME=/backups/
 
 COPY . /go/src/github.com/dingotiles/dingo-postgresql-agent
 RUN set -x \

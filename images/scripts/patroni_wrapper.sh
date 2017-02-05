@@ -56,7 +56,6 @@ function wait_for_config {
     ls /etc/wal-e.d/env
   fi
 
-
   echo "/config/patroni.yml:"
   cat ${patroni_config}
 

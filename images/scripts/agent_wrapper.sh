@@ -25,6 +25,12 @@ if [[ -d ${PG_DATA_DIR} ]]; then
   chmod 700 $PG_DATA_DIR
 fi
 
+if [[ "${LOCAL_BACKUP_VOLUME:-X}" != "X" ]]; then
+  mkdir -p $LOCAL_BACKUP_VOLUME
+  chown -R postgres:postgres $LOCAL_BACKUP_VOLUME
+  chmod 700 $LOCAL_BACKUP_VOLUME
+fi
+
 export PATRONI_POSTGRES_START_COMMAND="supervisorctl start postgres:"
 
 dingo-postgresql-agent run
