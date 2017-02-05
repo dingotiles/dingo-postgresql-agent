@@ -7,7 +7,6 @@ tests:
 - name: read-write
   before_startup: [purge-backups]
   spec:
-  - stop: [patroni2]
   - wait: one-node-running
   - exec: [store-value]
   - assert: [retrieve-value]
@@ -15,12 +14,12 @@ tests:
 - name: restoration
   before_startup: [purge-backups]
   spec:
-  - stop: [patroni2]
   - wait: one-node-running
   - exec: [store-value, flush-xlog-wal-archives]
   - stop: [patroni1]
+  - destroy: [patroni1]
   - exec: [purge-etcd]
-  - start: [patroni2]
+  - start: [patroni1]
   - {wait: one-node-running, timeout: 180}
   - assert: [retrieve-value]
 

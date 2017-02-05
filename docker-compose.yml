@@ -19,20 +19,6 @@ services:
       BACKUPS_SUMMARY_WAITTIME: 10
     depends_on: [etcd]
     command: ["/scripts/entry.sh"]
-  patroni2:
-    image: dingotiles/dingo-postgresql:pre-test
-    container_name: patroni2
-    ports: ["5002:5432", "8002:8008"]
-    environment:
-      # DEBUG: 1
-      DINGO_CLUSTER: test-cluster
-      DINGO_ORG_TOKEN: test-org-token
-      DINGO_API_URI: http://${DOCKER_HOST_IP}:5000/wal-e
-      DOCKER_HOST_IP: ${DOCKER_HOST_IP}
-      DOCKER_HOST_PORT_5432: 5002
-      DOCKER_HOST_PORT_8008: 8002
-      BACKUPS_SUMMARY_WAITTIME: 10
-    depends_on: [etcd]
   test-api:
     build: .
     image: dingotiles/dingo-postgresql:pre-test
