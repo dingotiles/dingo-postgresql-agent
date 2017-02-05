@@ -1,6 +1,6 @@
 suite:
   name: dingo-postgresql-agent
-  system: docker-compose-s3.yml
+  system: docker-compose.yml
   task_service: tests
 
 tests:
