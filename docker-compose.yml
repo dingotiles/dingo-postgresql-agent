@@ -3,9 +3,11 @@ version: '2'
 services:
   patroni1:
     build: .
-    image: dingotiles/dingo-postgresql:pre-test
+    image: dingotiles/dingo-postgresql:wale-files
     container_name: patroni1
     ports: ["5432:5432", "8008:8008"]
+    volumes:
+    - backups:/backups
     environment:
       # DEBUG: 1
       DINGO_CLUSTER: test-cluster
@@ -18,7 +20,7 @@ services:
     depends_on: [etcd]
     command: ["/scripts/entry.sh"]
   patroni2:
-    image: dingotiles/dingo-postgresql:pre-test
+    image: dingotiles/dingo-postgresql:wale-files
     container_name: patroni2
     ports: ["5002:5432", "8002:8008"]
     environment:
@@ -69,6 +71,8 @@ services:
   tests:
     build: ./images/tests/
     image: dingotiles/dingo-pg-agent-container-tests
+    volumes:
+    - backups:/backups
     environment:
       DOCKER_HOST_IP:
       ETCD_URI: "http://root:password@${DOCKER_HOST_IP}:4001"
@@ -88,3 +92,6 @@ services:
       SUPERUSER_USERNAME: superuser-username
       SUPERUSER_PASSWORD: superuser-password
       ADMIN_PASSWORD: admin-password
+
+volumes:
+  backups:
