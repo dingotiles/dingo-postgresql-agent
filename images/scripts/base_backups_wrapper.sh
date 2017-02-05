@@ -33,9 +33,8 @@ function wait_for_config {
 function wale_base_backups {
   # NOTE: env vars printed also ensures they are set (set -u)
   echo PATRONI_SCOPE: ${PATRONI_SCOPE}
-  echo WALE_FILES_PREFIX: ${WALE_FILES_PREFIX}
-  echo WALE_S3_PREFIX: ${WALE_S3_PREFIX}
-  echo WAL_S3_BUCKET: ${WAL_S3_BUCKET}
+  echo WALE_FILES_PREFIX: ${WALE_FILES_PREFIX:-}
+  echo WALE_S3_PREFIX: ${WALE_S3_PREFIX:-}
 
   if [[ "${WALE_S3_PREFIX:-X}" != "X" ]]; then
     if [[ "${DEBUG:-X}" != "X" ]]; then

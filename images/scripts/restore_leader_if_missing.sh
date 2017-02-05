@@ -45,12 +45,21 @@ indent() {
 
   # must have /initialize set
   if [[ "$(curl -s ${ETCD_URI}/v2/keys/service/${PATRONI_SCOPE}/initialize | jq -r .node.value)" == "null" ]]; then
-    echo "etcd missing /initialize system ID, fetching from ${WALE_S3_PREFIX:?required}sysids"
-    region=$(aws s3api get-bucket-location --bucket ${WAL_S3_BUCKET} | jq -r '.LocationConstraint')
-    if [[ ${region} != 'null' ]]; then
-      region_option="--region ${region}"
+    if [[ "${WALE_S3_PREFIX:-X}" != "X" ]]; then
+      echo "etcd missing /initialize system ID, fetching from ${WALE_S3_PREFIX:?required}sysids"
+      region=$(aws s3api get-bucket-location --bucket ${WAL_S3_BUCKET} | jq -r '.LocationConstraint')
+      if [[ ${region} != 'null' ]]; then
+        region_option="--region ${region}"
+      fi
+      aws s3 ${region_option:-} sync ${WALE_S3_PREFIX}sysids /tmp/sysids
+    elif [[ "${WALE_FILES_PREFIX:-X}" != "X" ]]; then
+      echo "etcd missing /initialize system ID, fetching from ${WALE_FILES_PREFIX:?required}sysids"
+      cp ${LOCAL_BACKUP_VOLUME:?required}sysids /tmp/sysids
+    else
+      echo "Not implemented backup of sysids for '$ARCHIVE_METHOD'"
+      exit 1
     fi
-    aws s3 ${region_option:-} sync ${WALE_S3_PREFIX}sysids /tmp/sysids
+
 
     if [[ ! -f /tmp/sysids/sysid ]]; then
       echo "Target ${WALE_S3_PREFIX} missing /sysids/sysid for original 'Database system identifier'"

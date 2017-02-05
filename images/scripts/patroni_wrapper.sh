@@ -71,9 +71,8 @@ function wait_for_config {
   : ${PATRONI_SCOPE:?required}
   : ${PG_DATA_DIR:?required}
   : ${ETCD_URI:?required}
-  : ${ARCHIVE_METHOD:?required}
 
-  $DIR/archives/$ARCHIVE_METHOD/restore_leader_if_missing.sh
+  $DIR/restore_leader_if_missing.sh
 
   # runs as postgres user via supervisor
   python3 /patroni/patroni.py /config/patroni.yml

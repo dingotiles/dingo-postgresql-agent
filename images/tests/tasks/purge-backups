@@ -16,7 +16,8 @@ if [[ "${AWS_ACCESS_KEY_ID:-X}" != "X" ]]; then
   set -x
   aws s3 ${region_option:-} rm --recursive "s3://${WAL_S3_BUCKET}/backups/${PATRONI_SCOPE}"
 elif [[ "${LOCAL_BACKUP_VOLUME:-X}" != "X" ]]; then
-  rm -rf ${LOCAL_BACKUP_VOLUME}/*
+  set -x
+  rm -rfv ${LOCAL_BACKUP_VOLUME}/*
 elif [[ "${RSYNC_URI:-X}" != "X" ]]; then
   rsync --delete -d ${RSYNC_URI}
 else
