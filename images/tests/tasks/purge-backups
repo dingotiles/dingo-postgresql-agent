@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -e -u
+
+if [[ "${AWS_ACCESS_KEY_ID:-X}" != "X" ]]; then
+  : ${AWS_SECRET_ACCESS_KEY:?required}
+  : ${WAL_S3_BUCKET:?required}
+  : ${PATRONI_SCOPE:?required}
+
+  echo "Deleting all backups for cluster '${PATRONI_SCOPE}'..."
+  region=$(aws s3api get-bucket-location --bucket ${WAL_S3_BUCKET} | jq -r '.LocationConstraint')
+  if [[ ${region} != 'null' ]]; then
+    region_option="--region ${region}"
+  fi
+
+  set -x
+  aws s3 ${region_option:-} rm --recursive "s3://${WAL_S3_BUCKET}/backups/${PATRONI_SCOPE}"
+elif [[ "${LOCAL_BACKUP_VOLUME:-X}" != "X" ]]; then
+  rm -rf ${LOCAL_BACKUP_VOLUME}/
+elif [[ "${RSYNC_URI:-X}" != "X" ]]; then
+  rsync --delete -d ${RSYNC_URI}
+else
+  echo "No configuration passed for S3, Local, or Rsync"
+  exit 1
+fi

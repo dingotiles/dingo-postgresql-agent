@@ -25,7 +25,7 @@ tests:
   - assert: [retrieve-value]
 
 tasks:
-- {name: purge-backups, command: "/tasks/purge-s3-backups"}
+- {name: purge-backups, command: "/tasks/purge-backups"}
 - {name: purge-etcd, command: "/tasks/purge-etcd"}
 - {name: one-node-running, command: "/tasks/nodes-running 1"}
 - {name: store-value, command: "/tasks/store-value testtable test-value"}
