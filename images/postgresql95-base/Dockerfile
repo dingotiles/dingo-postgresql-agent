@@ -1,4 +1,5 @@
 FROM alpine:3.4
+# contains postgresql-9.5.4
 
 ENV PG_VERSION=9.5
 
@@ -26,12 +27,7 @@ RUN set -ex \
 
 # PostgreSQL
 RUN set -x \
-    && apk update && apk add curl postgresql postgresql-contrib postgresql-dev
-# TODO: when https://pkgs.alpinelinux.org/packages?name=postgresql 9.6.0-r2 or 9.6.1 comes out try again
-# https://github.com/zalando/patroni/issues/341
-# RUN set -x \
-#     && echo "@edge http://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
-#     && apk update && apk add curl "postgresql@edge>9.6" "postgresql-contrib@edge>9.6" "postgresql-dev@edge>9.6"
+    && apk update && apk add bash curl rsync postgresql postgresql-contrib postgresql-dev
 
 ENV POSTGIS_VERSION 2.2.2
 # https://hub.docker.com/r/unocha/alpine-base-postgis/~/dockerfile/
@@ -65,7 +61,7 @@ RUN echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/re
             gcc make libgcc g++
 
 # python3, wal-3
-ENV WALE_VERSION=1.0.0
+ENV WALE_VERSION=1.0.2
 RUN set -x \
       && echo "@community http://nl.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
       && apk add --update python3 python3-dev bash sed jq curl alpine-sdk linux-headers musl-dev pv@community \

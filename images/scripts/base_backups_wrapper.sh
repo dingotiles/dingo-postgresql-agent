@@ -30,18 +30,19 @@ function wait_for_config {
   done
 }
 
-function wale_s3_base_backups {
+function wale_base_backups {
   # NOTE: env vars printed also ensures they are set (set -u)
   echo PATRONI_SCOPE: ${PATRONI_SCOPE}
-  echo PG_DATA_DIR: ${PG_DATA_DIR}
-  echo WALE_S3_PREFIX: ${WALE_S3_PREFIX}
-  echo WAL_S3_BUCKET: ${WAL_S3_BUCKET}
+  echo WALE_FILES_PREFIX: ${WALE_FILES_PREFIX:-}
+  echo WALE_S3_PREFIX: ${WALE_S3_PREFIX:-}
 
-  if [[ "${DEBUG:-}X" != "X" ]]; then
-    aws s3api get-bucket-location --bucket ${WAL_S3_BUCKET}
+  if [[ "${WALE_S3_PREFIX:-X}" != "X" ]]; then
+    if [[ "${DEBUG:-X}" != "X" ]]; then
+      aws s3api get-bucket-location --bucket ${WAL_S3_BUCKET}
+    fi
+    AWS_REGION=$(aws s3api get-bucket-location --bucket ${WAL_S3_BUCKET} | jq -r '.LocationConstraint')
+    echo AWS_REGION: ${AWS_REGION}
   fi
-  AWS_REGION=$(aws s3api get-bucket-location --bucket ${WAL_S3_BUCKET} | jq -r '.LocationConstraint')
-  echo AWS_REGION: ${AWS_REGION}
 
   INITIAL=1
   SYSID_UPLOADED=0
@@ -85,18 +86,25 @@ function wale_s3_base_backups {
       BACKUPS_LINES=$(wal-e backup-list 2>/dev/null|wc -l)
       [[ $PIPESTATUS[0] = 0 ]] && [[ $BACKUPS_LINES -ge 2 ]] && INITIAL=0
     fi
-    # store the system ID into AWS
-    if [[ $SYSID_UPLOADED = 0 ]] && [[ "${WALE_S3_PREFIX}X" != "X" ]]
+    # Backup the system ID
+    if [[ $SYSID_UPLOADED = 0 ]]
     then
       pg_controldata ${PG_DATA_DIR}
 
       mkdir -p /tmp/sysids
       pg_controldata ${PG_DATA_DIR} | grep "Database system identifier" | cut -d ":" -f2 | awk '{print $1}' > /tmp/sysids/sysid
 
-      if [[ ${AWS_REGION} != 'null' ]]; then
-        region_option="--region ${AWS_REGION}"
+      if [[ "${WALE_S3_PREFIX:-X}" != "X" ]]; then
+        if [[ ${AWS_REGION} != 'null' ]]; then
+          region_option="--region ${AWS_REGION}"
+        fi
+        aws s3 ${region_option:-} sync /tmp/sysids ${WALE_S3_PREFIX}sysids
+      elif [[ "${WALE_FILES_PREFIX:-X}" != "X" ]]; then
+        cp -R /tmp/sysids ${LOCAL_BACKUP_VOLUME:?required}sysids
+      else
+        echo "Not implemented backup of sysids for '$ARCHIVE_METHOD'"
+        exit 1
       fi
-      aws s3 ${region_option:-} sync /tmp/sysids ${WALE_S3_PREFIX}sysids
       SYSID_UPLOADED=1
     fi
     # produce backup only at a given hour, unless it's set to *, which means
@@ -136,13 +144,6 @@ function wale_s3_base_backups {
   done
 }
 
-function noop_base_backups {
-  while true; do
-    echo "TODO: implement base_backups_wrapper.sh"
-    sleep 5
-  done
-}
-
 (
   echo Waiting for configuration from agent...
   wait_for_config
@@ -153,9 +154,5 @@ function noop_base_backups {
     env | sort
   fi
 
-  if [[ "${WALE_S3_PREFIX:-X}" != "X" ]]; then
-    wale_s3_base_backups
-  else
-    noop_base_backups
-  fi
+  wale_base_backups
 ) 2>&1 | indent

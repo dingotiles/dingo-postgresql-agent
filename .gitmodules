@@ -1,0 +1,4 @@
+[submodule "wal-e"]
+	path = wal-e
+	url = https://github.com/drnic/wal-e.git
+	branch = files_scheme

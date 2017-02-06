@@ -11,7 +11,7 @@ The output will look similar to:
 ```
 ENV PG_VERSION=9.6
 ENV POSTGIS_VERSION 2.2.2
-ENV WALE_VERSION=1.0.0
+ENV WALE_VERSION=1.0.2
 ENV SUPERVISOR_VERSION=3.3.1
 ENV GOSU_VERSION=1.10
 ENV PATRONI_VERSION=1.1
@@ -38,7 +38,7 @@ jq-1.5
 $ docker run -ti $image etcdctl --version
 etcdctl version 2.3.4
 $ docker run -ti $image wal-e version
-1.0.0
+1.0.2
 $ docker run -ti $image python --version
 Python 2.7.12
 $ docker run -ti $image python3 --version

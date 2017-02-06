@@ -6,7 +6,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"strconv"
 
 	"github.com/hashicorp/errwrap"
 
@@ -26,7 +25,7 @@ type PatroniV12Specification struct {
 	} `yaml:"restapi"`
 	Etcd struct {
 		URL      string `yaml:"url"`
-		Host     string `yaml:"host"`
+		Host     string `yaml:"host,omitempty"`
 		Port     int    `yaml:"port,omitempty"`
 		Protocol string `yaml:"protocol,omitempty"`
 		Username string `yaml:"username,omitempty"`
@@ -150,15 +149,6 @@ func (patroniSpec *PatroniV12Specification) MergeClusterSpec(clusterSpec *Cluste
 	appuserName := clusterSpec.Postgresql.Appuser.Username
 	replicationUsername := appuserName
 	patroniSpec.Etcd.URL = clusterSpec.Etcd.URI
-	patroniSpec.Etcd.Host = clusterSpec.Etcd.Host
-	if clusterSpec.Etcd.Port != "" {
-		var err error
-		patroniSpec.Etcd.Port, err = strconv.Atoi(clusterSpec.Etcd.Port)
-		fmt.Fprintf(os.Stderr, "Could not parse etcd.port into integer '%s': %s", clusterSpec.Etcd.Port, err)
-	}
-	patroniSpec.Etcd.Protocol = clusterSpec.Etcd.Protocol
-	patroniSpec.Etcd.Username = clusterSpec.Etcd.Username
-	patroniSpec.Etcd.Password = clusterSpec.Etcd.Password
 	patroniSpec.Scope = clusterSpec.Cluster.Scope
 	patroniSpec.Name = clusterSpec.Cluster.Name
 	patroniSpec.Bootstrap.PgHba = []string{
