@@ -3,7 +3,6 @@ package clicmd
 import (
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/codegangsta/cli"
 	"github.com/codegangsta/martini-contrib/binding"
@@ -63,41 +62,6 @@ func RunTestAPI(c *cli.Context) {
 	})
 
 	m.Run()
-}
-
-var (
-	waleEnvVarPrefixes  = []string{"WAL", "AWS", "WABS", "GOOGLE", "SWIFT", "PATRONI", "ETCD", "CONSUL"}
-	rsyncEnvVarPrefixes = []string{"RSYNC", "PATRONI", "ETCD", "CONSUL"}
-)
-
-func filterWaleEnvVars() []string {
-	return filterEnvVarsFromList(os.Environ(), waleEnvVarPrefixes)
-}
-
-func filterRsyncEnvVars() []string {
-	return filterEnvVarsFromList(os.Environ(), rsyncEnvVarPrefixes)
-}
-
-func filterEnvVarsFromList(environ, envVarPrefixes []string) []string {
-	envCount := 0
-	for _, envVar := range environ {
-		for _, prefix := range envVarPrefixes {
-			if strings.Index(envVar, prefix) == 0 && !strings.HasSuffix(envVar, "=") {
-				envCount++
-			}
-		}
-	}
-	envVars := make([]string, envCount)
-	envIndex := 0
-	for _, envVar := range environ {
-		for _, prefix := range envVarPrefixes {
-			if strings.Index(envVar, prefix) == 0 && !strings.HasSuffix(envVar, "=") {
-				envVars[envIndex] = envVar
-				envIndex++
-			}
-		}
-	}
-	return envVars
 }
 
 func requiredEnv(envKey string) string {
