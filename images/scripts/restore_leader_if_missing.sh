@@ -52,8 +52,8 @@ indent() {
         region_option="--region ${region}"
       fi
       aws s3 ${region_option:-} sync ${WALE_S3_PREFIX}sysids /tmp/sysids
-    elif [[ "${WALE_FILES_PREFIX:-X}" != "X" ]]; then
-      echo "etcd missing /initialize system ID, fetching from ${WALE_FILES_PREFIX:?required}sysids"
+    elif [[ "${WALE_LOCAL_PREFIX:-X}" != "X" ]]; then
+      echo "etcd missing /initialize system ID, fetching from ${WALE_LOCAL_PREFIX:?required}sysids"
       cp -R ${LOCAL_BACKUP_VOLUME:?required}sysids /tmp/sysids
     else
       echo "Not implemented backup of sysids for '$ARCHIVE_METHOD'"

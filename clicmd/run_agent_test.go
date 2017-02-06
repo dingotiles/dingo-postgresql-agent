@@ -42,7 +42,7 @@ func TestRunAgent_createPatroniPostgresConfigFilesForLocal(t *testing.T) {
 	clusterSpec := &config.ClusterSpecification{}
 	clusterSpec.Postgresql.Appuser.Username = "appuser"
 	clusterSpec.Archives.Method = "s3"
-	clusterSpec.Archives.Local.LocalBackupVolume = "files:///backup/"
+	clusterSpec.Archives.Local.LocalBackupVolume = "local:///backup/"
 
 	err := createPatroniPostgresConfigFiles(clusterSpec, "/tmp/run_agent_test", "")
 	if err != nil {

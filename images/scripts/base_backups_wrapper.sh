@@ -33,7 +33,7 @@ function wait_for_config {
 function wale_base_backups {
   # NOTE: env vars printed also ensures they are set (set -u)
   echo PATRONI_SCOPE: ${PATRONI_SCOPE}
-  echo WALE_FILES_PREFIX: ${WALE_FILES_PREFIX:-}
+  echo WALE_LOCAL_PREFIX: ${WALE_LOCAL_PREFIX:-}
   echo WALE_S3_PREFIX: ${WALE_S3_PREFIX:-}
 
   if [[ "${WALE_S3_PREFIX:-X}" != "X" ]]; then
@@ -99,7 +99,7 @@ function wale_base_backups {
           region_option="--region ${AWS_REGION}"
         fi
         aws s3 ${region_option:-} sync /tmp/sysids ${WALE_S3_PREFIX}sysids
-      elif [[ "${WALE_FILES_PREFIX:-X}" != "X" ]]; then
+      elif [[ "${WALE_LOCAL_PREFIX:-X}" != "X" ]]; then
         cp -R /tmp/sysids ${LOCAL_BACKUP_VOLUME:?required}sysids
       else
         echo "Not implemented backup of sysids for '$ARCHIVE_METHOD'"

@@ -36,7 +36,7 @@ func NewPatroniEnvironFromClusterSpec(clusterSpec *ClusterSpecification) *Enviro
 	}
 	if clusterSpec.UsingWaleLocal() {
 		volume := clusterSpec.Archives.Local.LocalBackupVolume
-		environ["WALE_FILES_PREFIX"] = fmt.Sprintf("files://%s", volume)
+		environ["WALE_LOCAL_PREFIX"] = fmt.Sprintf("local://%s", volume)
 		environ["LOCAL_BACKUP_VOLUME"] = volume
 	}
 
