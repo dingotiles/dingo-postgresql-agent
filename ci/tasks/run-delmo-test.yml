@@ -18,6 +18,7 @@ params:
   AWS_REGION:
   WALE_S3_ENDPOINT:
   WAL_S3_BUCKET:
+  LOCAL_BACKUP_VOLUME: /backups/
 
 run:
   path: /entrypoint.sh

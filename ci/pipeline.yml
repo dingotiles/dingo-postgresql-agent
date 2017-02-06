@@ -49,7 +49,7 @@ jobs:
     - {get: agent, passed: [build-image]}
     - {get: pg95-image, passed: [build-image], trigger: true, params: {skip_download: true}}
     - {get: version, passed: [build-image]}
-  - task: run-delmo-test
+  - task: run-s3-delmo-test
     file: agent-ci/ci/tasks/run-delmo-test.yml
     params:
       MACHINE_EXPORT_AWS_ACCESS_KEY_ID: {{docker-machine-access-key-id}}
@@ -61,6 +61,13 @@ jobs:
       AWS_REGION: {{delmo-aws-bucket-region}}
       WALE_S3_ENDPOINT: {{delmo-aws-bucket-endpoint}}
       WAL_S3_BUCKET: {{delmo-s3-bucket}}
+  - task: run-local-delmo-test
+    file: agent-ci/ci/tasks/run-delmo-test.yml
+    params:
+      MACHINE_EXPORT_AWS_ACCESS_KEY_ID: {{docker-machine-access-key-id}}
+      MACHINE_EXPORT_AWS_SECRET_ACCESS_KEY: {{docker-machine-secret-access-key}}
+      MACHINE_EXPORT_AWS_REGION: {{docker-machine-region}}
+      MACHINE_EXPORT_AWS_BUCKET: {{docker-machine-bucket}}
   - put: pg95-image
     params:
       pull_repository: dingotiles/dingo-postgresql
