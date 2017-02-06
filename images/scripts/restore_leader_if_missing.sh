@@ -54,7 +54,7 @@ indent() {
       aws s3 ${region_option:-} sync ${WALE_S3_PREFIX}sysids /tmp/sysids
     elif [[ "${WALE_FILES_PREFIX:-X}" != "X" ]]; then
       echo "etcd missing /initialize system ID, fetching from ${WALE_FILES_PREFIX:?required}sysids"
-      cp ${LOCAL_BACKUP_VOLUME:?required}sysids /tmp/sysids
+      cp -R ${LOCAL_BACKUP_VOLUME:?required}sysids /tmp/sysids
     else
       echo "Not implemented backup of sysids for '$ARCHIVE_METHOD'"
       exit 1

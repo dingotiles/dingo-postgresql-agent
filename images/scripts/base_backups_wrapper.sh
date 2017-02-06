@@ -100,7 +100,7 @@ function wale_base_backups {
         fi
         aws s3 ${region_option:-} sync /tmp/sysids ${WALE_S3_PREFIX}sysids
       elif [[ "${WALE_FILES_PREFIX:-X}" != "X" ]]; then
-        cp /tmp/sysids ${LOCAL_BACKUP_VOLUME:?required}sysids
+        cp -R /tmp/sysids ${LOCAL_BACKUP_VOLUME:?required}sysids
       else
         echo "Not implemented backup of sysids for '$ARCHIVE_METHOD'"
         exit 1
