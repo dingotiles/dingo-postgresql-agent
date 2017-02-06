@@ -2,8 +2,6 @@
 groups:
 - name: images
   jobs: [test-agent, rc, build-image, test-image, shipit, minor, major, patch, docker-machine-setup]
-- name: storage
-  jobs: [wale-files]
 - name: base-images
   jobs: [pg95-base-image]
 - name: ci-image
@@ -22,6 +20,7 @@ jobs:
   public: true
   plan:
     - {get: agent, passed: [test-agent], trigger: true}
+    - {get: wale-fork, trigger: true}
     - {get: version, params: {pre: rc}}
     - {put: version, params: {file: version/number}}
 
@@ -29,12 +28,16 @@ jobs:
   public: true
   serial: true
   plan:
-    - {get: agent-ci}
-    - {get: agent, passed: [rc]}
-    - {get: version, passed: [rc], trigger: true}
+    - aggregate:
+      - {get: agent-ci}
+      - {get: agent, passed: [rc]}
+      - {get: version, passed: [rc], trigger: true}
+      - {get: wal-e, resource: wale-fork, trigger: true}
+    - task: custom-wal-e
+      file: agent-ci/ci/tasks/custom-wal-e.yml
     - put: pg95-image
       params:
-        build: agent
+        build: dockerfile
         # cache: true -- causing https://ci.starkandwayne.com/teams/main/pipelines/dingo-postgresql-agent/jobs/build-image/builds/16
         tag: agent-ci/ci/tags/pre-test
 
@@ -154,19 +157,6 @@ jobs:
       AWS_SECURITY_GROUP: {{docker-machine-security-group}}
       AWS_AMI: ami-fd6e3bea
 
-- name: wale-files
-  public: true
-  plan:
-  - aggregate:
-    - {get: agent-ci}
-    - {get: wal-e, resource: wale-files, trigger: true}
-  - task: custom-wal-e
-    file: agent-ci/ci/tasks/custom-wal-e.yml
-  - put: pg95-image-wale-files
-    params:
-      build: dockerfile
-      tag: agent-ci/ci/tags/wale-files
-
 resources:
 - name: agent
   type: git
@@ -234,17 +224,9 @@ resources:
     file: version
     private_key: {{github-private-key}}
 
-- name: wale-files
+- name: wale-fork
   type: git
   source:
     uri: https://github.com/drnic/wal-e.git
     branch: files_scheme
     private_key: {{github-private-key}}
-
-- name: pg95-image-wale-files
-  type: docker-image
-  source:
-    email: {{docker-hub-email}}
-    username: {{docker-hub-username}}
-    password: {{docker-hub-password}}
-    repository: dingotiles/dingo-postgresql
