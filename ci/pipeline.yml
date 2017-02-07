@@ -235,5 +235,5 @@ resources:
   type: git
   source:
     uri: https://github.com/drnic/wal-e.git
-    branch: local_strategy
+    branch: remote_strategy
     private_key: {{github-private-key}}
