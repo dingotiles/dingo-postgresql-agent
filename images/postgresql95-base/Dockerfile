@@ -27,7 +27,7 @@ RUN set -ex \
 
 # PostgreSQL
 RUN set -x \
-    && apk update && apk add bash curl rsync postgresql postgresql-contrib postgresql-dev
+    && apk update && apk add bash curl openssh-client postgresql postgresql-contrib postgresql-dev
 
 ENV POSTGIS_VERSION 2.2.2
 # https://hub.docker.com/r/unocha/alpine-base-postgis/~/dockerfile/
