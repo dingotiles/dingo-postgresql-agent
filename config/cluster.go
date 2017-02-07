@@ -33,6 +33,13 @@ type ClusterSpecification struct {
 		Local struct {
 			LocalBackupVolume string `json:"local_backup_volume,omitempty"`
 		} `json:"local,omitempty"`
+		Remote struct {
+			Host       string `json:"host,omitempty"`
+			Port       string `json:"port,omitempty"`
+			User       string `json:"user,omitempty"`
+			PrivateKey string `json:"private_key,omitempty"`
+			BasePath   string `json:"base_path,omitempty"`
+		} `json:"remote,omitempty"`
 	} `json:"archives"`
 	Etcd struct {
 		URI string `json:"uri"`
@@ -93,6 +100,11 @@ func (cluster *ClusterSpecification) UsingWaleS3() bool {
 // UsingWaleLocal true if wal-e will push/fetch files to a local filesystem volume
 func (cluster *ClusterSpecification) UsingWaleLocal() bool {
 	return cluster.Archives.Method == "local"
+}
+
+// UsingWaleRemote true if wal-e will push/fetch files to a remote server filesystem
+func (cluster *ClusterSpecification) UsingWaleRemote() bool {
+	return cluster.Archives.Method == "remote"
 }
 
 func (cluster *ClusterSpecification) waleS3Prefix() string {

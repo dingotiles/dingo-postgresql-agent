@@ -99,6 +99,13 @@ function wale_base_backups {
           region_option="--region ${AWS_REGION}"
         fi
         aws s3 ${region_option:-} sync /tmp/sysids ${WALE_S3_PREFIX}sysids
+      elif [[ "${WALE_REMOTE_PREFIX:-X}" != "X" ]]; then
+        sysids=${REMOTE_BASE_PATH:?required}
+        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+            -p ${REMOTE_PORT:-22} \
+            -i ${REMOTE_IDENTITY_FILE:?required} \
+            ${REMOTE_USER}@${REMOTE_HOST} \
+            "mkdir -p ${sysids} && cat > ${sysids}/sysid" < /tmp/sysids/sysid
       elif [[ "${WALE_LOCAL_PREFIX:-X}" != "X" ]]; then
         cp -R /tmp/sysids ${LOCAL_BACKUP_VOLUME:?required}sysids
       else

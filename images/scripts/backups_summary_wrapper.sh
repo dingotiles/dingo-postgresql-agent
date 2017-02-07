@@ -55,7 +55,7 @@ function backups_summary {
 
   while true; do
     pg_isready >/dev/null 2>&2 || continue
-    in_recovery=$(psql -tqAc "select pg_is_in_recovery()")
+    in_recovery=$(psql -U postgres -tqAc "select pg_is_in_recovery()")
     if [[ "${in_recovery}" == "f" ]]; then
       backups_summary
     fi

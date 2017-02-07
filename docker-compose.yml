@@ -7,7 +7,7 @@ services:
     container_name: patroni1
     ports: ["5432:5432", "8008:8008"]
     volumes:
-    - backups:/backups
+    - local_backups:/backups
     environment:
       # DEBUG: 1
       DINGO_CLUSTER: test-cluster
@@ -19,6 +19,16 @@ services:
       BACKUPS_SUMMARY_WAITTIME: 10
     depends_on: [etcd]
     command: ["/scripts/entry.sh"]
+  backup_storage:
+    build: images/backup_storage
+    image: dingotiles/backup-storage
+    container_name: backup_storage
+    ports: ["4022:22"]
+    volumes:
+    - remote_backups:/data
+    environment:
+      REMOTE_USER: dingo
+      REMOTE_PUBLIC_KEY: ~
   test-api:
     build: .
     image: dingotiles/dingo-postgresql:pre-test
@@ -37,7 +47,11 @@ services:
       WAL_S3_BUCKET: ~
       WALE_S3_ENDPOINT: ~
       WALE_S3_PREFIX: ~
-      LOCAL_BACKUP_VOLUME: ~
+      REMOTE_HOST: ${DOCKER_HOST_IP}
+      REMOTE_PORT: 4022
+      REMOTE_USER: dingo
+      REMOTE_BASE_PATH: /data/backups/
+      REMOTE_PRIVATE_KEY: ~
     depends_on: [etcd]
     command: [/scripts/test-api.sh]
   etcd:
@@ -58,7 +72,7 @@ services:
     build: ./images/tests/
     image: dingotiles/dingo-pg-agent-container-tests
     volumes:
-    - backups:/backups
+    - local_backups:/backups
     environment:
       DOCKER_HOST_IP:
       ETCD_URI: "http://root:password@${DOCKER_HOST_IP}:4001"
@@ -72,7 +86,9 @@ services:
       AWS_SECRET_ACCESS_KEY: ~
       WAL_S3_BUCKET: ~
       AWS_REGION: ~
-      LOCAL_BACKUP_VOLUME: /backups/
+      REMOTE_HOST: ${DOCKER_HOST_IP}:4022
+      REMOTE_USER: dingo
+      REMOTE_PRIVATE_KEY: ~
       APPUSER_USERNAME: appuser-username
       APPUSER_PASSWORD: appuser-password
       SUPERUSER_USERNAME: superuser-username
@@ -80,4 +96,5 @@ services:
       ADMIN_PASSWORD: admin-password
 
 volumes:
-  backups:
+  local_backups:
+  remote_backups:

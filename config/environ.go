@@ -39,6 +39,18 @@ func NewPatroniEnvironFromClusterSpec(clusterSpec *ClusterSpecification) *Enviro
 		environ["WALE_LOCAL_PREFIX"] = fmt.Sprintf("local://%s", volume)
 		environ["LOCAL_BACKUP_VOLUME"] = volume
 	}
+	if clusterSpec.UsingWaleRemote() {
+		host := clusterSpec.Archives.Remote.Host
+		basePath := clusterSpec.Archives.Remote.BasePath
+		environ["REMOTE_HOST"] = host
+		environ["REMOTE_BASE_PATH"] = basePath
+		environ["REMOTE_PORT"] = clusterSpec.Archives.Remote.Port
+		environ["REMOTE_USER"] = clusterSpec.Archives.Remote.User
+		environ["REMOTE_PRIVATE_KEY"] = clusterSpec.Archives.Remote.PrivateKey
+		environ["WALE_REMOTE_PREFIX"] = fmt.Sprintf("remote://%s%s", host, basePath)
+		environ["REMOTE_IDENTITY_FILE"] = "/home/postgres/.ssh/remote_backup_storage"
+		// contents of $REMOTE_IDENTITY_FILE created by agent_wrapper.sh
+	}
 
 	return &environ
 }
@@ -98,7 +110,7 @@ func (environ *Environ) CreateEnvScript(filePath string, chownUser string) (err 
 	}
 
 	for name, value := range *environ {
-		env := fmt.Sprintf("export %s=%s\n", name, value)
+		env := fmt.Sprintf("export %s=\"%s\"\n", name, value)
 		_, err = f.WriteString(env)
 		if err != nil {
 			return errwrap.Wrapf("Cannot create write string to file: {{err}}", err)

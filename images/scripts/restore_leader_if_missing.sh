@@ -52,6 +52,15 @@ indent() {
         region_option="--region ${region}"
       fi
       aws s3 ${region_option:-} sync ${WALE_S3_PREFIX}sysids /tmp/sysids
+    elif [[ "${WALE_REMOTE_PREFIX:-X}" != "X" ]]; then
+      mkdir -p /tmp/sysids
+      echo "etcd missing /initialize system ID, fetching from ${WALE_REMOTE_PREFIX:?required}sysids/sysid"
+      sysid=${REMOTE_BASE_PATH:?required}/sysids/sysid
+      ssh -o StrictHostKeyChecking=no \
+          -p ${REMOTE_PORT:-22} \
+          -i ${REMOTE_IDENTITY_FILE:?required} \
+          ${REMOTE_USER}@${REMOTE_HOST} \
+          "[[ -f ${sysid} ]] && cat ${sysid}" > /tmp/sysids/sysid
     elif [[ "${WALE_LOCAL_PREFIX:-X}" != "X" ]]; then
       echo "etcd missing /initialize system ID, fetching from ${WALE_LOCAL_PREFIX:?required}sysids"
       cp -R ${LOCAL_BACKUP_VOLUME:?required}sysids /tmp/sysids
@@ -62,12 +71,13 @@ indent() {
 
 
     if [[ ! -f /tmp/sysids/sysid ]]; then
-      echo "Target ${WALE_S3_PREFIX} missing /sysids/sysid for original 'Database system identifier'"
+      echo "Pre-existing backups but missing /sysids/sysid from original 'Database system identifier'"
       exit 1
     fi
 
     echo "Re-initializing /${PATRONI_SCOPE}/initialize with original 'Database system identifier'"
     curl -s ${ETCD_URI}/v2/keys/service/${PATRONI_SCOPE}/initialize -XPUT -d "value=$(cat /tmp/sysids/sysid)"
+    curl -s ${ETCD_URI}/v2/keys/service/${PATRONI_SCOPE}/initialize
   fi
 
   echo "preparing patroni to restore this container from wal-e backups"

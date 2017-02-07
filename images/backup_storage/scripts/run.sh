@@ -1,29 +1,22 @@
 #!/bin/bash
 
-# Built from https://github.com/nabeken/docker-volume-container-rsync
-# USAGE:
-#   rsync rsync://${DOCKER_HOST_IP}:4873/
-#   rsync rsync://${DOCKER_HOST_IP}:4873/volume/
-# To upload/sync files:
-#   rsync -aP images/backup_storage rsync://${DOCKER_HOST_IP}:4873/volume/
+set -e
 
-VOLUME=${VOLUME:-/data}
-OWNER=${OWNER:-nobody}
-GROUP=${GROUP:-nogroup}
+: ${REMOTE_USER:?required}
+: ${REMOTE_PUBLIC_KEY:?required}
 
-chown "${OWNER}:${GROUP}" "${VOLUME}"
+if [[ ! -d /home/$REMOTE_USER ]]; then
+  useradd -m -s /bin/bash $REMOTE_USER
+fi
 
-[ -f /etc/rsyncd.conf ] || cat <<EOF > /etc/rsyncd.conf
-uid = ${OWNER}
-gid = ${GROUP}
-use chroot = yes
-log file = /dev/stdout
-reverse lookup = no
-[volume]
-    hosts allow = *
-    read only = false
-    path = ${VOLUME}
-    comment = docker volume
-EOF
+sshdir=/home/$REMOTE_USER/.ssh
+mkdir -p ${sshdir}
+echo -e $REMOTE_PUBLIC_KEY > ${sshdir}/authorized_keys
 
-exec /usr/bin/rsync --no-detach --daemon --config /etc/rsyncd.conf "$@"
+chown -R $REMOTE_USER:$REMOTE_USER ${sshdir}
+chmod 700 ${sshdir}
+chmod 600 ${sshdir}/authorized_keys
+
+chown -R $REMOTE_USER:$REMOTE_USER /data
+
+/usr/sbin/sshd -D

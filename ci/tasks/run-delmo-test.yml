@@ -18,7 +18,9 @@ params:
   AWS_REGION:
   WALE_S3_ENDPOINT:
   WAL_S3_BUCKET:
-  LOCAL_BACKUP_VOLUME: /backups/
+  REMOTE_HOST:
+  REMOTE_USER:
+  REMOTE_IDENTITY_FILE:
 
 run:
   path: /entrypoint.sh

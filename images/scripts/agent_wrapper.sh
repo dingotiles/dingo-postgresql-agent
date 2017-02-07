@@ -31,6 +31,13 @@ if [[ "${LOCAL_BACKUP_VOLUME:-X}" != "X" ]]; then
   chmod 700 $LOCAL_BACKUP_VOLUME
 fi
 
+mkdir -p /home/postgres/.ssh
+touch /home/postgres/.ssh/remote_backup_storage
+chown -R postgres:postgres /home/postgres
+chmod 700 /home/postgres/.ssh
+chmod 600 /home/postgres/.ssh/remote_backup_storage
+# file contents come from API
+
 export PATRONI_POSTGRES_START_COMMAND="supervisorctl start postgres:"
 
 dingo-postgresql-agent run
