@@ -55,12 +55,15 @@ indent() {
     elif [[ "${WALE_REMOTE_PREFIX:-X}" != "X" ]]; then
       mkdir -p /tmp/sysids
       echo "etcd missing /initialize system ID, fetching from ${WALE_REMOTE_PREFIX:?required}sysids/sysid"
-      sysid=${REMOTE_BASE_PATH:?required}/sysids/sysid
+      sysid=${REMOTE_BASE_PATH:?required}sysids/sysid
+      set +e -x
       ssh -o StrictHostKeyChecking=no \
           -p ${REMOTE_PORT:-22} \
           -i ${REMOTE_IDENTITY_FILE:?required} \
           ${REMOTE_USER}@${REMOTE_HOST} \
           "[[ -f ${sysid} ]] && cat ${sysid}" > /tmp/sysids/sysid
+      set -e +x
+      echo "copied ${sysid} into /tmp/sysids/sysid: $(cat /tmp/sysids/sysid)"
     elif [[ "${WALE_LOCAL_PREFIX:-X}" != "X" ]]; then
       echo "etcd missing /initialize system ID, fetching from ${WALE_LOCAL_PREFIX:?required}sysids"
       cp -R ${LOCAL_BACKUP_VOLUME:?required}sysids /tmp/sysids
