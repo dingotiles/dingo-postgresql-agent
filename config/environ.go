@@ -39,17 +39,17 @@ func NewPatroniEnvironFromClusterSpec(clusterSpec *ClusterSpecification) *Enviro
 		environ["WALE_LOCAL_PREFIX"] = fmt.Sprintf("local://%s", volume)
 		environ["LOCAL_BACKUP_VOLUME"] = volume
 	}
-	if clusterSpec.UsingWaleRemote() {
-		host := clusterSpec.Archives.Remote.Host
-		basePath := clusterSpec.Archives.Remote.BasePath
-		environ["REMOTE_HOST"] = host
-		environ["REMOTE_BASE_PATH"] = basePath
-		environ["REMOTE_PORT"] = clusterSpec.Archives.Remote.Port
-		environ["REMOTE_USER"] = clusterSpec.Archives.Remote.User
-		environ["REMOTE_PRIVATE_KEY"] = clusterSpec.Archives.Remote.PrivateKey
-		environ["WALE_REMOTE_PREFIX"] = fmt.Sprintf("remote://%s%s", host, basePath)
-		environ["REMOTE_IDENTITY_FILE"] = "/home/postgres/.ssh/remote_backup_storage"
-		// contents of $REMOTE_IDENTITY_FILE created by agent_wrapper.sh
+	if clusterSpec.UsingWaleSSH() {
+		host := clusterSpec.Archives.SSH.Host
+		basePath := clusterSpec.Archives.SSH.BasePath
+		environ["SSH_HOST"] = host
+		environ["SSH_BASE_PATH"] = basePath
+		environ["SSH_PORT"] = clusterSpec.Archives.SSH.Port
+		environ["SSH_USER"] = clusterSpec.Archives.SSH.User
+		environ["SSH_PRIVATE_KEY"] = clusterSpec.Archives.SSH.PrivateKey
+		environ["WALE_SSH_PREFIX"] = fmt.Sprintf("ssh://%s%s", host, basePath)
+		environ["SSH_IDENTITY_FILE"] = "/home/postgres/.ssh/ssh_backup_storage"
+		// contents of $SSH_IDENTITY_FILE created by agent_wrapper.sh
 	}
 
 	return &environ

@@ -2,21 +2,21 @@
 
 set -e
 
-: ${REMOTE_USER:?required}
-: ${REMOTE_PUBLIC_KEY:?required}
+: ${SSH_USER:?required}
+: ${SSH_PUBLIC_KEY:?required}
 
-if [[ ! -d /home/$REMOTE_USER ]]; then
-  useradd -m -s /bin/bash $REMOTE_USER
+if [[ ! -d /home/$SSH_USER ]]; then
+  useradd -m -s /bin/bash $SSH_USER
 fi
 
-sshdir=/home/$REMOTE_USER/.ssh
+sshdir=/home/$SSH_USER/.ssh
 mkdir -p ${sshdir}
-echo -e $REMOTE_PUBLIC_KEY > ${sshdir}/authorized_keys
+echo -e $SSH_PUBLIC_KEY > ${sshdir}/authorized_keys
 
-chown -R $REMOTE_USER:$REMOTE_USER ${sshdir}
+chown -R $SSH_USER:$SSH_USER ${sshdir}
 chmod 700 ${sshdir}
 chmod 600 ${sshdir}/authorized_keys
 
-chown -R $REMOTE_USER:$REMOTE_USER /data
+chown -R $SSH_USER:$SSH_USER /data
 
 /usr/sbin/sshd -D

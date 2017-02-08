@@ -13,7 +13,7 @@ restapi:
 #    password: password
 
 etcd:
-  url: http://REMOTE-ETCD:2379
+  url: http://SSH-ETCD:2379
   cacert: /etc/ssl/certs/ca-certificates.crt
 
 bootstrap:

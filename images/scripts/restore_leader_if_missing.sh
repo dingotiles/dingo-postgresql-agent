@@ -52,15 +52,15 @@ indent() {
         region_option="--region ${region}"
       fi
       aws s3 ${region_option:-} sync ${WALE_S3_PREFIX}sysids /tmp/sysids
-    elif [[ "${WALE_REMOTE_PREFIX:-X}" != "X" ]]; then
+    elif [[ "${WALE_SSH_PREFIX:-X}" != "X" ]]; then
       mkdir -p /tmp/sysids
-      echo "etcd missing /initialize system ID, fetching from ${WALE_REMOTE_PREFIX:?required}sysids/sysid"
-      sysid=${REMOTE_BASE_PATH:?required}sysids/sysid
+      echo "etcd missing /initialize system ID, fetching from ${WALE_SSH_PREFIX:?required}sysids/sysid"
+      sysid=${SSH_BASE_PATH:?required}sysids/sysid
       set +e -x
       ssh -o StrictHostKeyChecking=no \
-          -p ${REMOTE_PORT:-22} \
-          -i ${REMOTE_IDENTITY_FILE:?required} \
-          ${REMOTE_USER}@${REMOTE_HOST} \
+          -p ${SSH_PORT:-22} \
+          -i ${SSH_IDENTITY_FILE:?required} \
+          ${SSH_USER}@${SSH_HOST} \
           "[[ -f ${sysid} ]] && cat ${sysid}" > /tmp/sysids/sysid
       set -e +x
       echo "copied ${sysid} into /tmp/sysids/sysid: $(cat /tmp/sysids/sysid)"

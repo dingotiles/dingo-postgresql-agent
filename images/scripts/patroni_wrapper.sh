@@ -56,8 +56,8 @@ function wait_for_config {
     ls /etc/wal-e.d/env
   fi
 
-  if [[ -f /etc/wal-e.d/env/REMOTE_PRIVATE_KEY ]]; then
-    echo -e $(cat /etc/wal-e.d/env/REMOTE_PRIVATE_KEY) > /home/postgres/.ssh/remote_backup_storage
+  if [[ -f /etc/wal-e.d/env/SSH_PRIVATE_KEY ]]; then
+    echo -e $(cat /etc/wal-e.d/env/SSH_PRIVATE_KEY) > /home/postgres/.ssh/ssh_backup_storage
   fi
 
   echo "/config/patroni.yml:"
