@@ -24,11 +24,9 @@ services:
     image: dingotiles/backup-storage
     container_name: backup_storage
     ports: ["4022:22"]
-    volumes:
-    - remote_backups:/data
     environment:
       REMOTE_USER: dingo
-      REMOTE_PUBLIC_KEY: ~
+      REMOTE_PUBLIC_KEY: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDb8vk1P5VWngfudmTCNKxbBP0YZXlN/JnNahFDR6+8lkX9/k//mh0IekuW+T3xgOmGrgEC7jrpc0etfeL7u/MbkGKDkAS7Ag+CQ110PSZzU746+mFo3PaMRhLIuAyx6YuB5BerZ3VPmL5DswbRwOY2QPOoKn8HGhV4ufQlNXxw0xkr5iawLq8Rc7BGKM4wvTtY1SpoK+ftmQs2Jl8gtW7GisJZECi8OFpHABs+G/K5QAERKOkWxLnQ/cT9zD6Qxx0fPNb+K6vzUlJYNSvq2aNnP1vWJqlfNU2E+oeiLlVvNx1PZqD8DQTBgu7cvWOn/VO+rvTss+rnSgqgxxbkarrd"
   test-api:
     build: .
     image: dingotiles/dingo-postgresql:pre-test
@@ -51,7 +49,7 @@ services:
       REMOTE_PORT: 4022
       REMOTE_USER: dingo
       REMOTE_BASE_PATH: /data/backups/
-      REMOTE_PRIVATE_KEY: ~
+      REMOTE_PRIVATE_KEY: "-----BEGIN RSA PRIVATE KEY-----\\nMIIEpAIBAAKCAQEA2/L5NT+VVp4H7nZkwjSsWwT9GGV5TfyZzWoRQ0evvJZF/f5P\\n/5odCHpLlvk98YDphq4BAu466XNHrX3i+7vzG5Big5AEuwIPgkNddD0mc1O+Ovph\\naNz2jEYSyLgMsemLgeQXq2d1T5i+Q7MG0cDmNkDzqCp/BxoVeLn0JTV8cNMZK+Ym\\nsC6vEXOwRijOML07WNUqaCvn7ZkLNiZfILVuxorCWRAovDhaRwAbPhvyuUABESjp\\nFsS50P3E/cw+kMcdHzzW/iur81JSWDUr6tmjZz9b1iapXzVNhPqHoi5VbzcdT2ag\\n/A0EwYLu3L1jp/1Tvq707LPq50oKoMcW5Gq63QIDAQABAoIBAQCVb/TPr96YFhDP\\nfNMie8Uqpi4LmE4dpWUeAlWuP5Nv7y2oz1OtFxlovCaFcdwbLHn9jlWTlyahnDhz\\n8Jb6cA1RifzU5FHCeTjuSTTCmBV6v8f8rEboh1Bfp/B1PU8qxcGKQ92tEELNDLsg\\npg8ZDhWbgO/LLuxVd+xktPrjGP7ua8vINKgGchGzo7uOqotH9ofv6t3yc6wawTRk\\nfoC6sKVlveiR5RjDbZslTLGmsgkl0L76drKZcsyEfHPPL59kyDCavv7oLgJ8QDS8\\niybzu9RPv9qXLudHhPNK3aY96hwjeIm2l5HUT3U/4Yapq6/iZNrFdySmnqZFq3AU\\nu3njn/DBAoGBAPoP14fwQhvjOsbnIvJFYfAIpDS4SSZ8cprWr5C11FqFWDhY9Gp0\\nuHsIWHlDfKk8e/7S4zu17lA3JKHd01sS3tqa1/Qqqxt6Yiu/P24p8B8yO669HaD3\\nqqtJP6gIX6uBqmF+9HQAGVeiXN+oHb2vMju1cPlUQwMTFzRADfeeO80tAoGBAOEs\\nEnt6Hv7g5a7tUuCUQuCdYfwlv8AlXF9bTVuxxxYAD8VoxtPpNWFr4UCxR6md6rbh\\nRGxtZzzzOjCWDJ3yGnpZZDciGgV5r/FDMqzooTZ0qIwnatCKqDWVbmO9bZSYOF33\\nozKf/WUnzXzsqcIY2OiXQygRXWGqqsrsmFvk+BJxAoGBAMvhwr9JOv115WRq6+lQ\\nfKuyv/9kCfBhIyfvxrFcL0mm0ukOTinGBOv7P/eO+MMbV5XK6A61JRst+qYnML5e\\nwmjGOzEO4PfEbupwQg1WEDu/Pz4XX2Lwy6xgSpB8U1SIohxf4Hv74K286bBJaAZS\\nI8jfBL+k3gZRuGeXmku8LdH5AoGAKIPVj4IZsaKlsSPilaYXonKu/r+MEPan+EBl\\nWupR+BNqwwpnPBnqEO1oSkubqVlQsjc2KIxG1yCsh7F387NsMDeFYKYyKGoMzkxZ\\nAeOZnkK/UPiGr59DRODuS+P5o5MAEWhNZP6EiX7v6lpq8RGndbJB0yPMuZYLxRdt\\nEpvQRwECgYAWgExp3D1BS6iYHhM8bo4lWMtEo9TkUMa9ga8PUJqT/T8kcMbDQA9p\\nYvb+9Fg8G01rtfCPU7DtslvTbgaL6J1zrxTccktszYzLDY19o+ggW4C7WScJTg/z\\n+AHW6JKY9LT6aSD33KJ3ai7Fi00nhLXSywS1BdzwDcqGtRuCAmZylQ==\\n-----END RSA PRIVATE KEY-----"
     depends_on: [etcd]
     command: [/scripts/test-api.sh]
   etcd:
@@ -86,9 +84,6 @@ services:
       AWS_SECRET_ACCESS_KEY: ~
       WAL_S3_BUCKET: ~
       AWS_REGION: ~
-      REMOTE_HOST: ${DOCKER_HOST_IP}:4022
-      REMOTE_USER: dingo
-      REMOTE_PRIVATE_KEY: ~
       APPUSER_USERNAME: appuser-username
       APPUSER_PASSWORD: appuser-password
       SUPERUSER_USERNAME: superuser-username
@@ -97,4 +92,3 @@ services:
 
 volumes:
   local_backups:
-  remote_backups:
