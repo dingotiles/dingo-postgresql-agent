@@ -22,26 +22,8 @@ type ClusterSpecification struct {
 		Name  string `json:"name"`
 		Scope string `json:"scope"`
 	} `json:"cluster"`
-	Archives struct {
-		Method string `json:"method"`
-		S3     struct {
-			AWSAccessKeyID    string `json:"aws_access_key_id,omitempty"`
-			AWSSecretAccessID string `json:"aws_secret_access_id,omitempty"`
-			S3Bucket          string `json:"s3_bucket,omitempty"`
-			S3Endpoint        string `json:"s3_endpoint,omitempty"`
-		} `json:"s3,omitempty"`
-		Local struct {
-			LocalBackupVolume string `json:"local_backup_volume,omitempty"`
-		} `json:"local,omitempty"`
-		SSH struct {
-			Host       string `json:"host,omitempty"`
-			Port       string `json:"port,omitempty"`
-			User       string `json:"user,omitempty"`
-			PrivateKey string `json:"private_key,omitempty"`
-			BasePath   string `json:"base_path,omitempty"`
-		} `json:"ssh,omitempty"`
-	} `json:"archives"`
-	Etcd struct {
+	Archives Archives `json:"archives"`
+	Etcd     struct {
 		URI string `json:"uri"`
 	} `json:"etcd"`
 	Postgresql struct {
@@ -57,6 +39,27 @@ type ClusterSpecification struct {
 			Username string `json:"username"`
 		} `json:"superuser"`
 	} `json:"postgresql"`
+}
+
+// Archives describes the different supported backends for patroni/wal-e
+type Archives struct {
+	Method string `json:"method"`
+	S3     struct {
+		AWSAccessKeyID    string `json:"aws_access_key_id,omitempty"`
+		AWSSecretAccessID string `json:"aws_secret_access_id,omitempty"`
+		S3Bucket          string `json:"s3_bucket,omitempty"`
+		S3Endpoint        string `json:"s3_endpoint,omitempty"`
+	} `json:"s3,omitempty"`
+	Local struct {
+		LocalBackupVolume string `json:"local_backup_volume,omitempty"`
+	} `json:"local,omitempty"`
+	SSH struct {
+		Host       string `json:"host,omitempty"`
+		Port       string `json:"port,omitempty"`
+		User       string `json:"user,omitempty"`
+		PrivateKey string `json:"private_key,omitempty"`
+		BasePath   string `json:"base_path,omitempty"`
+	} `json:"ssh,omitempty"`
 }
 
 // TODO: POST ClusterName & OrgAuthToken to API
