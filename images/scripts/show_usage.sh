@@ -36,5 +36,11 @@ USAGE
 if [[ -z "${DOCKER_HOST_IP:+x}" || -z "${DOCKER_HOST_PORT_5432:+x}" || \
       -z "${DINGO_CLUSTER:+x}" || -z "${DINGO_ORG_TOKEN:+x}" ]]; then
   show_usage
+
+  echo "Required environment variables:"
+  echo "  DOCKER_HOST_IP=$DOCKER_HOST_IP"
+  echo "  DOCKER_HOST_PORT_5432=$DOCKER_HOST_PORT_5432"
+  echo "  DINGO_CLUSTER=$DINGO_CLUSTER"
+  echo "  DINGO_ORG_TOKEN=$DINGO_ORG_TOKEN"
   exit 1
 fi
