@@ -23,13 +23,11 @@ func RunTestAPI(c *cli.Context) {
 
 	m.Post("/wal-e/api", binding.Bind(config.ContainerStartupRequest{}), func(req config.ContainerStartupRequest, r render.Render) {
 		fmt.Printf("Recv [wal-e]: container start request: %v\n", req)
-		name := "patroni1"
-		patroniScope := "test-cluster-scope"
 		missingRequiredEnvs = []string{}
 
 		clusterSpec := config.ClusterSpecification{}
-		clusterSpec.Cluster.Name = name
-		clusterSpec.Cluster.Scope = patroniScope
+		clusterSpec.Cluster.Name = req.NodeName
+		clusterSpec.Cluster.Scope = req.ClusterName
 
 		if os.Getenv("AWS_ACCESS_KEY_ID") != "" {
 			clusterSpec.Archives.Method = "s3"
