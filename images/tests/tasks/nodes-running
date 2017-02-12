@@ -22,6 +22,7 @@ if psql ${superuser_uri} -c 'SELECT current_database();' > /dev/null 2>&1; then
 else
   if [[ "${leader_accessible:-}X" == "X" ]]; then
     echo "Trying to access database at URI ${superuser_uri} ..."
+    curl -sk "${ETCD_URI:?required}/v2/keys/service/"
     curl -sk "${ETCD_URI:?required}/v2/keys/service/${PATRONI_SCOPE}/members/?recursive=true"
     curl -sk "${ETCD_URI:?required}/v2/keys/service/${PATRONI_SCOPE}/leader"
     curl -sk "${ETCD_URI:?required}/v2/keys/service/${PATRONI_SCOPE}/?recursive=true"

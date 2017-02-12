@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -79,7 +80,8 @@ func FetchClusterSpec() (cluster *ClusterSpecification, err error) {
 	nodeName := apiSpec.NodeName
 	if nodeName == "" {
 		hostDiscovery := HostDiscoverySpec()
-		nodeName = fmt.Sprintf("%s:%s", hostDiscovery.IP, hostDiscovery.Port5432)
+		nodeName = fmt.Sprintf("%s-%s", hostDiscovery.IP, hostDiscovery.Port5432)
+		nodeName = strings.Replace(nodeName, ".", "-", -1)
 	}
 	startupReq := ContainerStartupRequest{
 		ImageVersion: apiSpec.ImageVersion,
