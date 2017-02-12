@@ -29,7 +29,7 @@ func RunAgent(c *cli.Context) {
 		if err == nil && clusterSpec != nil {
 			break
 		}
-		fmt.Printf("Error trying to connect to API %s, retrying...\n", startupConfig.APIURI)
+		fmt.Printf("Error trying to connect to API %s, retrying... (%s)\n", startupConfig.APIURI, err)
 		time.Sleep(time.Second)
 		retryCount++
 	}
