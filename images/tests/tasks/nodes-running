@@ -6,15 +6,22 @@ expected_number_of_nodes=${1}
 
 # Leader is running
 leader_name=$(curl -sk ${ETCD_URI:?required}/v2/keys/service/${PATRONI_SCOPE}/leader | jq -r '.node.value')
+
+if [[ "${leader_name}" == "null" ]]; then
+  echo "No leader yet"
+  curl -sk "${ETCD_URI:?required}/v2/keys/service/${PATRONI_SCOPE}/?recursive=true"
+  echo
+  exit 1
+fi
+
 leader_uri=$(curl -sk ${ETCD_URI}/v2/keys/service/${PATRONI_SCOPE}/members/${leader_name} | jq -r '.node.value' | jq -r '.conn_url')
 superuser_uri=$(echo ${leader_uri} \
   | sed "s%postgres://%postgres://${SUPERUSER_USERNAME}:${SUPERUSER_PASSWORD}@%")
 
-echo leader_name: $leader_name
+leader_state=$(curl -sk ${ETCD_URI}/v2/keys/service/${PATRONI_SCOPE}/members/${leader_name} | jq -r '.node.value' | jq -r '.state')
+
 echo leader_uri: $leader_uri
 echo superuser_uri: $superuser_uri
-
-leader_state=$(curl -sk ${ETCD_URI}/v2/keys/service/${PATRONI_SCOPE}/members/${leader_name} | jq -r '.node.value' | jq -r '.state')
 echo leader_state: $leader_state
 
 if psql ${superuser_uri} -c 'SELECT current_database();' > /dev/null 2>&1; then
@@ -22,10 +29,10 @@ if psql ${superuser_uri} -c 'SELECT current_database();' > /dev/null 2>&1; then
 else
   if [[ "${leader_accessible:-}X" == "X" ]]; then
     echo "Trying to access database at URI ${superuser_uri} ..."
-    curl -sk "${ETCD_URI:?required}/v2/keys/service/"
     curl -sk "${ETCD_URI:?required}/v2/keys/service/${PATRONI_SCOPE}/members/?recursive=true"
     curl -sk "${ETCD_URI:?required}/v2/keys/service/${PATRONI_SCOPE}/leader"
     curl -sk "${ETCD_URI:?required}/v2/keys/service/${PATRONI_SCOPE}/?recursive=true"
+    echo
   fi
   leader_accessible='false'
 fi
