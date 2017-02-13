@@ -8,6 +8,7 @@ tests:
   before_startup: [purge-backups]
   spec:
   - wait: one-node-running
+  - exec: [node-self-advertising]
   - exec: [store-value]
   - assert: [retrieve-value]
 
@@ -26,6 +27,7 @@ tests:
 tasks:
 - {name: purge-backups, command: "/tasks/purge-backups"}
 - {name: purge-etcd, command: "/tasks/purge-etcd"}
+- {name: node-self-advertising, command: "/tasks/node-self-advertising"}
 - {name: one-node-running, command: "/tasks/nodes-running 1"}
 - {name: store-value, command: "/tasks/store-value testtable test-value"}
 - {name: retrieve-value, command: "/tasks/retrieve-value testtable test-value"}

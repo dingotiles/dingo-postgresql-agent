@@ -10,12 +10,14 @@ services:
     - local_backups:/backups
     environment:
       # DEBUG: 1
+      DINGO_NODE: patroni1
       DINGO_CLUSTER: test-cluster
       DINGO_ORG_TOKEN: test-org-token
       DINGO_API_URI: http://${DOCKER_HOST_IP}:5000/wal-e
       DOCKER_HOST_IP: ${DOCKER_HOST_IP}
       DOCKER_HOST_PORT_5432: 5432
       DOCKER_HOST_PORT_8008: 8008
+      CELL_GUID: cell1
       BACKUPS_SUMMARY_WAITTIME: 10
     depends_on: [etcd]
     command: ["/scripts/entry.sh"]
