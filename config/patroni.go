@@ -58,6 +58,13 @@ type PatroniV12Specification struct {
 				} `yaml:"parameters"`
 				RecoveryConf struct {
 					RestoreCommand string `yaml:"restore_command"`
+					// see https://www.postgresql.org/docs/9.5/static/recovery-target-settings.html
+					TargetName      string `yaml:"recovery_target_name,omitempty"`
+					TargetTime      string `yaml:"recovery_target_time,omitempty"`
+					TargetXid       string `yaml:"recovery_target_xid,omitempty"`
+					TargetInclusive bool   `yaml:"recovery_target_inclusive,omitempty"`
+					TargetTimeline  string `yaml:"recovery_target_timeline,omitempty"`
+					TargetAction    string `yaml:"recovery_target_action,omitempty"`
 				} `yaml:"recovery_conf"`
 			} `yaml:"postgresql"`
 		} `yaml:"dcs"`
@@ -115,12 +122,15 @@ type PatroniV12Specification struct {
 var defaultPatroniSpec *PatroniV12Specification
 
 // BuildPatroniSpec merges cluster config with defaults
-func BuildPatroniSpec(clusterSpec *ClusterSpecification, hostDiscoverySpec *HostDiscoverySpecification) (patroniSpec *PatroniV12Specification, err error) {
+func BuildPatroniSpec(
+	clusterSpec *ClusterSpecification,
+	hostDiscoverySpec *HostDiscoverySpecification,
+	overrideSpec *OverrideSpecification) (patroniSpec *PatroniV12Specification, err error) {
 	patroniSpec, err = DefaultPatroniSpec()
 	if err != nil {
 		return
 	}
-	patroniSpec.MergeClusterSpec(clusterSpec, hostDiscoverySpec)
+	patroniSpec.MergeClusterSpec(clusterSpec, hostDiscoverySpec, overrideSpec)
 	return
 }
 
@@ -145,7 +155,10 @@ func DefaultPatroniSpec() (*PatroniV12Specification, error) {
 }
 
 // MergeClusterSpec builds patroni v1.1 config specification
-func (patroniSpec *PatroniV12Specification) MergeClusterSpec(clusterSpec *ClusterSpecification, hostDiscoverySpec *HostDiscoverySpecification) {
+func (patroniSpec *PatroniV12Specification) MergeClusterSpec(
+	clusterSpec *ClusterSpecification,
+	hostDiscoverySpec *HostDiscoverySpecification,
+	overrideSpec *OverrideSpecification) {
 	appuserName := clusterSpec.Postgresql.Appuser.Username
 	replicationUsername := appuserName
 	patroniSpec.Etcd.URL = clusterSpec.Etcd.URI
@@ -160,6 +173,18 @@ func (patroniSpec *PatroniV12Specification) MergeClusterSpec(clusterSpec *Cluste
 	patroniSpec.Postgresql.Authentication.Replication.Password = clusterSpec.Postgresql.Appuser.Password
 	patroniSpec.Postgresql.Authentication.Superuser.Username = clusterSpec.Postgresql.Superuser.Username
 	patroniSpec.Postgresql.Authentication.Superuser.Password = clusterSpec.Postgresql.Superuser.Password
+
+	if overrideSpec != nil {
+		if overrideSpec.PostgresRecovery != nil {
+			patroniSpec.Bootstrap.Dcs.Postgresql.RecoveryConf.TargetTimeline = overrideSpec.PostgresRecovery.TargetTimeline
+			patroniSpec.Bootstrap.Dcs.Postgresql.RecoveryConf.TargetName = overrideSpec.PostgresRecovery.TargetName
+			patroniSpec.Bootstrap.Dcs.Postgresql.RecoveryConf.TargetTime = overrideSpec.PostgresRecovery.TargetTime
+			patroniSpec.Bootstrap.Dcs.Postgresql.RecoveryConf.TargetXid = overrideSpec.PostgresRecovery.TargetXid
+			patroniSpec.Bootstrap.Dcs.Postgresql.RecoveryConf.TargetInclusive = overrideSpec.PostgresRecovery.TargetInclusive
+			patroniSpec.Bootstrap.Dcs.Postgresql.RecoveryConf.TargetTimeline = overrideSpec.PostgresRecovery.TargetTimeline
+			patroniSpec.Bootstrap.Dcs.Postgresql.RecoveryConf.TargetAction = overrideSpec.PostgresRecovery.TargetAction
+		}
+	}
 
 	patroniSpec.Postgresql.ConnectAddress = fmt.Sprintf("%s:%s", hostDiscoverySpec.IP, hostDiscoverySpec.Port5432)
 	patroniSpec.Restapi.ConnectAddress = fmt.Sprintf("%s:%s", hostDiscoverySpec.IP, hostDiscoverySpec.Port8008)
