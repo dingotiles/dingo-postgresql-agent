@@ -41,10 +41,10 @@ patroni_env=/etc/patroni.d/.envrc
         '{cell_guid:$cell, node_id:$node, state:.state, role:.role}' \
       )
 
-    set -x
+    echo value=$value
     curl -sf ${ETCD_URI:?required}/v2/keys/service/${DINGO_CLUSTER}/nodes/${DINGO_NODE}?ttl=20 \
       -XPUT -d "value=${value}" >/dev/null
-    set +x
+
     sleep 6
   done
 ) 2>&1 | indent
