@@ -56,7 +56,8 @@ func RunAgent(c *cli.Context) {
 func createPatroniPostgresConfigFiles(clusterSpec *config.ClusterSpecification, rootPath string, postgresUser string) (err error) {
 	fmt.Println(*clusterSpec)
 
-	patroniSpec, err := config.BuildPatroniSpec(clusterSpec, config.HostDiscoverySpec())
+	patroniSpec, err := config.BuildPatroniSpec(
+		clusterSpec, config.HostDiscoverySpec(), config.OverrideSpec())
 	if err != nil {
 		return errwrap.Wrapf("Cannot BuildPatroniSpec: {{err}}", err)
 	}
