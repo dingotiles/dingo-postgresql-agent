@@ -41,10 +41,10 @@ patroni_env=/etc/patroni.d/.envrc
         '{cell_guid:$cell, node_id:$node, state:.state, role:.role}' \
       )
 
-    if [[ "${value}X" ]]; then
+    if [[ "${value}X" == "X" ]]; then
       value="{\"cell_guid\":\"${CELL_GUID}\",\"node_id\":\"${DINGO_NODE}\",\"state\":\"api-not-available\"}"
+      echo value=$value
     fi
-    echo value=$value
     curl -sf ${ETCD_URI:?required}/v2/keys/service/${DINGO_CLUSTER}/nodes/${DINGO_NODE}?ttl=20 \
       -XPUT -d "value=${value}" >/dev/null
 
