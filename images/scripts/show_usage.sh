@@ -20,7 +20,7 @@ How to run:
     -e DOCKER_HOST_IP=${DOCKER_HOST_IP:?required} \
     -e DOCKER_HOST_PORT_5432=${PUBLIC_PORT:-5000} \
     -p ${PUBLIC_PORT:-5000}:5432 \
-    -e DINGO_ORG_TOKEN=global-org \
+    -e DINGO_ACCOUNT=global-org \
 USAGE
 echo "    -e DINGO_CLUSTER=${sample_cluster_name} \\"
 cat <<'USAGE'
@@ -34,7 +34,7 @@ USAGE
 }
 
 if [[ -z "${DOCKER_HOST_IP:+x}" || -z "${DOCKER_HOST_PORT_5432:+x}" || \
-      -z "${DINGO_CLUSTER:+x}" || -z "${DINGO_ORG_TOKEN:+x}" ]]; then
+      -z "${DINGO_CLUSTER:+x}" || -z "${DINGO_ACCOUNT:+x}" ]]; then
   show_usage
 
   echo
@@ -42,6 +42,6 @@ if [[ -z "${DOCKER_HOST_IP:+x}" || -z "${DOCKER_HOST_PORT_5432:+x}" || \
   echo "  DOCKER_HOST_IP=$DOCKER_HOST_IP"
   echo "  DOCKER_HOST_PORT_5432=$DOCKER_HOST_PORT_5432"
   echo "  DINGO_CLUSTER=$DINGO_CLUSTER"
-  echo "  DINGO_ORG_TOKEN=$DINGO_ORG_TOKEN"
+  echo "  DINGO_ACCOUNT=$DINGO_ACCOUNT"
   exit 1
 fi

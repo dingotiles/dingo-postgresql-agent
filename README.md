@@ -15,7 +15,7 @@ DOCKER_HOST_IP=$(docker-machine ip <name>)
 docker run -ti \
   --name dingo-demo \
   -e DINGO_CLUSTER=dingo-demo \
-  -e DINGO_ORG_TOKEN=shared-org \
+  -e DINGO_ACCOUNT=shared-org \
   -e DOCKER_HOST_IP=${DOCKER_HOST_IP} \
   -e DOCKER_HOST_PORT_5432=5000 \
   -v 5000:5432 \
