@@ -9,7 +9,7 @@ function show_usage {
 | | | | | '_ \ / _` |/ _ \
 | |_| | | | | | (_| | (_) |
 |____/|_|_| |_|\__, |\___/
-              |___/
+               |___/
 
 Dingo PostgreSQL continuously archived from Day 1.
 
