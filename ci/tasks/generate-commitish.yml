@@ -15,4 +15,4 @@ run:
   args:
   - -c
   - |
-    git -C boshrelease rev-parse HEAD > generated-commitish/commitish
+    git -C agent rev-parse HEAD > generated-commitish/commitish
