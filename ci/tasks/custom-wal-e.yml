@@ -11,5 +11,8 @@ inputs:
 outputs:
 - name: dockerfile
 
+params:
+  dockerfile_dir:
+
 run:
   path: agent-ci/ci/tasks/custom-wal-e.sh

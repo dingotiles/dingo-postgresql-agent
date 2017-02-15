@@ -32,12 +32,9 @@ jobs:
       - {get: agent-ci}
       - {get: agent, passed: [rc]}
       - {get: version, passed: [rc], trigger: true}
-      - {get: wal-e, resource: wale-fork, trigger: true}
-    - task: custom-wal-e
-      file: agent-ci/ci/tasks/custom-wal-e.yml
     - put: pg95-image
       params:
-        build: dockerfile
+        build: agent
         # cache: true -- causing https://ci.starkandwayne.com/teams/main/pipelines/dingo-postgresql-agent/jobs/build-image/builds/16
         tag: agent-ci/ci/tags/pre-test
 
@@ -140,11 +137,16 @@ jobs:
   public: true
   serial: true
   plan:
-  - {get: agent-base, trigger: true}
-  - {get: agent}
+  - aggregate:
+    - {get: agent, resource: agent-base, trigger: true}
+    - {get: agent-ci}
+    - {get: wal-e, resource: wale-fork, trigger: true}
+  - task: custom-wal-e
+    file: agent-ci/ci/tasks/custom-wal-e.yml
+    params: {dockerfile_dir: agent/images/postgresql95-base}
   - put: pg95-base-image
     params:
-      build: agent/images/postgresql95-base
+      build: dockerfile
       cache: true
 
 - name: build-task-image

@@ -2,7 +2,7 @@
 
 set -e
 
-cp -r agent/* dockerfile/
+cp -r ${dockerfile_dir}/* dockerfile/
 
 # remove submodule from development
 rm -rf dockerfile/wal-e

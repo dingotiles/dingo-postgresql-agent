@@ -3,7 +3,7 @@
 To see the versioned aspects of the base Docker image, run:
 
 ```
-grep "^ENV.*VERSION" images/pg96-base/Dockerfile
+grep "^ENV.*VERSION" images/postgresql95-base/Dockerfile
 ```
 
 The output will look similar to:
@@ -27,7 +27,7 @@ docker build -t dingotiles/dingo-postgresql95-agent-base:latest images/postgresq
 Sanity check of installed tools:
 
 ```
-$ image=dingotiles/dingo-postgresql96-agent-base:latest
+$ image=dingotiles/dingo-postgresql95-agent-base:latest
 
 $ docker run -ti $image postgres --version
 postgres (PostgreSQL) 9.5.4
@@ -38,7 +38,7 @@ jq-1.5
 $ docker run -ti $image etcdctl --version
 etcdctl version 2.3.4
 $ docker run -ti $image wal-e version
-1.0.2
+1.1.dev0
 $ docker run -ti $image python --version
 Python 2.7.12
 $ docker run -ti $image python3 --version

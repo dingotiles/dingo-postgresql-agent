@@ -72,6 +72,10 @@ RUN set -x \
       && rm -rf /var/cache/apk/* \
       && pip3 install --no-cache-dir wal-e[aws,azure,google,swift]==${WALE_VERSION} awscli envdir pgxnclient --upgrade
 
+# Now install patched wal-e with ssh_strategy
+COPY wal-e /tmp/wal-e
+RUN cd /tmp/wal-e && pip3 install . --upgrade
+
 # python2, dumb-init, supervisor
 ENV SUPERVISOR_VERSION=3.3.1
 RUN set -x \
