@@ -15,8 +15,8 @@ TODO
 
 ## Upgrade
 
-```
+\`\`\`
 docker pull dingotiles/dingo-postgresql:latest
 docker pull dingotiles/dingo-postgresql:v${version}
-```
+\`\`\`
 EOF
