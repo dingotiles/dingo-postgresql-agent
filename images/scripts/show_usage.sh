@@ -20,7 +20,7 @@ How to run:
     -e DOCKER_HOST_IP=${DOCKER_HOST_IP:?required} \
     -e DOCKER_HOST_PORT_5432=${PUBLIC_PORT:-5000} \
     -p ${PUBLIC_PORT:-5000}:5432 \
-    -e DINGO_ACCOUNT=global-org \
+    -e DINGO_ACCOUNT=$(git config --global --get user.email) \
 USAGE
 echo "    -e DINGO_CLUSTER=${sample_cluster_name} \\"
 cat <<'USAGE'
