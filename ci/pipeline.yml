@@ -96,17 +96,16 @@ jobs:
       - put: pg95-image
         params:
           build: dockerfile
-      - do:
-        - task: generate-commitish
-          file: agent-ci/ci/tasks/generate-commitish.yml
-        - task: create-release-notes
-          file: agent-ci/ci/tasks/create-release-notes.yml
-        - put: github-release
-          params:
-            name: release-notes/release-name
-            tag: release-notes/release-name
-            body: release-notes/notes.md
-            commitish: generated-commitish/commitish
+    - task: generate-commitish
+      file: agent-ci/ci/tasks/generate-commitish.yml
+    - task: create-release-notes
+      file: agent-ci/ci/tasks/create-release-notes.yml
+    - put: github-release
+      params:
+        name: release-notes/release-name
+        tag: release-notes/release-name
+        body: release-notes/notes.md
+        commitish: generated-commitish/commitish
 
 - name: major
   public: true
