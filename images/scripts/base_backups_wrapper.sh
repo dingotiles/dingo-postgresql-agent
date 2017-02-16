@@ -28,6 +28,8 @@ function wait_for_config {
     sleep 1
     wait_message="" # only show wait_message once
   done
+
+  source ${patroni_env}
 }
 
 function wale_base_backups {
@@ -35,12 +37,13 @@ function wale_base_backups {
   echo PATRONI_SCOPE: ${PATRONI_SCOPE}
   echo WALE_LOCAL_PREFIX: ${WALE_LOCAL_PREFIX:-}
   echo WALE_S3_PREFIX: ${WALE_S3_PREFIX:-}
+  echo WAL_S3_BUCKET: ${WAL_S3_BUCKET:-}
 
   if [[ "${WALE_S3_PREFIX:-X}" != "X" ]]; then
     if [[ "${DEBUG:-X}" != "X" ]]; then
-      aws s3api get-bucket-location --bucket ${WAL_S3_BUCKET}
+      aws s3api get-bucket-location --bucket ${WAL_S3_BUCKET:?required}
     fi
-    AWS_REGION=$(aws s3api get-bucket-location --bucket ${WAL_S3_BUCKET} | jq -r '.LocationConstraint')
+    AWS_REGION=$(aws s3api get-bucket-location --bucket ${WAL_S3_BUCKET:?required} | jq -r '.LocationConstraint')
     echo AWS_REGION: ${AWS_REGION}
   fi
 
