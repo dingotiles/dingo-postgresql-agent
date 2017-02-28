@@ -24,18 +24,18 @@ func RunAgent(c *cli.Context) {
 	retryCount := 0
 	var err error
 	var clusterSpec *config.ClusterSpecification
-	// TODO: no need to store retrying? API might restore anytime soon
-	for retryCount < 3 {
+	// 12 * 5s = 60s of waiting for API to be ready
+	for retryCount < 12 {
 		clusterSpec, err = config.FetchClusterSpec()
 		if err == nil && clusterSpec != nil {
 			break
 		}
 		fmt.Printf("Error trying to connect to API %s, retrying... (%s)\n", startupConfig.APIURI, err)
-		time.Sleep(time.Second)
+		time.Sleep(time.Second * 5)
 		retryCount++
 	}
 	if err != nil {
-		panic(err)
+		os.Exit(1)
 	}
 	if clusterSpec == nil {
 		fmt.Println("Cannot connect to API", startupConfig.APIURI)
