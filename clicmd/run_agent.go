@@ -24,6 +24,7 @@ func RunAgent(c *cli.Context) {
 	retryCount := 0
 	var err error
 	var clusterSpec *config.ClusterSpecification
+	// TODO: no need to store retrying? API might restore anytime soon
 	for retryCount < 3 {
 		clusterSpec, err = config.FetchClusterSpec()
 		if err == nil && clusterSpec != nil {

@@ -14,13 +14,13 @@ patroni_env=/etc/patroni.d/.envrc
   set +e
   # patroni_env is created by the agent during initialization
   wait_message="Waiting until ${patroni_env} is created..."
-  if [[ ! -f ${patroni_env} ]]; then
+  while [[ ! -f ${patroni_env} ]]; do
     if [[ "${wait_message}X" != "X" ]]; then
       echo ${wait_message} >&2
     fi
     sleep 1
     wait_message=""
-  fi
+  done
   set -e
 
   source ${patroni_env}
