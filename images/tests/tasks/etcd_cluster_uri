@@ -13,4 +13,4 @@ else
   service_instance_id=$(curl -s ${ETCD_URI}/v2/keys/service_instances | jq -r ".node.nodes | sort_by(.createdIndex) | reverse | first | .key | split(\"/\") | last")
   etcd_cluster_uri="${ETCD_URI}/v2/keys/service_instances/${service_instance_id}/service/${PATRONI_SCOPE}"
 fi
-echo etcd_cluster_uri: ${etcd_cluster_uri}
+echo ${etcd_cluster_uri}

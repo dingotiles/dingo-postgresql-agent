@@ -5,6 +5,7 @@ set -e -u
 expected_number_of_nodes=${1}
 
 etcd_cluster_uri=$(/tasks/etcd_cluster_uri)
+echo etcd_cluster_uri=$etcd_cluster_uri
 
 # Leader is running
 leader_name=$(curl -sk ${etcd_cluster_uri:?required}/leader | jq -r '.node.value')
