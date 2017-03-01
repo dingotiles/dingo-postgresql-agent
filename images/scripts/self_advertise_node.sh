@@ -28,6 +28,7 @@ patroni_env=/etc/patroni.d/.envrc
   echo "Self-advertising cell/node pairing for cluster"
   echo DINGO_NODE=${DINGO_NODE:?required}
   echo DINGO_CLUSTER=${DINGO_CLUSTER:?required}
+  echo ETCD_CLUSTER_URI=${ETCD_CLUSTER_URI:?required}
   echo DOCKER_HOST_IP=${DOCKER_HOST_IP:?required}
   CELL_GUID=${CELL_GUID:-$DOCKER_HOST_IP}
   echo CELL_GUID=${CELL_GUID}
@@ -45,7 +46,7 @@ patroni_env=/etc/patroni.d/.envrc
       value="{\"cell_guid\":\"${CELL_GUID}\",\"node_id\":\"${DINGO_NODE}\",\"state\":\"api-not-available\"}"
       echo value=$value
     fi
-    curl -sf ${ETCD_URI:?required}/v2/keys/service/${DINGO_CLUSTER}/nodes/${DINGO_NODE}?ttl=20 \
+    curl -sf ${ETCD_CLUSTER_URI}/nodes/${DINGO_NODE}?ttl=20 \
       -XPUT -d "value=${value}" >/dev/null
 
     sleep 6

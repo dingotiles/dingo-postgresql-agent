@@ -28,6 +28,7 @@ func RunTestAPI(c *cli.Context) {
 		clusterSpec := config.ClusterSpecification{}
 		clusterSpec.Cluster.Name = req.NodeName
 		clusterSpec.Cluster.Scope = req.ClusterName
+		clusterSpec.Cluster.Namespace = requiredEnv("TEST_API_NAMESPACE")
 
 		if os.Getenv("AWS_ACCESS_KEY_ID") != "" {
 			clusterSpec.Archives.Method = "s3"

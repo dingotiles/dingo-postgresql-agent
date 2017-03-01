@@ -1,6 +1,8 @@
 #!/bin/bash
 
-advert=$(curl -sk ${ETCD_URI:?required}/v2/keys/service/${PATRONI_SCOPE?:required}/nodes/patroni1 | jq -r '.node.value')
+etcd_cluster_uri=$(/tasks/etcd_cluster_uri)
+
+advert=$(curl -sk ${etcd_cluster_uri}/nodes/patroni1 | jq -r '.node.value')
 echo advert=${advert}
 
 cell_guid=$(echo ${advert} | jq -r '.cell_guid')

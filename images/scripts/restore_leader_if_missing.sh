@@ -25,6 +25,7 @@ indent() {
 }
 
 (
+  echo ETCD_CLUSTER_URI=$ETCD_CLUSTER_URI
   if [[ "$(curl -s ${ETCD_CLUSTER_URI:?required}/leader | jq -r .node.value)" != "null" ]]; then
     echo "leader exists, no additional preparation required for container to join cluster"
     exit 0

@@ -83,6 +83,7 @@ services:
       ETCD_PASSWORD: password
       DINGO_CLUSTER: test-cluster
       PATRONI_SCOPE: test-cluster
+      TEST_API_NAMESPACE: /testing/service/
       AWS_ACCESS_KEY_ID: ~
       AWS_SECRET_ACCESS_KEY: ~
       WAL_S3_BUCKET: ~
