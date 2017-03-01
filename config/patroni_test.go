@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestPatroni_(t *testing.T) {
+func TestPatroni_Spec(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("DOCKER_HOST_IP", "10.11.12.13")
 	os.Setenv("DOCKER_HOST_PORT_5432", "5000")

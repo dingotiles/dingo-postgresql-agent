@@ -2,8 +2,21 @@
 
 set -e -x
 
-leader_name=$(curl -sk ${ETCD_URI:?required}/v2/keys/service/${PATRONI_SCOPE}/leader | jq -r '.node.value')
-leader_uri=$(curl -sk ${ETCD_URI:?required}/v2/keys/service/${PATRONI_SCOPE}/members/${leader_name} | jq -r '.node.value' | jq -r '.conn_url')
+if [[ "${ETCD_BROKER_URI:-X}" == "X" ]]; then
+  etcd_cluster_uri="${ETCD_URI}/v2/keys/service/${PATRONI_SCOPE}"
+else
+  # Look up /service_instances/xyz for newest
+  if [[ $(curl -s ${ETCD_URI}/v2/keys/service_instances | jq -r .message) == "Key not found" ]]; then
+    echo "Waiting for cluster to connect to etcd..."
+    exit 1
+  fi
+  service_instance_id=$(curl -s ${ETCD_URI}/v2/keys/service_instances | jq -r ".node.nodes | sort_by(.createdIndex) | reverse | first | .key | split(\"/\") | last")
+  etcd_cluster_uri="${ETCD_URI}/v2/keys/service_instances/${service_instance_id}/service/${PATRONI_SCOPE}"
+fi
+echo etcd_cluster_uri: ${etcd_cluster_uri}
+
+leader_name=$(curl -sk ${etcd_cluster_uri:?required}/leader | jq -r '.node.value')
+leader_uri=$(curl -sk ${etcd_cluster_uri:?required}/members/${leader_name} | jq -r '.node.value' | jq -r '.conn_url')
 superuser_uri=$(echo ${leader_uri} \
   | sed "s%postgres://%postgres://${SUPERUSER_USERNAME}:${SUPERUSER_PASSWORD}@%")
 

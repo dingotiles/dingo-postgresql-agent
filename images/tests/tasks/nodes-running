@@ -4,21 +4,34 @@ set -e -u
 
 expected_number_of_nodes=${1}
 
+if [[ "${ETCD_BROKER_URI:-X}" == "X" ]]; then
+  etcd_cluster_uri="${ETCD_URI}/v2/keys/service/${PATRONI_SCOPE}"
+else
+  # Look up /service_instances/xyz for newest
+  if [[ $(curl -s ${ETCD_URI}/v2/keys/service_instances | jq -r .message) == "Key not found" ]]; then
+    echo "Waiting for cluster to connect to etcd..."
+    exit 1
+  fi
+  service_instance_id=$(curl -s ${ETCD_URI}/v2/keys/service_instances | jq -r ".node.nodes | sort_by(.createdIndex) | reverse | first | .key | split(\"/\") | last")
+  etcd_cluster_uri="${ETCD_URI}/v2/keys/service_instances/${service_instance_id}/service/${PATRONI_SCOPE}"
+fi
+echo etcd_cluster_uri: ${etcd_cluster_uri}
+
 # Leader is running
-leader_name=$(curl -sk ${ETCD_URI:?required}/v2/keys/service/${PATRONI_SCOPE}/leader | jq -r '.node.value')
+leader_name=$(curl -sk ${etcd_cluster_uri:?required}/leader | jq -r '.node.value')
 
 if [[ "${leader_name}" == "null" ]]; then
   echo "No leader yet"
-  curl -sk "${ETCD_URI:?required}/v2/keys/service/${PATRONI_SCOPE}/?recursive=true"
+  curl -sk "${etcd_cluster_uri:?required}/?recursive=true"
   echo
   exit 1
 fi
 
-leader_uri=$(curl -sk ${ETCD_URI}/v2/keys/service/${PATRONI_SCOPE}/members/${leader_name} | jq -r '.node.value' | jq -r '.conn_url')
+leader_uri=$(curl -sk ${etcd_cluster_uri:?required}/members/${leader_name} | jq -r '.node.value' | jq -r '.conn_url')
 superuser_uri=$(echo ${leader_uri} \
   | sed "s%postgres://%postgres://${SUPERUSER_USERNAME}:${SUPERUSER_PASSWORD}@%")
 
-leader_state=$(curl -sk ${ETCD_URI}/v2/keys/service/${PATRONI_SCOPE}/members/${leader_name} | jq -r '.node.value' | jq -r '.state')
+leader_state=$(curl -sk ${etcd_cluster_uri:?required}/members/${leader_name} | jq -r '.node.value' | jq -r '.state')
 
 echo leader_uri: $leader_uri
 echo superuser_uri: $superuser_uri
@@ -29,16 +42,16 @@ if psql ${superuser_uri} -c 'SELECT current_database();' > /dev/null 2>&1; then
 else
   if [[ "${leader_accessible:-}X" == "X" ]]; then
     echo "Trying to access database at URI ${superuser_uri} ..."
-    curl -sk "${ETCD_URI:?required}/v2/keys/service/${PATRONI_SCOPE}/members/?recursive=true"
-    curl -sk "${ETCD_URI:?required}/v2/keys/service/${PATRONI_SCOPE}/leader"
-    curl -sk "${ETCD_URI:?required}/v2/keys/service/${PATRONI_SCOPE}/?recursive=true"
+    curl -sk "${etcd_cluster_uri:?required}/members/?recursive=true"
+    curl -sk "${etcd_cluster_uri:?required}/leader"
+    curl -sk "${etcd_cluster_uri:?required}/?recursive=true"
     echo
   fi
   leader_accessible='false'
 fi
 
 # All members are running
-found=$(curl -s ${ETCD_URI}/v2/keys/service/${PATRONI_SCOPE}/members?recursive=true \
+found=$(curl -s ${etcd_cluster_uri:?required}/members?recursive=true \
    | jq -r '.node.nodes[].value | fromjson | .state' \
    | grep "running" \
    | wc -l \

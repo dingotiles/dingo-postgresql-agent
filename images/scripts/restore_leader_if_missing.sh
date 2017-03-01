@@ -25,7 +25,7 @@ indent() {
 }
 
 (
-  if [[ "$(curl -s ${ETCD_URI:?required}/v2/keys/service/${PATRONI_SCOPE}/leader | jq -r .node.value)" != "null" ]]; then
+  if [[ "$(curl -s ${ETCD_CLUSTER_URI:?required}/leader | jq -r .node.value)" != "null" ]]; then
     echo "leader exists, no additional preparation required for container to join cluster"
     exit 0
   fi
@@ -44,7 +44,7 @@ indent() {
   fi
 
   # must have /initialize set
-  if [[ "$(curl -s ${ETCD_URI}/v2/keys/service/${PATRONI_SCOPE}/initialize | jq -r .node.value)" == "null" ]]; then
+  if [[ "$(curl -s ${ETCD_CLUSTER_URI:?required}/initialize | jq -r .node.value)" == "null" ]]; then
     if [[ "${WALE_S3_PREFIX:-X}" != "X" ]]; then
       echo "etcd missing /initialize system ID, fetching from ${WALE_S3_PREFIX:?required}sysids"
       region=$(aws s3api get-bucket-location --bucket ${WAL_S3_BUCKET} | jq -r '.LocationConstraint')
@@ -79,8 +79,8 @@ indent() {
     fi
 
     echo "Re-initializing /${PATRONI_SCOPE}/initialize with original 'Database system identifier'"
-    curl -s ${ETCD_URI}/v2/keys/service/${PATRONI_SCOPE}/initialize -XPUT -d "value=$(cat /tmp/sysids/sysid)"
-    curl -s ${ETCD_URI}/v2/keys/service/${PATRONI_SCOPE}/initialize
+    curl -s ${ETCD_CLUSTER_URI:?required}/initialize -XPUT -d "value=$(cat /tmp/sysids/sysid)"
+    curl -s ${ETCD_CLUSTER_URI:?required}/initialize
   fi
 
   echo "preparing patroni to restore this container from wal-e backups"
