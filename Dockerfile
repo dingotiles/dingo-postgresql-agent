@@ -1,14 +1,5 @@
 FROM dingotiles/dingo-postgresql95-agent-base:latest
 
-# slug generates GUIDs
-RUN set -x \
-      && go get github.com/taskcluster/slugid-go/slug \
-      && rm -rf $GOPATH/src
-
-RUN set -x \
-      && echo "@edge http://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
-      && apk add --no-cache --update pstree@edge
-
 COPY config/patroni-default-values.yml /patroni/patroni-default-values.yml
 COPY images/motd /etc/motd
 RUN echo "source /etc/motd" >> /root/.bashrc

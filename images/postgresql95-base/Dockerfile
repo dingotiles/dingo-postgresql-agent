@@ -115,7 +115,7 @@ RUN set -x \
       && curl -L https://s3.amazonaws.com/s3cli-artifacts/s3cli-${S3CLI_VERSION}-linux-amd64 -o /usr/local/bin/s3cli \
       && chmod +x /usr/local/bin/s3cli
 
-# slug generates GUIDs
+# slug generates GUIDs in show_usage
 RUN set -x \
       && go get github.com/taskcluster/slugid-go/slug \
       && rm -rf $GOPATH/src
