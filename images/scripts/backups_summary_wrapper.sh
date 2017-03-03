@@ -35,7 +35,7 @@ echo ETCD_CLUSTER_URI=${ETCD_CLUSTER_URI:?required}
 backups_found=
 function backups_summary {
   curl -s ${ETCD_CLUSTER_URI}/wale-backup-list \
-    -X PUT -d "value=$(wal-e backup-list 2>/dev/null)" # > /dev/null
+    -X PUT -d "value=$(wal-e backup-list 2>/dev/null)" > /dev/null
   backup_lines=$(wal-e backup-list 2>/dev/null | wc -l)
   if [[ $backup_lines -ge 2 ]]; then
     if [[ "${DEBUG:-}X" != "X" ]]; then
