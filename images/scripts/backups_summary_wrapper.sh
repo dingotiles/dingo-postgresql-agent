@@ -54,11 +54,11 @@ function backups_summary {
   fi
 
   while true; do
+    sleep ${BACKUPS_SUMMARY_WAITTIME}
     pg_isready >/dev/null 2>&2 || continue
     in_recovery=$(psql -U postgres -tqAc "select pg_is_in_recovery()")
     if [[ "${in_recovery}" == "f" ]]; then
       backups_summary
     fi
-    sleep ${BACKUPS_SUMMARY_WAITTIME}
   done
 ) 2>&1 | indent

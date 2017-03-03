@@ -51,8 +51,7 @@ function wale_base_backups {
   SYSID_UPLOADED=0
   RETRY=0
   LAST_BACKUP_TS=0
-  while true
-  do
+  while true; do
     sleep 5
 
     CURRENT_TS=$(date +%s)
