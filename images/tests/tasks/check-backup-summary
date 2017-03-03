@@ -1,0 +1,6 @@
+#!/bin/bash
+
+etcd_cluster_uri=$(/tasks/etcd_cluster_uri)
+
+set -e -x
+curl -sf ${etcd_cluster_uri}/wale-backup-list | jq -r .node.value

@@ -9,6 +9,7 @@ tests:
   spec:
   - wait: one-node-running
   - exec: [node-self-advertising]
+  - exec: [check-backup-summary]
   - exec: [store-value]
   - assert: [retrieve-value]
 
@@ -28,6 +29,7 @@ tasks:
 - {name: purge-backups, command: "/tasks/purge-backups"}
 - {name: purge-etcd, command: "/tasks/purge-etcd"}
 - {name: node-self-advertising, command: "/tasks/node-self-advertising"}
+- {name: check-backup-summary, command: "/tasks/check-backup-summary"}
 - {name: one-node-running, command: "/tasks/nodes-running 1"}
 - {name: store-value, command: "/tasks/store-value testtable test-value"}
 - {name: retrieve-value, command: "/tasks/retrieve-value testtable test-value"}
