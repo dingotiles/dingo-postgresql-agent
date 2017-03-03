@@ -36,7 +36,7 @@ indent() {
   fi
 
   echo Looking up existing backups:
-  wal-e backup-list
+  wal-e backup-list 2>/dev/null
 
   backups_lines=$(wal-e backup-list 2>/dev/null | wc -l)
   if [[ $backups_lines -lt 2 ]]; then
