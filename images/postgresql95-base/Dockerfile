@@ -60,6 +60,11 @@ RUN echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/re
             libxml2-dev gdal-dev proj4-dev \
             gcc make libgcc g++
 
+# pstree is pretty
+RUN set -x \
+      && echo "@edge http://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
+      && apk add --no-cache --update pstree@edge
+
 # python3, wal-3
 ENV WALE_VERSION=1.0.2
 RUN set -x \
@@ -109,6 +114,11 @@ ENV S3CLI_VERSION=0.0.51
 RUN set -x \
       && curl -L https://s3.amazonaws.com/s3cli-artifacts/s3cli-${S3CLI_VERSION}-linux-amd64 -o /usr/local/bin/s3cli \
       && chmod +x /usr/local/bin/s3cli
+
+# slug generates GUIDs
+RUN set -x \
+      && go get github.com/taskcluster/slugid-go/slug \
+      && rm -rf $GOPATH/src
 
 # 5432: PostgreSQL server
 # 8008: Patroni API
