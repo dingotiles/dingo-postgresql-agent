@@ -1,15 +1,15 @@
-# dingo-postgresql95-agent-base Docker image
+# dingo-postgresql96-agent-base Docker image
 
 To see the versioned aspects of the base Docker image, run:
 
 ```
-grep "^ENV.*VERSION" images/postgresql95-base/Dockerfile
+grep "^ENV.*VERSION" images/postgresql96-base/Dockerfile
 ```
 
 The output will look similar to:
 
 ```
-ENV PG_VERSION=9.5
+ENV PG_VERSION=9.6
 ENV POSTGIS_VERSION 2.2.2
 ENV WALE_VERSION=1.0.2
 ENV SUPERVISOR_VERSION=3.3.1
@@ -21,18 +21,18 @@ ENV SPRUCE_VERSION=1.8.1
 To build:
 
 ```
-docker build -t dingotiles/dingo-postgresql95-agent-base:latest images/postgresql95-base
+docker build -t dingotiles/dingo-postgresql96-agent-base images/postgresql96-base
 ```
 
 Sanity check of installed tools:
 
 ```
-$ image=dingotiles/dingo-postgresql95-agent-base:latest
+$ image=dingotiles/dingo-postgresql96-agent-base:latest
 
 $ docker run -ti $image postgres --version
-postgres (PostgreSQL) 9.5.4
+postgres (PostgreSQL) 9.6.1
 $ docker run -ti $image psql --version
-psql (PostgreSQL) 9.5.4
+psql (PostgreSQL) 9.6.1
 $ docker run -ti $image jq --version
 jq-1.5
 $ docker run -ti $image etcdctl --version
