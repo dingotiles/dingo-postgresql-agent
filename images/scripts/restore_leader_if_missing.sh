@@ -81,7 +81,6 @@ indent() {
 
     echo "Re-initializing /${PATRONI_SCOPE}/initialize with original 'Database system identifier'"
     curl -s ${ETCD_CLUSTER_URI:?required}/initialize -XPUT -d "value=$(cat /tmp/sysids/sysid)"
-    curl -s ${ETCD_CLUSTER_URI:?required}/initialize
   fi
 
   echo "preparing patroni to restore this container from wal-e backups"
