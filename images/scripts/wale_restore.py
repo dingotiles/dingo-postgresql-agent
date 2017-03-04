@@ -98,11 +98,14 @@ class WALERestore(object):
             # 00000001000000000000007F    00000240
             backup_strings = latest_backup.decode('utf-8').splitlines() if latest_backup else ()
             if len(backup_strings) != 2:
+                logger.debug('len(backup_strings) = {0}'.format(len(backup_strings)))
                 return False
 
             names = backup_strings[0].split()
             vals = backup_strings[1].split()
             if (len(names) != len(vals)) or (len(names) != 7):
+                logger.debug('len(names) = {0}'.format(len(names)))
+                logger.debug('len(vals) = {0}'.format(len(vals)))
                 return False
 
             backup_info = dict(zip(names, vals))
@@ -114,6 +117,9 @@ class WALERestore(object):
             backup_size = backup_info['expanded_size_bytes']
             backup_start_segment = backup_info['wal_segment_backup_start']
             backup_start_offset = backup_info['wal_segment_offset_backup_start']
+            logger.debug('backup_size = {0}'.format(backup_size))
+            logger.debug('backup_start_segment = {0}'.format(backup_start_segment))
+            logger.debug('backup_start_offset = {0}'.format(backup_start_offset))
         except Exception:
             logger.exception("unable to get some of WALE backup parameters")
             return None
@@ -131,6 +137,7 @@ class WALERestore(object):
 
         diff_in_bytes = int(backup_size)
         attempts_no = 0
+        logger.debug('master_connection = {0}'.format(self.master_connection))
         while True:
             if self.master_connection:
                 try:
@@ -168,6 +175,9 @@ class WALERestore(object):
 
         # if the size of the accumulated WAL segments is more than a certan percentage of the backup size
         # or exceeds the pre-determined size - pg_basebackup is chosen instead.
+        logger.debug('diff_in_bytes = {0}'.format(diff_in_bytes))
+        logger.debug('threshold_megabytes = {0}'.format(int(threshold_megabytes) * 1048576))
+        logger.debug('threshold_backup_size_percentage = {0}'.format(int(backup_size) * float(threshold_backup_size_percentage) / 100))
         return (diff_in_bytes < int(threshold_megabytes) * 1048576) and\
             (diff_in_bytes < int(backup_size) * float(threshold_backup_size_percentage) / 100)
 
@@ -190,23 +200,30 @@ class WALERestore(object):
         return True
 
     def create_replica_with_s3(self):
+        logger.debug('create_replica_with_s3 start...')
         # if we're set up, restore the replica using fetch latest
         try:
             ret = subprocess.call(self.wal_e.cmd.split() + ['backup-fetch', '{}'.format(self.data_dir), 'LATEST'])
+            logger.debug('wal-e backup-fetch: done')
+        except subprocess.CalledProcessError as e:
+            logger.exception("could not wal-e backup-fetch: {0}".format(e))
+            return 1
         except Exception as e:
+            logger.debug('Error when fetching backup with WAL-E: {0}'.format(e))
             logger.error('Error when fetching backup with WAL-E: {0}'.format(e))
             return 1
 
-        if (ret == 0 and not
-           self.fix_subdirectory_path_if_broken('pg_xlog' if get_major_version(self.data_dir) < 10.0 else 'pg_wal')):
+        logger.debug('wal-e backup-fetch returned {0}'.format(ret))
+        if (ret == 0 and not self.fix_subdirectory_path_if_broken('pg_xlog' if get_major_version(self.data_dir) < 10.0 else 'pg_wal')):
+            logger.debug('fix_subdirectory_path_if_broken returned False')
             return 2
         return ret
 
 
 def main():
     logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s',
-                        filename='/tmp/wale_restore.log',
-                        level=logging.INFO)
+                        # filename='/tmp/wale_restore.log',
+                        level=logging.DEBUG)
 
     parser = argparse.ArgumentParser(description='Script to image replicas using WAL-E')
     parser.add_argument('--scope', required=True)
