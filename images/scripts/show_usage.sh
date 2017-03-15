@@ -23,8 +23,8 @@ How to run:
     -e DINGO_ACCOUNT=$(git config --global --get user.email) \
 USAGE
 echo "    -e DINGO_CLUSTER=${sample_cluster_name} \\"
+echo "    ${DINGO_IMAGE_NAME:-dingotiles/dingo-postgresql}"
 cat <<'USAGE'
-    dingotiles/dingo-postgresql
 
 How to get direct PostgreSQL URI:
 
