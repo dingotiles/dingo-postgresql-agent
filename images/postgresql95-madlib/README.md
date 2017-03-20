@@ -17,11 +17,13 @@ docker run dingotiles/dingo-postgresql-madlib
 To access your PostgreSQL, and install the madlib extension:
 
 ```
-psql $(docker exec -ti dingo-postgresql cat /config/uri) -c "create extension madlib;"
+uri=$(docker exec -ti dingo-postgresql cat /config/uri)
+psql $uri -c "create extension plpythonu;"
+psql $uri -c "create extension madlib;"
 ```
 
 To play with your PostgreSQL with madlib:
 
 ```
-psql $(docker exec -ti dingo-postgresql cat /config/uri)
+psql $uri
 ```

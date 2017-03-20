@@ -1,6 +1,6 @@
 FROM dingotiles/dingo-postgresql-base:latest
 
-RUN apk add --update --virtual=.build-dependencies perl bison flex readline zlib python3-dev
+RUN apk add --update --virtual=.build-dependencies perl bison flex readline zlib python python-dev
 
 ENV POSTGRESQL_VERSION=9.5.6 PG_VERSION=9.5.6
 RUN wget https://ftp.postgresql.org/pub/source/v${PG_VERSION}/postgresql-${PG_VERSION}.tar.gz -O /tmp/postgresql-${PG_VERSION}.tar.gz && \
@@ -11,7 +11,7 @@ RUN wget https://ftp.postgresql.org/pub/source/v${PG_VERSION}/postgresql-${PG_VE
         --with-python \
         --without-openssl \
         --without-readline --without-zlib \
-        PYTHON=/usr/bin/python3 && \
+        PYTHON=/usr/bin/python && \
       make && make install && \
       rm -rf /tmp/postgresql-${PG_VERSION}*
 

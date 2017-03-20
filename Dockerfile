@@ -1,3 +1,5 @@
+# FROM dingotiles/dingo-postgresql-madlib:latest
+# FROM dingotiles/dingo-postgresql95-src-agent-base:latest
 FROM dingotiles/dingo-postgresql95-agent-base:latest
 
 COPY config/patroni-default-values.yml /patroni/patroni-default-values.yml

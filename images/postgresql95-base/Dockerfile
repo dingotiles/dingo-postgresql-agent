@@ -1,6 +1,5 @@
 FROM dingotiles/dingo-postgresql-base:latest
 
-
 # PostgreSQL
 RUN set -x \
     && apk update && apk add postgresql postgresql-contrib postgresql-dev
