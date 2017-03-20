@@ -170,7 +170,7 @@ jobs:
     - {get: base-image, passed: [base-image], trigger: true, params: {skip_download: true}}
   - put: pg95-base-image
     params:
-      build: agent-ci/images/
+      build: agent-ci/images/postgresql95-base
       cache: true
 
 - name: pg96-base-image

@@ -6,7 +6,6 @@ image_resource:
 
 inputs:
 - name: wal-e
-- name: agent
 - name: agent-ci
 outputs:
 - name: dockerfile
