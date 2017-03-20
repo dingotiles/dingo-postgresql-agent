@@ -126,7 +126,6 @@ jobs:
     - aggregate:
       - {get: image, resource: pg95-image, passed: [test-image], params: {skip_download: true}}
       - {get: madlib-image, resource: pg95-madlib-image, passed: [test-madlib-image], params: {skip_download: true}}
-    - aggregate:
       - {get: agent-ci}
       - {get: agent, passed: [test-image, test-madlib-image]}
       - {get: version, passed: [test-image, test-madlib-image], params: {bump: final}}
