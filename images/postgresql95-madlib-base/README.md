@@ -5,7 +5,7 @@ Thanks to @mwright-pivotal for coding up a madlib version of Dingo PostgreSQL:
 To build this image from the root folder:
 
 ```
-docker build -t dingotiles/dingo-postgresql-madlib images/postgresql95-madlib
+docker build -t dingotiles/dingo-postgresql-madlib-base images/postgresql95-madlib-base
 ```
 
 Then run the following and follow the prompts to run Dingo PostgreSQL/madlib:

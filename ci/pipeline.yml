@@ -1,9 +1,9 @@
 ---
 groups:
 - name: images
-  jobs: [test-agent, rc, build-image, madlib-image, test-image, shipit, minor, major, patch, docker-machine-setup]
+  jobs: [test-agent, rc, build-image, test-image, shipit, minor, major, patch, docker-machine-setup]
 - name: base-images
-  jobs: [base-image, pg95-base-image, pg96-base-image]
+  jobs: [base-image, pg95-base-image, pg96-base-image, pg95-base-madlib-image]
 - name: ci-image
   jobs: [build-task-image]
 
@@ -37,19 +37,6 @@ jobs:
         build: agent
         # cache: true -- causing https://ci.starkandwayne.com/teams/main/pipelines/dingo-postgresql-agent/jobs/build-image/builds/16
         tag: agent-ci/ci/tags/pre-test
-
-- name: madlib-image
-  public: true
-  serial: true
-  plan:
-    - aggregate:
-      - {get: agent-ci}
-      - {get: agent, passed: [build-image]}
-      - {get: pg95-image, passed: [build-image], trigger: true, params: {skip_download: true}}
-      - {get: version, passed: [build-image]}
-    - put: pg95-madlib-image
-      params:
-        build: agent-ci/images/postgresql95-madlib
 
 - name: test-image
   serial_groups: [delmo]
@@ -188,6 +175,17 @@ jobs:
       build: dockerfile
       cache: true
 
+- name: pg95-base-madlib-image
+  public: true
+  serial: true
+  plan:
+    - aggregate:
+      - {get: agent-ci}
+      - {get: base-image, passed: [base-image], trigger: true, params: {skip_download: true}}
+    - put: pg95-base-madlib-image
+      params:
+        build: agent-ci/images/postgresql95-madlib-base
+
 - name: build-task-image
   public: true
   serial: true
@@ -247,13 +245,13 @@ resources:
     repository: dingotiles/dingo-postgresql
     tag: latest
 
-- name: pg95-madlib-image
+- name: pg95-base-madlib-image
   type: docker-image
   source:
     email: {{docker-hub-email}}
     username: {{docker-hub-username}}
     password: {{docker-hub-password}}
-    repository: dingotiles/dingo-postgresql-madlib
+    repository: dingotiles/dingo-postgresql-madlib-base
     tag: latest
 
 - name: base-image

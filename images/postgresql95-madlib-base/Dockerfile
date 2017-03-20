@@ -45,4 +45,3 @@ RUN echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/re
       build-base gcc abuild binutils binutils-doc gcc-doc \
       cmake cmake-doc
 RUN pgxn install madlib
-ENV DINGO_IMAGE_NAME=dingotiles/dingo-postgresql-madlib
