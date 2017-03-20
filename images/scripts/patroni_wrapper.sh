@@ -18,7 +18,6 @@ patroni_env=/etc/patroni.d/.envrc
   if [[ "${DEBUG:-}X" != "X" ]]; then
     set -x
 
-
     echo "\nInstalled alpine/apk packages:"
     apk -vv info | sort
 
