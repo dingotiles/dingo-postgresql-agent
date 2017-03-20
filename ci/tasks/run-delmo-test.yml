@@ -6,6 +6,7 @@ image_resource:
 
 inputs:
 - name: agent-ci
+- name: agent-delmo
 
 params:
   MACHINE_EXPORT_AWS_ACCESS_KEY_ID:
@@ -26,4 +27,4 @@ params:
 
 run:
   path: /entrypoint.sh
-  args: [delmo, --only-build-task, -f, agent-ci/delmo.yml, -m, delmo-dingo-postgresql-agent-pipeline]
+  args: [delmo, --only-build-task, -f, agent-delmo/delmo.yml, -m, delmo-dingo-postgresql-agent-pipeline]

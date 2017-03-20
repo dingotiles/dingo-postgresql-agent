@@ -3,7 +3,7 @@ groups:
 - name: images
   jobs: [test-agent, rc, build-image, test-image, shipit, minor, major, patch, docker-machine-setup]
 - name: madlib
-  jobs: [test-agent, rc, base-image, pg95-base-madlib-image, build-madlib-image]
+  jobs: [test-agent, rc, base-image, pg95-base-madlib-image, build-madlib-image, test-madlib-image]
 - name: base-images
   jobs: [base-image, pg95-base-image, pg96-base-image, pg95-base-madlib-image]
 - name: ci-image
@@ -63,6 +63,10 @@ jobs:
     - {get: agent, passed: [build-image]}
     - {get: pg95-image, passed: [build-image], trigger: true, params: {skip_download: true}}
     - {get: version, passed: [build-image]}
+  - task: prepare-delmo-docker-compose
+    file: agent-ci/ci/tasks/prepare-delmo-docker-compose.yml
+    params:
+      image_name_tag: dingotiles/dingo-postgresql:pre-test
   - task: run-ssh-delmo-test
     file: agent-ci/ci/tasks/run-delmo-test.yml
     params:
@@ -85,6 +89,32 @@ jobs:
   - put: pg95-image
     params:
       pull_repository: dingotiles/dingo-postgresql
+      pull_tag: pre-test
+      cache: true
+      tag: agent-ci/ci/tags/tested
+
+- name: test-madlib-image
+  serial_groups: [delmo]
+  plan:
+  - aggregate:
+    - {get: agent-ci}
+    - {get: agent, passed: [build-madlib-image]}
+    - {get: pg95-madlib-image, passed: [build-madlib-image], trigger: true, params: {skip_download: true}}
+    - {get: version, passed: [build-madlib-image]}
+  - task: prepare-delmo-docker-compose
+    file: agent-ci/ci/tasks/prepare-delmo-docker-compose.yml
+    params:
+      image_name_tag: dingotiles/dingo-postgresql-madlib:pre-test
+  - task: run-ssh-delmo-test
+    file: agent-ci/ci/tasks/run-delmo-test.yml
+    params:
+      MACHINE_EXPORT_AWS_ACCESS_KEY_ID: {{docker-machine-access-key-id}}
+      MACHINE_EXPORT_AWS_SECRET_ACCESS_KEY: {{docker-machine-secret-access-key}}
+      MACHINE_EXPORT_AWS_REGION: {{docker-machine-region}}
+      MACHINE_EXPORT_AWS_BUCKET: {{docker-machine-bucket}}
+  - put: pg95-madlib-image
+    params:
+      pull_repository: dingotiles/dingo-postgresql-madlib
       pull_tag: pre-test
       cache: true
       tag: agent-ci/ci/tags/tested
