@@ -12,5 +12,8 @@ inputs:
 outputs:
 - name: dockerfile
 
+params:
+  image_name: dingotiles/dingo-postgresql
+
 run:
   path: agent-ci/ci/tasks/dockerfile-versioned.sh

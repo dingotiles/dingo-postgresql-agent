@@ -3,7 +3,7 @@ groups:
 - name: images
   jobs: [test-agent, rc, build-image, test-image, shipit, minor, major, patch, docker-machine-setup]
 - name: madlib
-  jobs: [test-agent, rc, base-image, pg95-base-madlib-image, build-madlib-image, test-madlib-image]
+  jobs: [test-agent, rc, base-image, pg95-base-madlib-image, build-madlib-image, test-madlib-image, shipit]
 - name: base-images
   jobs: [base-image, pg95-base-image, pg96-base-image, pg95-base-madlib-image]
 - name: ci-image
@@ -124,22 +124,41 @@ jobs:
   serial: true
   plan:
     - aggregate:
-      - {get: agent-ci}
-      - {get: agent, passed: [test-image]}
       - {get: image, resource: pg95-image, passed: [test-image], params: {skip_download: true}}
-      - {get: version, passed: [test-image], params: {bump: final}}
-    - {put: version, params: {file: version/number}}
-    - task: dockerfile-versioned
-      file: agent-ci/ci/tasks/dockerfile-versioned.yml
+      - {get: madlib-image, resource: pg95-madlib-image, passed: [test-madlib-image], params: {skip_download: true}}
     - aggregate:
-      - put: pg95-image
-        params:
-          build: dockerfile
-          tag: version/number
-          tag_prefix: v
-      - put: pg95-image
-        params:
-          build: dockerfile
+      - {get: agent-ci}
+      - {get: agent, passed: [test-image, test-madlib-image]}
+      - {get: version, passed: [test-image, test-madlib-image], params: {bump: final}}
+    - {put: version, params: {file: version/number}}
+    - aggregate:
+      - do:
+        - task: dockerfile-versioned
+          file: agent-ci/ci/tasks/dockerfile-versioned.yml
+        - aggregate:
+          - put: pg95-image
+            params:
+              build: dockerfile
+              tag: version/number
+              tag_prefix: v
+          - put: pg95-image
+            params:
+              build: dockerfile
+      - do:
+        - task: dockerfile-versioned
+          file: agent-ci/ci/tasks/dockerfile-versioned.yml
+          input_mapping: {image: madlib-image}
+          params:
+            image_name: dingotiles/dingo-postgresql-madlib
+        - aggregate:
+          - put: pg95-madlib-image
+            params:
+              build: dockerfile
+              tag: version/number
+              tag_prefix: v
+          - put: pg95-madlib-image
+            params:
+              build: dockerfile
     - task: generate-commitish
       file: agent-ci/ci/tasks/generate-commitish.yml
     - task: create-release-notes
