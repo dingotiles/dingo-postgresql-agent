@@ -178,12 +178,11 @@ jobs:
   serial: true
   plan:
   - aggregate:
-    - {get: agent, resource: agent-base, trigger: true}
     - {get: agent-ci}
     - {get: wal-e, resource: wale-fork, trigger: true}
   - task: custom-wal-e
     file: agent-ci/ci/tasks/custom-wal-e.yml
-    params: {dockerfile_dir: agent/images/postgresql96-base}
+    params: {dockerfile_dir: agent-ci/images/postgresql96-base}
   - put: pg96-base-image
     params:
       build: dockerfile
@@ -230,14 +229,6 @@ resources:
     uri: git@github.com:dingotiles/dingo-postgresql-agent.git
     branch: {{pipeline-branch}}
     private_key: {{github-private-key}}
-
-- name: agent-base
-  type: git
-  source:
-    uri: git@github.com:dingotiles/dingo-postgresql-agent.git
-    branch: {{pipeline-branch}}
-    private_key: {{github-private-key}}
-    paths: [images/postgresql95-base]
 
 - name: agent-ci-task
   type: git
