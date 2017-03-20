@@ -3,7 +3,7 @@ groups:
 - name: images
   jobs: [test-agent, rc, build-image, madlib-image, test-image, shipit, minor, major, patch, docker-machine-setup]
 - name: base-images
-  jobs: [pg95-base-image, pg96-base-image]
+  jobs: [base-image, pg95-base-image, pg96-base-image]
 - name: ci-image
   jobs: [build-task-image]
 
@@ -146,7 +146,7 @@ jobs:
   - put: version
     params: {file: version/number}
 
-- name: pg95-base-image
+- name: base-image
   public: true
   serial: true
   plan:
@@ -156,10 +156,23 @@ jobs:
     - {get: wal-e, resource: wale-fork, trigger: true}
   - task: custom-wal-e
     file: agent-ci/ci/tasks/custom-wal-e.yml
-    params: {dockerfile_dir: agent/images/postgresql95-base}
-  - put: pg95-base-image
+    params: {dockerfile_dir: agent/images/base}
+  - put: base-image
     params:
       build: dockerfile
+      cache: true
+
+- name: pg95-base-image
+  public: true
+  serial: true
+  plan:
+  - aggregate:
+    - {get: agent, resource: agent-base, trigger: true}
+    - {get: agent-ci}
+    - {get: base-image, trigger: true, params: {skip_download: true}}
+  - put: pg95-base-image
+    params:
+      build: agent/images/
       cache: true
 
 - name: pg96-base-image
@@ -252,6 +265,15 @@ resources:
     username: {{docker-hub-username}}
     password: {{docker-hub-password}}
     repository: dingotiles/dingo-postgresql-madlib
+    tag: latest
+
+- name: base-image
+  type: docker-image
+  source:
+    email: {{docker-hub-email}}
+    username: {{docker-hub-username}}
+    password: {{docker-hub-password}}
+    repository: dingotiles/dingo-postgresql-base
     tag: latest
 
 - name: pg95-base-image

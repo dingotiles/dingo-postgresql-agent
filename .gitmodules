@@ -1,8 +1,8 @@
-[submodule "images/postgresql95-base/wal-e"]
-	path = images/postgresql95-base/wal-e
-	url = https://github.com/drnic/wal-e.git
-	branch = ssh_strategy
 [submodule "images/postgresql96-base/wal-e"]
 	path = images/postgresql96-base/wal-e
+	url = https://github.com/drnic/wal-e.git
+	branch = ssh_strategy
+[submodule "images/base/wal-e"]
+	path = images/base/wal-e
 	url = https://github.com/drnic/wal-e.git
 	branch = ssh_strategy
