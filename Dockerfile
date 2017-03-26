@@ -10,7 +10,10 @@ COPY images/services/*.conf /etc/supervisor/conf.d/
 COPY images/scripts /scripts
 CMD ["/scripts/entry.sh"]
 
-ENV DINGO_API_URI=https://api.dingotiles.com DINGO_IMAGE_VERSION=0.0.0
+ENV DINGO_API_URI=https://api.dingotiles.com \
+    DINGO_AGENT_VERSION=dev \
+    DINGO_IMAGE_VERSION=dev \
+    DINGO_IMAGE_NAME=dingotiles/dingo-postgresql
 VOLUME ["/backups"]
 
 COPY . /go/src/github.com/dingotiles/dingo-postgresql-agent

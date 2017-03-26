@@ -11,7 +11,9 @@ import (
 // e.g. ClusterName with envconfig "cluster" is loaded from DINGO_CLUSTER
 // e.g. NodeName with envconfig "node" is loaded from DINGO_NODE
 type APISpecification struct {
+	AgentVersion            string `required:"true" envconfig:"agent_version"`
 	ImageVersion            string `required:"true" envconfig:"image_version"`
+	ImageName               string `required:"true" envconfig:"image_name"`
 	ClusterName             string `required:"true" envconfig:"cluster"`
 	NodeName                string `required:"false" envconfig:"node"`
 	Account                 string `required:"true" envconfig:"account"`
