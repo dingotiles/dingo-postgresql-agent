@@ -9,7 +9,9 @@ import (
 
 func TestRunAgent_createPatroniPostgresConfigFilesForWale(t *testing.T) {
 	os.Clearenv()
+	os.Setenv("DINGO_IMAGE_NAME", "dingotiles/dingo-postgresql")
 	os.Setenv("DINGO_IMAGE_VERSION", "0.0.1")
+	os.Setenv("DINGO_AGENT_VERSION", "0.0.1")
 	os.Setenv("DINGO_CLUSTER", "test-cluster")
 	os.Setenv("DINGO_ACCOUNT", "test-org")
 	os.Setenv("DINGO_API_URI", "localhost:3000")
